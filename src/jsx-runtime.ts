@@ -19,7 +19,7 @@
 import {
   type IntrinsicNodeProps,
   type IntrinsicTextProps,
-} from './intrinsicTypes.js';
+} from '@lightningtv/core';
 
 declare module 'solid-js' {
   namespace JSX {

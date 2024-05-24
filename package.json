@@ -41,6 +41,9 @@
   ],
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
+  "dependencies": {
+    "@lightningtv/core": "^0.0.1"
+  },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.5",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -64,7 +67,7 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningjs/renderer": "^0.8.4",
+    "@lightningjs/renderer": "^0.9.1",
     "solid-js": "*"
   },
   "repository": {

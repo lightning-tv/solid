@@ -1,26 +1,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/*
- * Copyright 2023 Comcast Cable Communications Management, LLC
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { createRenderer } from 'solid-js/universal';
-import { config } from '../config.js';
-import { startLightningRenderer } from './lightningInit.js';
+import {
+  Config,
+  startLightningRenderer,
+  type SolidNode,
+} from '@lightningtv/core';
 import nodeOpts from './solidOpts.js';
-import { type SolidNode } from './node/elementNode.js';
 import {
   splitProps,
   createMemo,
@@ -38,7 +23,7 @@ export async function startLightning(
   rootId?: string | HTMLElement,
 ) {
   renderer = startLightningRenderer(
-    options || config.rendererOptions,
+    options || Config.rendererOptions,
     rootId || 'app',
   );
   return await renderer.init();
