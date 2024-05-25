@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 
 export default withSolid({
   solidOptions: {
-    moduleName: '@lightningjs/solid',
+    moduleName: '@lightningtv/solid',
     generate: 'universal',
     contextToCustomElements: false,
   },

@@ -14,3 +14,4 @@ export * from './activeElement.js';
 export { View } from './View.jsx';
 export { Text } from './Text.jsx';
 export * from './utils.js';
+export * from './render.js';

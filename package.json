@@ -1,21 +1,12 @@
 {
-  "name": "@lightningjs/solid",
-  "version": "0.16.1",
-  "description": "Lightning renderer for solid universal",
+  "name": "@lightningtv/solid",
+  "version": "0.0.1",
+  "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "source": "src/index.ts",
   "main": "./dist/esm/index.js",
   "browser": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./src/index.ts",
-      "typescript": "./src/index.ts",
-      "browser": "./dist/esm/index.js",
-      "solid": "./dist/source/index.js",
-      "types": "./dist/types/index.d.ts"
-    }
-  },
   "sideEffects": false,
   "scripts": {
     "start": "npm run watch",
@@ -52,9 +43,9 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^15.2.4",
     "prettier": "^3.2.5",
-    "rollup": "^4.17.2",
+    "rollup": "^4.18.0",
     "rollup-preset-solid": "^2.0.1",
     "solid-js": "^1.8.17",
     "typescript": "^5.4.5"

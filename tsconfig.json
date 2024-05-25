@@ -20,7 +20,6 @@
     "noImplicitOverride": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
     "composite": true,
 
     // jsx
