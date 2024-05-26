@@ -33,7 +33,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^0.0.1"
+    "@lightningtv/core": "^0.0.3"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.5",

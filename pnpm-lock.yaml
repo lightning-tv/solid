@@ -12,8 +12,8 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1
       '@lightningtv/core':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@rollup/plugin-replace':
         specifier: ^5.0.5
@@ -868,8 +868,8 @@ packages:
   '@lightningjs/threadx@0.3.5':
     resolution: {integrity: sha512-aUIUfP/d3S0Vg/Ror7CLbqQR6qu5AAdGRnQ5RQuSQz4t9X2p8TomKD7ShRxI1/FnRR7om2MwKIe1Dix/Axdgpg==}
 
-  '@lightningtv/core@0.0.1':
-    resolution: {integrity: sha512-XN/ZEgsAbXQFh7zp3M7T4hOZMTs5GTD5rIjEUx73aVaWJD1rtsFnXzgNOVYsMpRkELQqakCOJ5SxoTrkSTJ9Lg==}
+  '@lightningtv/core@0.0.3':
+    resolution: {integrity: sha512-oaFlSELSsnh4c+NnjQhhG3r7bL8JAguVfE9WKhJQYErSZkzbAfUS/UtzGdZyJ9JnZ59yl3B8Jzi+R900jGkhAw==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1688,6 +1688,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
@@ -2096,6 +2097,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rollup-preset-solid@2.0.1:
@@ -3209,7 +3211,7 @@ snapshots:
 
   '@lightningjs/threadx@0.3.5': {}
 
-  '@lightningtv/core@0.0.1': {}
+  '@lightningtv/core@0.0.3': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
