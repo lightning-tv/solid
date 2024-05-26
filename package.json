@@ -33,7 +33,10 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^0.0.3"
+    "@lightningtv/core": "^0.0.3",
+    "@lightningtv/solid": "file:",
+    "@solid-primitives/keyboard": "^1.2.8",
+    "@solid-primitives/scheduled": "^1.4.3"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^5.0.5",

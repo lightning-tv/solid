@@ -15,3 +15,4 @@ export { View } from './View.jsx';
 export { Text } from './Text.jsx';
 export * from './utils.js';
 export * from './render.js';
+export * from './primitives/index.js';
