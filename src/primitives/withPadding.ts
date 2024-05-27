@@ -30,12 +30,13 @@ export function withPadding(el: ElementNode, padding: () => withPaddingInput) {
   el.onBeforeLayout = (node, size) => {
     if (size) {
       el.width =
-        el.children.reduce((acc, c) => {
+        el.children.reduce((acc, child) => {
+          const c = child as ElementNode;
           return acc + (c.width || 0);
         }, 0) +
         left +
         right;
-      const firstChild = el.children[0];
+      const firstChild = el.children[0] as ElementNode;
       if (firstChild) {
         // set padding or marginLeft for flex
         firstChild.x = left;
@@ -43,7 +44,8 @@ export function withPadding(el: ElementNode, padding: () => withPaddingInput) {
       }
 
       let maxHeight = 0;
-      el.children.forEach((c) => {
+      el.children.forEach((child) => {
+        const c = child as ElementNode;
         c.y = top;
         c.marginTop = top;
         maxHeight = Math.max(maxHeight, c.height || 0);

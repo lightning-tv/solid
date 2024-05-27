@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { createRenderer } from 'solid-js/universal';
-import {
-  Config,
-  startLightningRenderer,
-  type SolidNode,
-} from '@lightningtv/core';
-import nodeOpts from './solidOpts.js';
+import { Config, startLightningRenderer } from '@lightningtv/core';
+import nodeOpts, { type SolidNode } from './solidOpts.js';
 import {
   splitProps,
   createMemo,

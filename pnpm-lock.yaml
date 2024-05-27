@@ -12,14 +12,20 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1
       '@lightningtv/core':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.8
+        version: 0.0.8(@lightningjs/renderer@0.9.1)
       '@lightningtv/solid':
         specifier: 'file:'
         version: file:(@lightningjs/renderer@0.9.1)(solid-js@1.8.17)
+      '@solid-primitives/event-listener':
+        specifier: ^2.3.3
+        version: 2.3.3(solid-js@1.8.17)
       '@solid-primitives/keyboard':
         specifier: ^1.2.8
         version: 1.2.8(solid-js@1.8.17)
+      '@solid-primitives/mouse':
+        specifier: ^2.0.19
+        version: 2.0.19(solid-js@1.8.17)
       '@solid-primitives/scheduled':
         specifier: ^1.4.3
         version: 1.4.3(solid-js@1.8.17)
@@ -877,8 +883,10 @@ packages:
   '@lightningjs/threadx@0.3.5':
     resolution: {integrity: sha512-aUIUfP/d3S0Vg/Ror7CLbqQR6qu5AAdGRnQ5RQuSQz4t9X2p8TomKD7ShRxI1/FnRR7om2MwKIe1Dix/Axdgpg==}
 
-  '@lightningtv/core@0.0.6':
-    resolution: {integrity: sha512-oKCsEsTGmRLbH8DjODBZfP3k7RbuXuqs8qXhkG33vI2VYslW5MoyMKvxWWFYWKoqp6kwi3HRRZlL2wg1yGerfw==}
+  '@lightningtv/core@0.0.8':
+    resolution: {integrity: sha512-xdTilfC9oLMAjb//FnhMUjWRKg8C2B+L5p5wby2Su4EDbxzah7fJW8FBcKrr/a3CZGR+P2XbWIhTR1uV9bxcRQ==}
+    peerDependencies:
+      '@lightningjs/renderer': '*'
 
   '@lightningtv/solid@file:':
     resolution: {directory: '', type: directory}
@@ -1118,6 +1126,11 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
+  '@solid-primitives/mouse@2.0.19':
+    resolution: {integrity: sha512-mVYhWsMjjIdZ8iLIypiYGhNGtLOFVCmCeXaNQVYUjPOZkZOm9aaKjjGqgdwVw5RtJ0ZfNvKH/A5WE1t/fOBvLA==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
   '@solid-primitives/rootless@1.4.5':
     resolution: {integrity: sha512-GFJE9GC3ojx0aUKqAUZmQPyU8fOVMtnVNrkdk2yS4kd17WqVSpXpoTmo9CnOwA+PG7FTzdIkogvfLQSLs4lrww==}
     peerDependencies:
@@ -1125,6 +1138,11 @@ packages:
 
   '@solid-primitives/scheduled@1.4.3':
     resolution: {integrity: sha512-HfWN5w7b7FEc6VPLBKnnE302h90jsLMuR28Fcf7neRGGf8jBj6wm6/UFQ00VlKexHFMR6KQ2u4VBh5a1ZcqM8g==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/static-store@0.0.8':
+    resolution: {integrity: sha512-ZecE4BqY0oBk0YG00nzaAWO5Mjcny8Fc06CdbXadH9T9lzq/9GefqcSe/5AtdXqjvY/DtJ5C6CkcjPZO0o/eqg==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -3251,13 +3269,17 @@ snapshots:
 
   '@lightningjs/threadx@0.3.5': {}
 
-  '@lightningtv/core@0.0.6': {}
+  '@lightningtv/core@0.0.8(@lightningjs/renderer@0.9.1)':
+    dependencies:
+      '@lightningjs/renderer': 0.9.1
 
   '@lightningtv/solid@file:(@lightningjs/renderer@0.9.1)(solid-js@1.8.17)':
     dependencies:
       '@lightningjs/renderer': 0.9.1
-      '@lightningtv/core': 0.0.6
+      '@lightningtv/core': 0.0.8(@lightningjs/renderer@0.9.1)
+      '@solid-primitives/event-listener': 2.3.3(solid-js@1.8.17)
       '@solid-primitives/keyboard': 1.2.8(solid-js@1.8.17)
+      '@solid-primitives/mouse': 2.0.19(solid-js@1.8.17)
       '@solid-primitives/scheduled': 1.4.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
@@ -3452,6 +3474,14 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
+  '@solid-primitives/mouse@2.0.19(solid-js@1.8.17)':
+    dependencies:
+      '@solid-primitives/event-listener': 2.3.3(solid-js@1.8.17)
+      '@solid-primitives/rootless': 1.4.5(solid-js@1.8.17)
+      '@solid-primitives/static-store': 0.0.8(solid-js@1.8.17)
+      '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
+      solid-js: 1.8.17
+
   '@solid-primitives/rootless@1.4.5(solid-js@1.8.17)':
     dependencies:
       '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
@@ -3459,6 +3489,11 @@ snapshots:
 
   '@solid-primitives/scheduled@1.4.3(solid-js@1.8.17)':
     dependencies:
+      solid-js: 1.8.17
+
+  '@solid-primitives/static-store@0.0.8(solid-js@1.8.17)':
+    dependencies:
+      '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
   '@solid-primitives/utils@6.2.3(solid-js@1.8.17)':
