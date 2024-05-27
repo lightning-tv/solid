@@ -1,6 +1,6 @@
 import { assertTruthy } from '@lightningjs/renderer/utils';
 import type { SolidNode, TextNode } from '@lightningtv/core';
-import { ElementNode, NodeTypes, log } from '@lightningtv/core';
+import { ElementNode, NodeType, log } from '@lightningtv/core';
 import type { createRenderer } from 'solid-js/universal';
 
 export type SolidRendererOptions = Parameters<
@@ -13,7 +13,7 @@ export default {
   },
   createTextNode(text: string): TextNode {
     // A text node is just a string - not the <text> node
-    return { type: NodeTypes.Text, text, parent: undefined };
+    return { type: NodeType.Text, text, parent: undefined };
   },
   replaceText(node: TextNode, value: string): void {
     log('Replace Text: ', node, value);

@@ -12,8 +12,8 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1
       '@lightningtv/core':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.5
+        version: 0.0.5
       '@lightningtv/solid':
         specifier: 'file:'
         version: file:(@lightningjs/renderer@0.9.1)(solid-js@1.8.17)
@@ -877,8 +877,8 @@ packages:
   '@lightningjs/threadx@0.3.5':
     resolution: {integrity: sha512-aUIUfP/d3S0Vg/Ror7CLbqQR6qu5AAdGRnQ5RQuSQz4t9X2p8TomKD7ShRxI1/FnRR7om2MwKIe1Dix/Axdgpg==}
 
-  '@lightningtv/core@0.0.3':
-    resolution: {integrity: sha512-oaFlSELSsnh4c+NnjQhhG3r7bL8JAguVfE9WKhJQYErSZkzbAfUS/UtzGdZyJ9JnZ59yl3B8Jzi+R900jGkhAw==}
+  '@lightningtv/core@0.0.5':
+    resolution: {integrity: sha512-ajTtCnydj7aSXD02ezMSieM0b3iVmbEptc5uRYJjJbEowshlBivV9jbcDzLlG7gegtQnXACvjFxPgdRkpJHjCQ==}
 
   '@lightningtv/solid@file:':
     resolution: {directory: '', type: directory}
@@ -3251,13 +3251,14 @@ snapshots:
 
   '@lightningjs/threadx@0.3.5': {}
 
-  '@lightningtv/core@0.0.3': {}
+  '@lightningtv/core@0.0.5': {}
 
   '@lightningtv/solid@file:(@lightningjs/renderer@0.9.1)(solid-js@1.8.17)':
     dependencies:
       '@lightningjs/renderer': 0.9.1
-      '@lightningtv/core': 0.0.3
+      '@lightningtv/core': 0.0.5
       '@solid-primitives/keyboard': 1.2.8(solid-js@1.8.17)
+      '@solid-primitives/scheduled': 1.4.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
   '@nodelib/fs.scandir@2.1.5':
