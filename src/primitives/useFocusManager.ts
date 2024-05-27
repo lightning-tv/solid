@@ -1,4 +1,10 @@
-import { createEffect, on, createSignal, untrack } from 'solid-js';
+import {
+  createEffect,
+  on,
+  createSignal,
+  untrack,
+  type Accessor,
+} from 'solid-js';
 import { useKeyDownEvent } from '@solid-primitives/keyboard';
 import {
   activeElement,
@@ -111,7 +117,7 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
   }
   createEffect(
     on(
-      activeElement,
+      activeElement as Accessor<ElementNode>,
       (
         currentFocusedElm: ElementNode,
         prevFocusedElm: ElementNode | undefined,

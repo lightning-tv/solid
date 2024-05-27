@@ -7,6 +7,10 @@
   "main": "./dist/source/index.js",
   "browser": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
+  "exports": {
+    "types": "./src/index.ts",
+    "import": "./src/index.ts"
+  },
   "sideEffects": false,
   "scripts": {
     "start": "npm run watch",
@@ -33,7 +37,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^0.0.5",
+    "@lightningtv/core": "^0.0.6",
     "@lightningtv/solid": "file:",
     "@solid-primitives/keyboard": "^1.2.8",
     "@solid-primitives/scheduled": "^1.4.3"
