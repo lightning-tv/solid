@@ -1,11 +1,11 @@
-# Solid Lightning 3
+# SolidJS Lightning 3
 
 ## Installation
 
 Clone starter template:
 
 ```sh
-> npx degit lightning-js/solid-starter-template my-app
+> npx degit lightning-tv/solid-starter-template my-app
 > cd my-app
 > npm i # or yarn or pnpm
 > npm start # or yarn or pnpm

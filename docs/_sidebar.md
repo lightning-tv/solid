@@ -1,4 +1,7 @@
-- [Getting started](getting_started.md)
+- Welcome
+  - [Overview](intro.md)
+  - [Getting started](getting_started.md)
+  - [Solid / Blits Framework Comparison](solidvsblits.md)
 - [Components & Events](components.md)
 - [Styling](styling.md)
 - [Positioning and Layout](layout.md)
@@ -8,4 +11,3 @@
 - [Images](images.md)
 - [Effects](effects.md)
 - [Accessibility / Announcer](a11y.md)
-- [Solid / Blits Framework Comparison](solidvsblits.md)
