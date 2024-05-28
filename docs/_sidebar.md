@@ -1,7 +1,7 @@
 - Welcome
-  - [Overview](intro.md)
-  - [Getting started](getting_started.md)
-  - [Solid / Blits Framework Comparison](solidvsblits.md)
+  - [Overview](/intro/intro.md)
+  - [Getting started](/intro/getting_started.md)
+  - [Solid / Blits Framework Comparison](/intro/solidvsblits.md)
 - [Components & Events](components.md)
 - [Styling](styling.md)
 - [Positioning and Layout](layout.md)
