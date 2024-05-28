@@ -44,7 +44,7 @@ Clone starter template:
 Solid provides a global `Config` object to setup application defaults:
 
 ```js
-import { Config } from '@lightningjs/solid';
+import { Config } from '@lightningtv/solid';
 
 // Log out solid rendering information
 // This is removed for Prod builds for performance

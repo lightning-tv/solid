@@ -22,9 +22,9 @@ const Button = {
 };
 ```
 
-When Button is focused via the [useFocusManager](./keyhandling.md) the focus state will be added to button causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set. Be sure to set defaults on the original styles if applying a new style via state.
+When `Button` is focused via the [useFocusManager](/primitives/useFocusManager.md), the `focus` state will be added to the button, causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set. Be sure to set defaults on the original styles if applying a new style via state.
 
-States can be added to components declaritively:
+States can be added to components declaratively:
 
 ```jsx
 <Button states={{ active: true, happy: false, disabled: false }}>Movies</Button>
@@ -32,7 +32,7 @@ States can be added to components declaritively:
 <Button states='happy'>News</Button>
 ```
 
-Or imperatively
+Or imperatively:
 
 ```jsx
 let myButton;
@@ -41,8 +41,8 @@ createEffect(() => {
   myButton.states.add('focus');
 
   // Check for a state
-  if(myButton.states.has('focus')) {
-    myButton.states.remove('focus')
+  if (myButton.states.has('focus')) {
+    myButton.states.remove('focus');
   }
 
   myButton.states.add('disabled');
@@ -51,15 +51,15 @@ createEffect(() => {
 
   // toggle disabled on / off
   myButton.states.toggle('disabled');
-})
-<View ref={myButton} style={Button} />
+});
+<View ref={myButton} style={Button} />;
 ```
 
-Note: states always use the values in the style object. If you have a button with a base color, and an disabled and focus state which both change the color, the value applied to the button will be determined from the style object. You won't be able to set the color of the button on the JSX `<Button color={???}>` because as the states change we need to determine which color to apply. If you need this functionality, you should pass in the color to the style object.
+Note: states always use the values in the style object. If you have a button with a base color, and a disabled and focus state which both change the color, the value applied to the button will be determined from the style object. You won't be able to set the color of the button on the JSX `<Button color={???}>` because as the states change, we need to determine which color to apply. If you need this functionality, you should pass in the color to the style object.
 
 ## forwardStates
 
-When you want the state to also be applied to children elements, you can add `forwardStates` attribute to the parent element. Any states set on the parent will be add / removed from the children as well. This is useful for functional components where you need to change styles of children as well.
+When you want the state to also be applied to children elements, you can add the `forwardStates` attribute to the parent element. Any states set on the parent will be added/removed from the children as well. This is useful for functional components where you need to change styles of children as well.
 
 ```jsx
 function Button(props) {

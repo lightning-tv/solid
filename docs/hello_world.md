@@ -1,7 +1,7 @@
 ## Hello World
 
 ```jsx
-import { render, Text } from '@lightningjs/solid';
+import { render, Text } from '@lightningtv/solid';
 
 render(() => <Text>Hello World</Text>);
 ```

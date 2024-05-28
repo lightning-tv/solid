@@ -57,7 +57,7 @@ If you don't pass in animation settings as the second argument, it will default 
 You can set default animation settings for all transitions globally via Config.
 
 ```js
-import { Config } from '@lightningjs/solid';
+import { Config } from '@lightningtv/solid';
 Config.animationSettings = {
   duration: 250,
   delay: 0,
