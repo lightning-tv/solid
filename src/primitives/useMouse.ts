@@ -3,6 +3,7 @@ import {
   ElementNode,
   activeElement,
   setActiveElement,
+  rootNode,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
@@ -96,10 +97,7 @@ function getChildrenByPosition(
   return result;
 }
 
-export function useMouse(myApp?: ElementNode): void {
-  if (!myApp) {
-    return;
-  }
+export function useMouse(myApp: ElementNode = rootNode): void {
   const pos = useMousePosition();
   const scheduled = createScheduled((fn) => throttle(fn, 100));
   makeEventListener(window, 'wheel', handleScroll);
