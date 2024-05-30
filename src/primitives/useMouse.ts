@@ -4,6 +4,7 @@ import {
   activeElement,
   setActiveElement,
   rootNode,
+  Config,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
@@ -41,15 +42,16 @@ const handleScroll = throttle((e: WheelEvent): void => {
 
 const handleClick = (e: MouseEvent): void => {
   const active = activeElement();
+  const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
   if (
     active &&
     testCollision(
       e.clientX,
       e.clientY,
-      (active.lng as MainOnlyNode).coreNode.absX,
-      (active.lng as MainOnlyNode).coreNode.absY,
-      active.width,
-      active.height,
+      (active.lng as MainOnlyNode).coreNode.absX * precision,
+      (active.lng as MainOnlyNode).coreNode.absY * precision,
+      active.width! * precision,
+      active.height! * precision,
     )
   ) {
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
@@ -73,6 +75,7 @@ function getChildrenByPosition(
   y: number,
 ): ElementNode[] {
   let result: ElementNode[] = [node];
+  const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
 
   for (let i = 0; i < node.children.length; i++) {
     const child = node.children[i];
@@ -82,10 +85,10 @@ function getChildrenByPosition(
         testCollision(
           x,
           y,
-          (child.lng as MainOnlyNode).coreNode.absX,
-          (child.lng as MainOnlyNode).coreNode.absY,
-          child.width,
-          child.height,
+          (child.lng as MainOnlyNode).coreNode.absX * precision,
+          (child.lng as MainOnlyNode).coreNode.absY * precision,
+          child.width! * precision,
+          child.height! * precision,
         )
       ) {
         // continue searching tree
