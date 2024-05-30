@@ -21,7 +21,7 @@ Solid-Lightning is a UI framework for the [Lightning 3 Renderer](https://github.
 
 ## Solid vs Blits
 
-For further comparison about which framework you should use read [Solid vs Blits](solidvsblits.md)
+For further comparison about which framework you should use read [Solid vs Blits](/intro/solidvsblits.md)
 
 ### Other Resources
 
