@@ -14,17 +14,35 @@ The Lightning renderer will scale the image to fit the width and height dimensio
 
 For the best performance, it's important to keep your source images as small as possible. If you're displaying an image at `200px x 200px`, make sure the image is exactly that size or _smaller_. The latter option may lead to some quality loss, but can positively impact the overall performance of your App.
 
-## Loaded Events / Failback Images
+## Loaded Events / Failback Images / Poster background color
 
 All images are loaded asynchronously (and can possibly fail to load). Here is how you'd provide a fallback image.
 
 ```jsx
-<View
-  width={200}
-  height={200}
-  src={imgSrcWhichFails}
-  onEvents={['fail', (node, msg) => (node.src = fallbackImage)]}
-/>
+// Create the Thumbnail component
+const Thumbnail = (props) => (
+  const handleLoad = (node) => {
+    node.color = 0xffffffff;
+  };
+
+  const handleFail = (node, msg) => {
+    node.src = fallbackImage;
+  };
+
+  const onEvents = [
+      ['load', handleLoad],
+      ['fail', handleFail],
+    ];
+
+  <View
+    width={200}
+    height={200}
+    // Add loading background color
+    color={0xff573366}
+    src={props.imgSrc}
+    onEvents={onEvents}
+  />
+);
 ```
 
 ## Colorization
