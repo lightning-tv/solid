@@ -74,26 +74,44 @@ function getChildrenByPosition(
   x: number,
   y: number,
 ): ElementNode[] {
-  let result: ElementNode[] = [node];
+  const result: ElementNode[] = [];
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
 
-  for (let i = 0; i < node.children.length; i++) {
-    const child = node.children[i];
-    if (child instanceof ElementNode) {
+  // Queue for BFS
+  let queue: ElementNode[] = [node];
+
+  while (queue.length > 0) {
+    // Process nodes at the current level
+    const currentLevelNodes: ElementNode[] = [];
+
+    for (const currentNode of queue) {
       if (
-        child.alpha !== 0 &&
+        currentNode.alpha !== 0 &&
         testCollision(
           x,
           y,
-          (child.lng as MainOnlyNode).coreNode.absX * precision,
-          (child.lng as MainOnlyNode).coreNode.absY * precision,
-          child.width! * precision,
-          child.height! * precision,
+          (currentNode.lng as MainOnlyNode).coreNode.absX * precision,
+          (currentNode.lng as MainOnlyNode).coreNode.absY * precision,
+          currentNode.width! * precision,
+          currentNode.height! * precision,
         )
       ) {
-        // continue searching tree
-        result = [...result, ...getChildrenByPosition(child, x, y)];
+        currentLevelNodes.push(currentNode);
       }
+    }
+
+    const size = currentLevelNodes.length;
+    if (size === 0) {
+      break;
+    } else if (size > 1) {
+      // Find the node with the highest zIndex
+      currentLevelNodes.sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+    }
+
+    const highestZIndexNode = currentLevelNodes[0] as ElementNode;
+    result.push(highestZIndexNode);
+    if (!highestZIndexNode.isTextNode()) {
+      queue = highestZIndexNode.children as ElementNode[];
     }
   }
 
@@ -107,9 +125,9 @@ export function useMouse(myApp: ElementNode = rootNode): void {
   makeEventListener(window, 'click', handleClick);
   createEffect(() => {
     if (scheduled()) {
-      const result = getChildrenByPosition(myApp, pos.x, pos.y)
-        .filter((el) => (el.focus || el.onFocus || el.onEnter) && !el.skipFocus)
-        .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+      const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
+        (el) => (el.focus || el.onFocus || el.onEnter) && !el.skipFocus,
+      );
 
       if (result.length) {
         let activeElm = result[result.length - 1];

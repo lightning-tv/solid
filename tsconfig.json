@@ -9,7 +9,7 @@
     "moduleResolution": "NodeNext",
     "sourceMap": true,
     "declaration": true,
-    "noEmit": true,
+    "noEmit": false,
     // Temporarily disable this until `solid-js` is released with this PR:
     // https://github.com/solidjs/solid/pull/1913
     "skipLibCheck": true,
