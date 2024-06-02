@@ -105,13 +105,13 @@ export function Dynamic<T>(
 
 // Dont use JSX as it creates circular dependencies and causes trouble with the playground.
 export const View = (props: IntrinsicNodeProps) => {
-  const _el$ = createElement('node');
-  spread(_el$, props, false);
-  return _el$ as unknown as JSXElement;
+  const el = createElement('node');
+  spread(el, props, false);
+  return el as unknown as JSXElement;
 };
 
 export const Text = (props: IntrinsicTextProps) => {
-  const _el$ = createElement('text');
-  spread(_el$, props, false);
-  return _el$ as unknown as JSXElement;
+  const el = createElement('text');
+  spread(el, props, false);
+  return el as unknown as JSXElement;
 };
