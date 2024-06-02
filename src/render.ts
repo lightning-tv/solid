@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { createRenderer } from 'solid-js/universal';
-import { Config, startLightningRenderer } from '@lightningtv/core';
+import {
+  Config,
+  IntrinsicNodeProps,
+  IntrinsicTextProps,
+  startLightningRenderer,
+} from '@lightningtv/core';
 import nodeOpts, { type SolidNode } from './solidOpts.js';
 import {
   splitProps,
@@ -97,3 +102,16 @@ export function Dynamic<T>(
     }
   }) as unknown as JSXElement;
 }
+
+// Dont use JSX as it creates circular dependencies and causes trouble with the playground.
+export const View = (props: IntrinsicNodeProps) => {
+  const _el$ = createElement('node');
+  spread(_el$, props, false);
+  return _el$ as unknown as JSXElement;
+};
+
+export const Text = (props: IntrinsicTextProps) => {
+  const _el$ = createElement('text');
+  spread(_el$, props, false);
+  return _el$ as unknown as JSXElement;
+};
