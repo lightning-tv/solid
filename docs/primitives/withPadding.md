@@ -16,7 +16,7 @@ The `withPadding` directive is used to add padding to an `ElementNode` whose chi
 The `withPadding` directive allows us to create a border around a child text node like below:
 
 ```jsx
-import { View, Text, withPadding } from '@lightningtv/solid';
+import { View, Text, withPadding } from '@lightningtv/solid-ui';
 withPadding; // prevent treeshaking
 
 const BadgeStyle = {};
