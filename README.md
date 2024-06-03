@@ -42,3 +42,37 @@ render(() => <Text>Hello World</Text>);
 ```
 
 For a more detailed Hello World guide check out the [Hello World](HelloWorld.md) guide.
+
+## Migration Guide
+
+If you're migrating from https://github.com/lightning-js/solid
+
+Find and replace:
+"@lightningjs/solid-primitives" with "@lightningtv/solid/primitives"
+"@lightningjs/solid" with "@lightningtv/solid"
+
+Update vite.config to dedupe solid:
+
+```js
+resolve: {
+    dedupe: [
+      "solid-js",
+      "@lightningtv/solid",
+      "@lightningtv/solid/primitives",
+      "@lightningjs/solid-ui",
+      "@lightningjs/renderer",
+    ],
+  },
+```
+
+If you don't want to find and replace you can use alias
+
+```js
+resolve: {
+    alias: {
+      theme: "@lightningjs/l3-ui-theme-base",
+      "@lightningjs/solid": "@lightningtv/solid",
+      "@lightningjs/solid-primitives": "@lightningtv/solid/primitives",
+    },
+  },
+```
