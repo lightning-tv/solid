@@ -105,12 +105,14 @@ function getChildrenByPosition(
       break;
     } else if (size > 1) {
       // Find the node with the highest zIndex
-      currentLevelNodes.sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+      currentLevelNodes.sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
     }
 
     const highestZIndexNode = currentLevelNodes[0] as ElementNode;
     result.push(highestZIndexNode);
-    if (!highestZIndexNode.isTextNode()) {
+    if (highestZIndexNode.isTextNode()) {
+      queue = [];
+    } else {
       queue = highestZIndexNode.children as ElementNode[];
     }
   }
@@ -118,9 +120,12 @@ function getChildrenByPosition(
   return result;
 }
 
-export function useMouse(myApp: ElementNode = rootNode): void {
+export function useMouse(
+  myApp: ElementNode = rootNode,
+  throttleBy: number = 100,
+): void {
   const pos = useMousePosition();
-  const scheduled = createScheduled((fn) => throttle(fn, 100));
+  const scheduled = createScheduled((fn) => throttle(fn, throttleBy));
   makeEventListener(window, 'wheel', handleScroll);
   makeEventListener(window, 'click', handleClick);
   createEffect(() => {
@@ -130,19 +135,15 @@ export function useMouse(myApp: ElementNode = rootNode): void {
       );
 
       if (result.length) {
-        let activeElm = result[result.length - 1];
+        let activeElm = result[result.length - 1] as ElementNode;
 
-        while (activeElm) {
-          const elmParent = activeElm.parent;
-          if (elmParent?.forwardStates) {
-            activeElm = activeElm.parent;
-          } else {
-            break;
-          }
+        while (activeElm.parent?.forwardStates) {
+          activeElm = activeElm.parent;
         }
 
-        const activeElmParent = activeElm?.parent;
-        if (activeElm && activeElmParent?.selected !== undefined) {
+        // Update Row & Column Selected property
+        const activeElmParent = activeElm.parent;
+        if (activeElmParent?.selected !== undefined) {
           activeElmParent.selected =
             activeElmParent.children.indexOf(activeElm);
         }
