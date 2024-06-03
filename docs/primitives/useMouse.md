@@ -16,7 +16,8 @@ Import the `useMouse` and call it:
 import { useMouse } from '@lightningtv/solid';
 
 const App = () => {
-  useMouse();
+  // rootNode and throttleBy in ms
+  useMouse(undefined, 100);
 
   // Additional application logic...
 };
