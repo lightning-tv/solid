@@ -4,15 +4,15 @@
 
 # solid-lightning
 
-Solid-Lightning is a UI framework for [Lightning Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS. Also check out [Solid Lightning Primitives](https://github.com/lightning-js/solid-primitives) for additional primitives to speed up your development.
+Solid-Lightning is a UI framework for [Lightning Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
 
 ## Documentation
 
-[SolidJS Lightning Docs](https://lightning-js.github.io/solid/)
+[SolidJS Lightning Docs](https://lightning-tv.github.io/solid/)
 
 ## Demo App
 
-[Solid TMDB Demo App](https://github.com/lightning-js/solid-demo-app)
+[Solid TMDB Demo App](https://github.com/lightning-tv/solid-demo-app)
 
 ## Playground
 
@@ -23,7 +23,7 @@ Solid-Lightning is a UI framework for [Lightning Renderer](https://lightningjs.i
 Clone starter template:
 
 ```sh
-> npx degit lightning-js/solid-starter-template my-app
+> npx degit lightning-tv/solid-starter-template my-app
 > cd my-app
 > npm i # or yarn or pnpm
 > npm start # or yarn or pnpm
@@ -36,7 +36,7 @@ Clone starter template:
 ### Hello World
 
 ```jsx
-import { render, Text } from '@lightningjs/solid';
+import { render, Text } from '@lightningtv/solid';
 
 render(() => <Text>Hello World</Text>);
 ```
@@ -45,7 +45,7 @@ For a more detailed Hello World guide check out the [Hello World](HelloWorld.md)
 
 ## Migration Guide
 
-If you're migrating from https://github.com/lightning-js/solid
+If you're migrating from https://github.com/lightning-tv/solid
 
 Find and replace:
 "@lightningjs/solid-primitives" with "@lightningtv/solid/primitives"
