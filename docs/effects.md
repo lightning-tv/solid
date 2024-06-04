@@ -39,32 +39,36 @@ const style = {
 
 ## Linear Gradient & Radial Gradient
 
-`linearGradient` and `radialGradient` are effects that can be used like a style with following syntax.
+`linearGradient` and `radialGradient` are effects that can be used by setting the effects prop.
 
-```js
-linearGradient:
-    {
+```jsx
+<View
+  effects={{
+    linearGradient: {
       angle: 225,
       width: 300,
       height: 300,
       stops: [0.1, 0.5],
-      colors: [
-        0xff0000ff, 0x00000000,
-      ],
+      colors: [0xff0000ff, 0x00000000],
     },
+  }}
+/>
 ```
 
-```js
-radialGradient:
-    {
-      pivot: 225,
+```jsx
+<View
+  width={300}
+  height={300}
+  effects={{
+    radialGradient: {
+      pivot: [225],
       width: 300,
       height: 300,
       stops: [0.1, 0.5],
-      colors: [
-        0xff0000ff, 0x00000000,
-      ],
+      colors: [0xff0000ff, 0x00000000],
     },
+  }}
+/>
 ```
 
 You can have as many stops or colors as you like. Please note linearGradients strongly affect performance at the moment.
