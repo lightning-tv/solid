@@ -2,9 +2,9 @@
   <img src="https://assets.solidjs.com/banner?project=Library&type=solid-lightning" alt="SolidJS Lightning" />
 </p>
 
-# solid-lightning
+# SolidJS Lightning
 
-Solid-Lightning is a UI framework for [Lightning Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
+Is a UI framework for [Lightning 3 Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
 
 ## Documentation
 
@@ -43,9 +43,9 @@ render(() => <Text>Hello World</Text>);
 
 For a more detailed Hello World guide check out the [Hello World](HelloWorld.md) guide.
 
-## Migration Guide
+## Migration Guide from previous repo:
 
-If you're migrating from https://github.com/lightning-tv/solid
+If you're migrating from https://github.com/lightning-js/solid
 
 Find and replace:
 "@lightningjs/solid-primitives" with "@lightningtv/solid/primitives"
