@@ -13,6 +13,7 @@
   - [Focus / Key Handling](/essentials/focus.md)
   - [States](/essentials/states.md)
   - [Transitions (animations)](/essentials/transitions.md)
+  - [Screen Resolution](/essentials/screen_resolution.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)

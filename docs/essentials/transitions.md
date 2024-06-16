@@ -68,4 +68,6 @@ Config.animationSettings = {
 };
 ```
 
-Also you can disable all transitions with `Config.animationsEnabled = false`. This will not disable calls to `.animate`.
+## Disabling Animations for low end devices
+
+You can disable all transitions with `Config.animationsEnabled = false`. This will not disable calls directly to `.animate`.
