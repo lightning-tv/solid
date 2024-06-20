@@ -2,8 +2,8 @@
 import { createRenderer } from 'solid-js/universal';
 import {
   Config,
-  IntrinsicNodeProps,
-  IntrinsicTextProps,
+  type IntrinsicNodeProps,
+  type IntrinsicTextProps,
   startLightningRenderer,
 } from '@lightningtv/core';
 import nodeOpts, { type SolidNode } from './solidOpts.js';
