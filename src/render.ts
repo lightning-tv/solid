@@ -6,7 +6,7 @@ import {
   IntrinsicTextProps,
   startLightningRenderer,
 } from '@lightningtv/core';
-import nodeOpts, { type SolidNode } from './solidOpts.js';
+import nodeOpts from './solidOpts.js';
 import {
   splitProps,
   createMemo,
@@ -16,7 +16,7 @@ import {
 } from 'solid-js';
 import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
 
-const solidRenderer = createRenderer<SolidNode>(nodeOpts);
+const solidRenderer = createRenderer(nodeOpts);
 
 let renderer: RendererMain;
 export const rootNode = nodeOpts.createElement('App');
