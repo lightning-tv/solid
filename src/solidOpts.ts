@@ -1,23 +1,6 @@
 import { assertTruthy } from '@lightningjs/renderer/utils';
 import { ElementNode, NodeType, log, type TextNode } from '@lightningtv/core';
-import { JSXElement } from 'solid-js';
-import type { createRenderer } from 'solid-js/universal';
-
-export type SolidRendererOptions = Parameters<
-  typeof createRenderer<SolidNode>
->[0];
-
-export type SolidNode = ElementNode | TextNode;
-
-declare module '@lightningtv/core' {
-  interface TextNode {
-    _queueDelete?: boolean;
-  }
-
-  interface IntrinsicNodeProps {
-    children?: JSXElement | undefined;
-  }
-}
+import { SolidNode, SolidRendererOptions } from './types.js';
 
 export default {
   createElement(name: string): ElementNode {

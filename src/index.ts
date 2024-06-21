@@ -3,7 +3,7 @@ export * from '@lightningtv/core';
 export * from './activeElement.js';
 export * from './utils.js';
 export * from './render.js';
-export type { SolidNode } from './solidOpts.js';
+export * from './types.js';
 export {
   For,
   Show,
