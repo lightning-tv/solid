@@ -6,7 +6,7 @@ import {
   type IntrinsicTextProps,
   startLightningRenderer,
 } from '@lightningtv/core';
-import nodeOpts, { type SolidNode } from './solidOpts.js';
+import nodeOpts from './solidOpts.js';
 import {
   splitProps,
   createMemo,
@@ -15,6 +15,7 @@ import {
   type ValidComponent,
 } from 'solid-js';
 import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
+import { SolidNode } from './types.js';
 
 const solidRenderer = createRenderer<SolidNode>(nodeOpts);
 
