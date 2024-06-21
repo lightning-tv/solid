@@ -7,11 +7,13 @@ To ensure that elements are rendered on the screen correctly, they must have the
 - **`width`**: The width of the element in pixels.
 - **`height`**: The height of the element in pixels.
 
-If width and height values are not specified, components will inherit these dimensions from their parent, minus their `x` and `y` values. The default values for `x` and `y` are 0, 0. The `<Text>` component does not require any of these properties, as it will use the default text properties.
+If width and height values are not specified, components will inherit these dimensions from their parent, minus their `x` and `y` values. The default values for `x` and `y` are 0, 0.
+
+The `<Text>` component does not require any of these properties, as it will use the default text properties found in `Config`. The height of a `<Text>` node equals it's `lineHeight` or `fontSize` and the width is calculated after it's rendered.
 
 ## Flex
 
-A fundamental tool for layout is the Flex container. Currently, there is a minimal implementation of flex (`display: flex`) that supports the following properties: `flexDirection`, `justifyContent`, `alignItems`, and `gap`. This is useful for laying out elements in rows and columns.
+A fundamental tool for layout is the Flex container. Currently, there is a minimal implementation of flex (`display: flex`) that supports the following properties: `flexDirection`, `justifyContent`, `alignItems`, `flexOrder`, `flexGrow` and `gap`. This is useful for laying out elements in rows and columns.
 
 ### Example
 
@@ -42,11 +44,40 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 - **`alignItems`**: 'flexStart' | 'flexEnd' | 'center'
 - **`display`**: 'flex'
 - **`flexDirection`**: 'row' | 'column'
-- **`flexBoundary`**: 'contain' | 'fixed' (Default updates container size based on children size with `alignItems: flexStart`. Set to `fixed` to use parent width when width isn't set.)
+- **`flexBoundary`**: 'contain' | 'fixed' (Default updates container size based on children size with `justifyContent: flexStart | flexEnd`. Set to `fixed` to use parent width when width isn't set.)
 - **`flexItem`**: boolean (Set to `false` on a child to exclude it from flex calculations.)
 - **`flexOrder`**: number (Set the order on children to change the layout order.)
+- **`flexGrow`**: number (Set to number on children to specify how much room elements should take up.)
 - **`gap`**: number
 - **`justifyContent`**: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
+
+### Flex Grow
+
+Flex grow is useful for laying out items where one item you may not know the size and you want the other items to take up the remainder of the space:
+
+```jsx
+<View width={600} display="flex" gap={20} height={42} y={100} x={150}>
+  <Text fontSize={42}>Flex Grow</Text>
+  <View flexGrow={1} height={4} y={19} color={hexColor('#ff3000')} />
+</View>
+```
+
+Produces:
+![Flex Grow](../images/flexGrow.png)
+
+We can also have multiple elements with flexGrow property. Flex will divide up the remaining space and give flexGrow \* size to each item.
+
+```jsx
+<View width={600} display="flex" gap={20} height={42} y={100} x={150}>
+  <Text fontSize={42}>Flex Grow</Text>
+  <View flexGrow={1} height={4} y={19} color={hexColor('#ff3000')} />
+  <View flexGrow={3} height={4} y={19} color={hexColor('#ff30ff')} />
+  <View flexGrow={1} height={4} y={19} color={hexColor('#003C0F')} />
+</View>
+```
+
+Produces:
+![Flex Grow](../images/flexGrow-multiple.png)
 
 ### Item-Specific Properties
 
