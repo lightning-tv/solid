@@ -106,7 +106,6 @@ function speakSeries(
               await speak(phrase, utterances, lang);
               retriesLeft = 0;
             } catch (e) {
-              // eslint-disable-next-line no-undef
               if (e instanceof SpeechSynthesisErrorEvent) {
                 if (e.error === 'network') {
                   retriesLeft--;

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { createRenderer } from 'solid-js/universal';
 import {
   Config,

@@ -42,23 +42,26 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^0.0.12",
+    "@lightningtv/core": "^0.0.13",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/keyboard": "^1.2.8",
     "@solid-primitives/mouse": "^2.0.19",
     "@solid-primitives/scheduled": "^1.4.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.0",
+    "@eslint/js": "^9.5.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "eslint": "^9.5.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
+    "globals": "^15.6.0",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.5",
-    "prettier": "^3.2.5",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2",
     "solid-js": "^1.8.17",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^7.13.1"
   },
   "lint-staged": {
     "*.ts": [
