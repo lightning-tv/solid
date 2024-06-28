@@ -46,6 +46,7 @@
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/keyboard": "^1.2.8",
     "@solid-primitives/mouse": "^2.0.19",
+    "@solid-primitives/rootless": "^1.4.5",
     "@solid-primitives/scheduled": "^1.4.3"
   },
   "devDependencies": {

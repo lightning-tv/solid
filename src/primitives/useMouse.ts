@@ -18,8 +18,12 @@ interface MainOnlyNode extends INode {
   };
 }
 
-function createKeyboardEvent(key: string, keyCode: number): KeyboardEvent {
-  return new KeyboardEvent('keydown', {
+function createKeyboardEvent(
+  key: string,
+  keyCode: number,
+  eventName: string = 'keydown',
+): KeyboardEvent {
+  return new KeyboardEvent(eventName, {
     key,
     keyCode,
     which: keyCode,
@@ -41,8 +45,10 @@ const handleScroll = throttle((e: WheelEvent): void => {
 }, 250);
 
 const handleClick = (e: MouseEvent): void => {
+  console.log('C!');
   const active = activeElement();
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
+  console.log(active, precision);
   if (
     active &&
     testCollision(
@@ -54,7 +60,13 @@ const handleClick = (e: MouseEvent): void => {
       active.height! * precision,
     )
   ) {
+    console.log('click!');
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
+    setTimeout(
+      () =>
+        document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
+      1,
+    );
   }
 };
 

@@ -1,17 +1,14 @@
 import {
-  createEffect,
-  on,
-  createSignal,
-  untrack,
-  type Accessor,
-} from 'solid-js';
-import { useKeyDownEvent } from '@solid-primitives/keyboard';
-import {
   activeElement,
   ElementNode,
   isFunc,
   isArray,
 } from '@lightningtv/solid';
+import { createEffect, createSignal, on, onCleanup, untrack } from 'solid-js';
+import { type Accessor } from 'solid-js';
+import { makeEventListener } from '@solid-primitives/event-listener';
+import { useKeyDownEvent } from '@solid-primitives/keyboard';
+import { createSingletonRoot } from '@solid-primitives/rootless';
 
 export interface DefaultKeyMap {
   Left: string | number | (string | number)[];
@@ -99,10 +96,51 @@ const keyMapEntries: Record<string | number, string> = {
   Escape: 'Escape',
 };
 
+const keyHoldMapEntries: Record<string | number, string> = {
+  Enter: 'EnterHold',
+};
+
+const DEFAULT_KEY_HOLD_THRESHOLD = 150; // ms
+
+export type KeyHoldOptions = {
+  userKeyHoldMap?: {
+    [eventName: string]: string | number | (string | number)[];
+  };
+  holdThreshold?: number;
+};
+
 const [focusPath, setFocusPath] = createSignal<ElementNode[]>([]);
 export { focusPath };
-export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
+
+// copy of useKeyDownEvent but for keyup
+export const useKeyUpEvent = /*#__PURE__*/ createSingletonRoot<
+  Accessor<KeyboardEvent | null>
+>(() => {
+  const [event, setEvent] = createSignal<KeyboardEvent | null>(null);
+
+  makeEventListener(window, 'keyup', (e) => {
+    setEvent(e);
+    setTimeout(() => setEvent(null));
+  });
+
+  return event;
+});
+
+export const useFocusManager = (
+  userKeyMap?: Partial<KeyMap>,
+  keyHoldOptions?: KeyHoldOptions,
+) => {
   const keypressEvent = useKeyDownEvent();
+  const keyupEvent = useKeyUpEvent();
+  const keyHoldTimeouts: { [key: string]: number } = {};
+
+  // clear out any leftover timeouts
+  onCleanup(() => {
+    for (const timeout in Object.values(keyHoldTimeouts)) {
+      if (timeout) clearTimeout(timeout as any);
+    }
+  });
+
   if (userKeyMap) {
     // Flatten the userKeyMap to a hash
     for (const [key, value] of Object.entries(userKeyMap)) {
@@ -112,6 +150,21 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
         });
       } else {
         keyMapEntries[value] = key;
+      }
+    }
+  }
+  if (keyHoldOptions?.userKeyHoldMap) {
+    // same as above
+    for (const [key, value] of Object.entries(keyHoldOptions?.userKeyHoldMap)) {
+      if (value === undefined || value === null) {
+        continue;
+      }
+      if (isArray(value)) {
+        for (const v of value) {
+          keyHoldMapEntries[v] = key;
+        }
+      } else {
+        keyHoldMapEntries[value] = key;
       }
     }
   }
@@ -128,7 +181,7 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
 
         const fp: ElementNode[] = [];
         while (current) {
-          if (!current.states.has('focus')) {
+          if (!current?.states?.has?.('focus')) {
             current.states.add('focus');
             isFunc(current.onFocus) &&
               current.onFocus.call(current, currentFocusedElm, prevFocusedElm);
@@ -154,45 +207,86 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
     ),
   );
 
-  createEffect(() => {
-    const e = keypressEvent();
-
-    if (e) {
-      // Search keyMap for the value of the pressed key or keyCode if value undefined
-      const mappedKeyEvent = keyMapEntries[e.key] || keyMapEntries[e.keyCode];
-      untrack(() => {
-        const fp = focusPath();
-        let finalFocusElm: ElementNode | undefined = undefined;
-        for (const elm of fp) {
-          finalFocusElm = finalFocusElm || elm;
-          if (mappedKeyEvent) {
-            const onKeyHandler =
-              elm[`on${mappedKeyEvent}` as keyof KeyMapEventHandlers];
-            if (isFunc(onKeyHandler)) {
-              if (onKeyHandler.call(elm, e, elm, finalFocusElm) === true) {
-                break;
-              }
-            }
-          } else {
-            console.log(`Unhandled key event: ${e.key || e.keyCode}`);
-          }
-
-          if (isFunc(elm.onKeyPress)) {
-            if (
-              elm.onKeyPress.call(
-                elm,
-                e,
-                mappedKeyEvent,
-                elm,
-                finalFocusElm,
-              ) === true
-            ) {
+  const propagateKeyDown = (
+    e: KeyboardEvent,
+    mappedEvent: string | undefined,
+    isHold = false,
+  ) => {
+    untrack(() => {
+      const fp = focusPath();
+      let finalFocusElm: ElementNode | undefined = undefined;
+      for (const elm of fp) {
+        finalFocusElm = finalFocusElm || elm;
+        if (mappedEvent) {
+          const onKeyHandler =
+            elm[`on${mappedEvent}` as keyof KeyMapEventHandlers];
+          if (isFunc(onKeyHandler)) {
+            if (onKeyHandler.call(elm, e, elm, finalFocusElm) === true) {
               break;
             }
           }
+        } else {
+          console.log(`Unhandled key event: ${e.key || e.keyCode}`);
         }
-        return false;
-      });
+        const fallbackFunction = isHold ? elm.onKeyPress : elm.onKeyHold;
+        if (isFunc(fallbackFunction)) {
+          if (
+            (fallbackFunction as any).call(
+              elm,
+              e,
+              mappedEvent,
+              elm,
+              finalFocusElm,
+            ) === true
+          ) {
+            break;
+          }
+        }
+      }
+      return false;
+    });
+  };
+
+  const keyHoldCallback = (
+    e: KeyboardEvent,
+    mappedKeyHoldEvent: string | undefined,
+  ) => {
+    delete keyHoldTimeouts[e.key || e.keyCode];
+    propagateKeyDown(e, mappedKeyHoldEvent, true);
+  };
+
+  createEffect(() => {
+    const keypress = keypressEvent();
+    const keyup = keyupEvent();
+
+    if (keypress) {
+      const key = keypress.key || keypress.keyCode;
+      const mappedKeyHoldEvent = keyHoldMapEntries[key];
+      const mappedKeyEvent = keyMapEntries[key];
+      if (!mappedKeyHoldEvent) {
+        // just a regular key press
+        propagateKeyDown(keypress, mappedKeyEvent, false);
+      } else {
+        const delay =
+          keyHoldOptions?.holdThreshold || DEFAULT_KEY_HOLD_THRESHOLD;
+        if (keyHoldTimeouts[key]) {
+          // recieved two keydown events without a keyup in between
+          clearTimeout(keyHoldTimeouts[key]);
+        }
+        keyHoldTimeouts[key] = setTimeout(
+          () => keyHoldCallback(keypress, mappedKeyHoldEvent),
+          delay,
+        );
+      }
+    }
+    if (keyup) {
+      const key = keyup.key || keyup.keyCode;
+      const mappedKeyEvent = keyMapEntries[key];
+      if (keyHoldTimeouts[key]) {
+        clearTimeout(keyHoldTimeouts[key]);
+        delete keyHoldTimeouts[key];
+        propagateKeyDown(keyup, mappedKeyEvent, false);
+      }
     }
   });
 
