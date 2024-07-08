@@ -45,10 +45,8 @@ const handleScroll = throttle((e: WheelEvent): void => {
 }, 250);
 
 const handleClick = (e: MouseEvent): void => {
-  console.log('C!');
   const active = activeElement();
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
-  console.log(active, precision);
   if (
     active &&
     testCollision(
@@ -60,7 +58,6 @@ const handleClick = (e: MouseEvent): void => {
       active.height! * precision,
     )
   ) {
-    console.log('click!');
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
     setTimeout(
       () =>

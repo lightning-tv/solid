@@ -10,16 +10,24 @@ import { makeEventListener } from '@solid-primitives/event-listener';
 import { useKeyDownEvent } from '@solid-primitives/keyboard';
 import { createSingletonRoot } from '@solid-primitives/rootless';
 
+export type KeyNameOrKeyCode = string | number;
+
 export interface DefaultKeyMap {
-  Left: string | number | (string | number)[];
-  Right: string | number | (string | number)[];
-  Up: string | number | (string | number)[];
-  Down: string | number | (string | number)[];
-  Enter: string | number | (string | number)[];
-  Last: string | number | (string | number)[];
+  Left: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+  Right: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+  Up: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+  Down: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+  Enter: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+  Last: KeyNameOrKeyCode | KeyNameOrKeyCode[];
+}
+
+export interface DefaultKeyHoldMap {
+  EnterHold: KeyNameOrKeyCode | KeyNameOrKeyCode[];
 }
 
 export interface KeyMap extends DefaultKeyMap {}
+
+export interface KeyHoldMap extends DefaultKeyHoldMap {}
 
 export type KeyHandlerReturn = boolean | void;
 
@@ -36,13 +44,18 @@ export type KeyHandler = (
 type KeyMapEventHandlers = {
   [K in keyof KeyMap as `on${Capitalize<K>}`]?: KeyHandler;
 };
+type KeyHoldMapEventHandlers = {
+  [K in keyof KeyHoldMap as `on${Capitalize<K>}`]?: KeyHandler;
+};
 
 declare module '@lightningtv/solid' {
   /**
    * Augment the existing IntrinsicCommonProps interface with our own
    * FocusManager-specific properties.
    */
-  interface IntrinsicCommonProps extends KeyMapEventHandlers {
+  interface IntrinsicCommonProps
+    extends KeyMapEventHandlers,
+      KeyHoldMapEventHandlers {
     onFocus?: (
       currentFocusedElm: ElementNode | undefined,
       prevFocusedElm: ElementNode | undefined,
@@ -84,7 +97,7 @@ declare module '@lightningtv/solid' {
   }
 }
 
-const keyMapEntries: Record<string | number, string> = {
+const keyMapEntries: Record<KeyNameOrKeyCode, string> = {
   ArrowLeft: 'Left',
   ArrowRight: 'Right',
   ArrowUp: 'Up',
@@ -96,16 +109,17 @@ const keyMapEntries: Record<string | number, string> = {
   Escape: 'Escape',
 };
 
-const keyHoldMapEntries: Record<string | number, string> = {
+const keyHoldMapEntries: Record<KeyNameOrKeyCode, string> = {
   Enter: 'EnterHold',
 };
 
 const DEFAULT_KEY_HOLD_THRESHOLD = 150; // ms
 
+/**
+ * holdThreshold is in milliseconds.
+ */
 export type KeyHoldOptions = {
-  userKeyHoldMap?: {
-    [eventName: string]: string | number | (string | number)[];
-  };
+  userKeyHoldMap: Partial<KeyHoldMap>;
   holdThreshold?: number;
 };
 
@@ -113,7 +127,7 @@ const [focusPath, setFocusPath] = createSignal<ElementNode[]>([]);
 export { focusPath };
 
 // copy of useKeyDownEvent but for keyup
-export const useKeyUpEvent = /*#__PURE__*/ createSingletonRoot<
+const useKeyUpEvent = /*#__PURE__*/ createSingletonRoot<
   Accessor<KeyboardEvent | null>
 >(() => {
   const [event, setEvent] = createSignal<KeyboardEvent | null>(null);
@@ -132,12 +146,12 @@ export const useFocusManager = (
 ) => {
   const keypressEvent = useKeyDownEvent();
   const keyupEvent = useKeyUpEvent();
-  const keyHoldTimeouts: { [key: string]: number } = {};
+  const keyHoldTimeouts: { [key: KeyNameOrKeyCode]: number } = {};
 
   // clear out any leftover timeouts
   onCleanup(() => {
-    for (const timeout in Object.values(keyHoldTimeouts)) {
-      if (timeout) clearTimeout(timeout as any);
+    for (const [_, timeout] of Object.entries(keyHoldTimeouts)) {
+      if (timeout) clearTimeout(timeout);
     }
   });
 
@@ -260,7 +274,7 @@ export const useFocusManager = (
     const keyup = keyupEvent();
 
     if (keypress) {
-      const key = keypress.key || keypress.keyCode;
+      const key: KeyNameOrKeyCode = keypress.key || keypress.keyCode;
       const mappedKeyHoldEvent = keyHoldMapEntries[key];
       const mappedKeyEvent = keyMapEntries[key];
       if (!mappedKeyHoldEvent) {
@@ -280,7 +294,7 @@ export const useFocusManager = (
       }
     }
     if (keyup) {
-      const key = keyup.key || keyup.keyCode;
+      const key: KeyNameOrKeyCode = keyup.key || keyup.keyCode;
       const mappedKeyEvent = keyMapEntries[key];
       if (keyHoldTimeouts[key]) {
         clearTimeout(keyHoldTimeouts[key]);
