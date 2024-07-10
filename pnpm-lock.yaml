@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@lightningjs/renderer':
-        specifier: ^0.9.3
-        version: 0.9.4
+        specifier: ^1.0.0-rc.1
+        version: 1.0.0-rc.1
       '@lightningtv/core':
-        specifier: ^0.1.3
-        version: 0.1.3(@lightningjs/renderer@0.9.4)
+        specifier: 1.0.0-rc1.2
+        version: 1.0.0-rc1.2(@lightningjs/renderer@1.0.0-rc.1)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.8.17)
@@ -103,17 +103,17 @@ packages:
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
 
-  '@lightningjs/renderer@0.9.4':
-    resolution: {integrity: sha512-+ar/Eg/oOeJ7z2p5FmOVAyv10hLCDLIrkOF29NUcRsrnwCZ8U80bqPozP38CwZ/R8Ob/mbIwITnvQBI0U7SJog==}
+  '@lightningjs/renderer@1.0.0-rc.1':
+    resolution: {integrity: sha512-JGPiqt7wBCyyuvV0mfQ461KBSUXFTA6lAPnYvPSJuseR1ccsR5UQ27+deXDuyWnlK4fRRSv0aG5cEsL11mfzbQ==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
   '@lightningjs/threadx@0.3.5':
     resolution: {integrity: sha512-aUIUfP/d3S0Vg/Ror7CLbqQR6qu5AAdGRnQ5RQuSQz4t9X2p8TomKD7ShRxI1/FnRR7om2MwKIe1Dix/Axdgpg==}
 
-  '@lightningtv/core@0.1.3':
-    resolution: {integrity: sha512-H0vB5I8Zzq85eg1mVmf8XBOVF3b0K5fnzNCcBVHdddmL1E6VAdFLwmCduNZcmlc1PciVgj0iwWE7AKHSJLbYBg==}
+  '@lightningtv/core@1.0.0-rc1.2':
+    resolution: {integrity: sha512-enrEFP3Oj2l4GuIzmfqlgrZzn42txxXU6E3xEAK4nDXzuuYcWJ4kRf738psSmBFcibSb9MZryfNX9PFfGSswQQ==}
     peerDependencies:
-      '@lightningjs/renderer': ^0.9.4
+      '@lightningjs/renderer': ^1.0.0-rc.1
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -882,7 +882,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@lightningjs/renderer@0.9.4':
+  '@lightningjs/renderer@1.0.0-rc.1':
     dependencies:
       '@lightningjs/threadx': 0.3.5
       '@protobufjs/eventemitter': 1.1.0
@@ -890,9 +890,9 @@ snapshots:
 
   '@lightningjs/threadx@0.3.5': {}
 
-  '@lightningtv/core@0.1.3(@lightningjs/renderer@0.9.4)':
+  '@lightningtv/core@1.0.0-rc1.2(@lightningjs/renderer@1.0.0-rc.1)':
     dependencies:
-      '@lightningjs/renderer': 0.9.4
+      '@lightningjs/renderer': 1.0.0-rc.1
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
