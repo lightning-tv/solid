@@ -50,6 +50,11 @@ declare module '@lightningtv/solid' {
       currentFocusedElm: ElementNode | undefined,
       prevFocusedElm: ElementNode | undefined,
     ) => void;
+    onFocusChanged?: (
+      hasFocus: boolean,
+      currentFocusedElm: ElementNode | undefined,
+      prevFocusedElm: ElementNode | undefined,
+    ) => void;
     onBlur?: (
       currentFocusedElm: ElementNode | undefined,
       prevFocusedElm: ElementNode | undefined,
@@ -132,7 +137,13 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
             current.states.add('focus');
             isFunc(current.onFocus) &&
               current.onFocus.call(current, currentFocusedElm, prevFocusedElm);
-
+            isFunc(current.onFocusChanged) &&
+              current.onFocusChanged.call(
+                current,
+                true,
+                currentFocusedElm,
+                prevFocusedElm,
+              );
             newFocusedElms.push(current);
           }
           fp.push(current);
@@ -144,6 +155,13 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
             elm.states.remove('focus');
             isFunc(elm.onBlur) &&
               elm.onBlur.call(elm, currentFocusedElm, prevFocusedElm);
+            isFunc(elm.onFocusChanged) &&
+              elm.onFocusChanged.call(
+                elm,
+                false,
+                currentFocusedElm,
+                prevFocusedElm,
+              );
           }
         });
 
