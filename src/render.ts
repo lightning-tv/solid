@@ -1,4 +1,4 @@
-import { createRenderer } from 'solid-js/universal';
+import { createRenderer as solidCreateRenderer } from 'solid-js/universal';
 import {
   Config,
   type IntrinsicNodeProps,
@@ -16,21 +16,29 @@ import {
 import type { RendererMain } from '@lightningjs/renderer';
 import { SolidNode } from './types.js';
 
-const solidRenderer = createRenderer<SolidNode>(nodeOpts);
+const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
 let renderer: RendererMain;
 export const rootNode = nodeOpts.createElement('App');
 
-export const render = async function (
-  code: () => JSXElement,
-  node?: HTMLElement | string,
-) {
-  renderer = startLightningRenderer(Config.rendererOptions, node || 'app');
-  rootNode.lng = renderer.root!;
-  rootNode.rendered = true;
+const render = function (code: () => JSXElement, node?: HTMLElement | string) {
   // @ts-expect-error - code is jsx element and not SolidElement yet
   return solidRenderer.render(code, rootNode);
 };
+
+export function createRenderer(
+  rendererOptions = Config.rendererOptions,
+  node?: HTMLElement | string,
+) {
+  renderer = startLightningRenderer(rendererOptions, node || 'app');
+  rootNode.lng = renderer.root!;
+  rootNode.rendered = true;
+  return {
+    renderer,
+    rootNode,
+    render,
+  };
+}
 
 export const {
   effect,
