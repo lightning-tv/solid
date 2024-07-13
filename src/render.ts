@@ -21,7 +21,7 @@ const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 let renderer: RendererMain;
 export const rootNode = nodeOpts.createElement('App');
 
-const render = function (code: () => JSXElement, node?: HTMLElement | string) {
+const render = function (code: () => JSXElement) {
   // @ts-expect-error - code is jsx element and not SolidElement yet
   return solidRenderer.render(code, rootNode);
 };
