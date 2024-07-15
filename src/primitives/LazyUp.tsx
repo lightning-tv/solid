@@ -4,20 +4,21 @@ import {
   createSignal,
   splitProps,
   type JSX,
-  type Accessor,
   type ValidComponent,
 } from 'solid-js';
-import { Dynamic } from '@lightningtv/solid';
+import { Dynamic, type ElementNode } from '@lightningtv/solid';
 
 export function LazyUp<T extends readonly any[], U extends JSX.Element>(
-  props: T & {
-    each: T | undefined | null | false;
-    fallback?: JSX.Element;
-    container?: JSX.Element;
-    component?: ValidComponent;
-    upCount: number;
-    children: (item: T[number], index: Accessor<number>) => U;
-  },
+  props: T &
+    ElementNode & {
+      each: T | undefined | null | false;
+      fallback?: JSX.Element;
+      container?: JSX.Element;
+      component?: ValidComponent;
+      direction?: 'row' | 'column';
+      upCount: number;
+      children: (item: T[number], index: number) => U;
+    },
 ) {
   const [p, others] = splitProps(props, [
     'component',
