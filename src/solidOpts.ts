@@ -8,7 +8,7 @@ export default {
   },
   createTextNode(text: string): ElementText {
     // A text node is just a string - not the <text> node
-    return { type: NodeType.Text, text, parent: undefined };
+    return { _type: NodeType.Text, text, parent: undefined };
   },
   replaceText(node: ElementText, value: string): void {
     log('Replace Text: ', node, value);
