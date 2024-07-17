@@ -13,7 +13,7 @@ import {
   type JSXElement,
   type ValidComponent,
 } from 'solid-js';
-import type { RendererMain } from '@lightningjs/renderer';
+import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
 import { SolidNode } from './types.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
@@ -27,7 +27,7 @@ const render = function (code: () => JSXElement) {
 };
 
 export function createRenderer(
-  rendererOptions = Config.rendererOptions,
+  rendererOptions: RendererMainSettings | undefined = Config.rendererOptions,
   node?: HTMLElement | string,
 ) {
   renderer = startLightningRenderer(rendererOptions, node || 'app');
