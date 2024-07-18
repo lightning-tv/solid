@@ -128,12 +128,13 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
         prevFocusedElm: ElementNode | undefined,
         prevFocusPath: ElementNode[] = [],
       ) => {
-        const newFocusedElms = [];
         let current = currentFocusedElm;
 
         const fp: ElementNode[] = [];
         while (current) {
-          if (!current.states.has('focus')) {
+          // Always call Focus on activeElement in case user called setFocus() - Useful for Rows / Columns that have had children
+          // changed and we can retrigger forwarding focus to newly added children
+          if (!current.states.has('focus') || current === currentFocusedElm) {
             current.states.add('focus');
             isFunc(current.onFocus) &&
               current.onFocus.call(current, currentFocusedElm, prevFocusedElm);
@@ -144,7 +145,6 @@ export const useFocusManager = (userKeyMap?: Partial<KeyMap>) => {
                 currentFocusedElm,
                 prevFocusedElm,
               );
-            newFocusedElms.push(current);
           }
           fp.push(current);
           current = current.parent!;
