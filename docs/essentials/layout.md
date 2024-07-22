@@ -97,4 +97,4 @@ When a container with `display: flex` undergoes layout during initial rendering,
 - **`onBeforeLayout`**: Use this callback to resize the parent node before flex is calculated. Return `true` to force the parent to call `parent.updateLayout` and resize.
 - **`onLayout`**: Use this callback to update the element after flex calculation.
 
-If you ever need to re-render a child element, call `updateLayout` on the parent to perform the layout again.
+If you ever need to re-render a child element, call `updateLayout` on the parent to perform the layout again. You can also set `updateLayoutOn` to a prop which calls updateLayout whenever the prop changes.
