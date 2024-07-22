@@ -11,8 +11,12 @@ import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
 import { createEffect } from 'solid-js';
 
-function createKeyboardEvent(key: string, keyCode: number): KeyboardEvent {
-  return new KeyboardEvent('keydown', {
+function createKeyboardEvent(
+  key: string,
+  keyCode: number,
+  eventName: string = 'keydown',
+): KeyboardEvent {
+  return new KeyboardEvent(eventName, {
     key,
     keyCode,
     which: keyCode,
@@ -27,9 +31,9 @@ function createKeyboardEvent(key: string, keyCode: number): KeyboardEvent {
 const handleScroll = throttle((e: WheelEvent): void => {
   const deltaY = e.deltaY;
   if (deltaY < 0) {
-    document.dispatchEvent(createKeyboardEvent('ArrowUp', 38));
+    document.body.dispatchEvent(createKeyboardEvent('ArrowUp', 38));
   } else if (deltaY > 0) {
-    document.dispatchEvent(createKeyboardEvent('ArrowDown', 40));
+    document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40));
   }
 }, 250);
 
@@ -48,6 +52,11 @@ const handleClick = (e: MouseEvent): void => {
     )
   ) {
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
+    setTimeout(
+      () =>
+        document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
+      1,
+    );
   }
 };
 

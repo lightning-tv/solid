@@ -23,6 +23,9 @@ importers:
       '@solid-primitives/mouse':
         specifier: ^2.0.19
         version: 2.0.19(solid-js@1.8.17)
+      '@solid-primitives/rootless':
+        specifier: ^1.4.5
+        version: 1.4.5(solid-js@1.8.17)
       '@solid-primitives/scheduled':
         specifier: ^1.4.3
         version: 1.4.3(solid-js@1.8.17)
