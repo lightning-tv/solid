@@ -14,7 +14,7 @@ import {
   type ValidComponent,
 } from 'solid-js';
 import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
-import { SolidNode } from './types.js';
+import type { SolidNode } from './types.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
