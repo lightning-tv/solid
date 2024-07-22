@@ -1,5 +1,5 @@
-import { ElementNode, Styles, ElementText } from '@lightningtv/core';
-import { JSXElement } from 'solid-js';
+import { ElementNode, type Styles, type ElementText } from '@lightningtv/core';
+import type { JSXElement } from 'solid-js';
 import { createRenderer } from 'solid-js/universal';
 
 export type SolidRendererOptions = Parameters<

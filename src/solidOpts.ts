@@ -1,6 +1,6 @@
 import { assertTruthy } from '@lightningjs/renderer/utils';
-import { ElementNode, NodeType, log, ElementText } from '@lightningtv/core';
-import { SolidNode, SolidRendererOptions } from './types.js';
+import { ElementNode, NodeType, log, type ElementText } from '@lightningtv/core';
+import type { SolidNode, SolidRendererOptions } from './types.js';
 
 export default {
   createElement(name: string): ElementNode {
