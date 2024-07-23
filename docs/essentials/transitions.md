@@ -71,3 +71,28 @@ Config.animationSettings = {
 ## Disabling Animations for low end devices
 
 You can disable all transitions with `Config.animationsEnabled = false`. This will not disable calls directly to `.animate`.
+
+## Bypassing Transitions
+
+In the event you want to bypass a style transition you can do the following:
+
+```jsx
+let button;
+
+onMount(() => {
+  // lng is the lightning node and will bypass transition property
+  button.lng.alpha = 0.5;
+});
+<Button ref={button}>Movies</Button>;
+```
+
+Additionally if you have new page loads and won't to skip any animations you can do
+
+```js
+Config.animationsEnabled = false;
+
+onMount(() => {
+  // Or set this back after your data loads and things are rendered
+  Config.animationsEnabled = true;
+});
+```
