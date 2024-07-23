@@ -305,7 +305,7 @@ export const useFocusManager = (
           // recieved two keydown events without a keyup in between
           clearTimeout(keyHoldTimeouts[key]);
         }
-        keyHoldTimeouts[key] = setTimeout(
+        keyHoldTimeouts[key] = window.setTimeout(
           () => keyHoldCallback(keypress, mappedKeyHoldEvent),
           delay,
         );
