@@ -58,7 +58,7 @@ Flex grow is useful for laying out items where one item you may not know the siz
 ```jsx
 <View width={600} display="flex" gap={20} height={42} y={100} x={150}>
   <Text fontSize={42}>Flex Grow</Text>
-  <View flexGrow={1} height={4} y={19} color={hexColor('#ff3000')} />
+  <View flexGrow={1} height={4} y={19} color={'#ff3000'} />
 </View>
 ```
 
@@ -70,9 +70,9 @@ We can also have multiple elements with flexGrow property. Flex will divide up t
 ```jsx
 <View width={600} display="flex" gap={20} height={42} y={100} x={150}>
   <Text fontSize={42}>Flex Grow</Text>
-  <View flexGrow={1} height={4} y={19} color={hexColor('#ff3000')} />
-  <View flexGrow={3} height={4} y={19} color={hexColor('#ff30ff')} />
-  <View flexGrow={1} height={4} y={19} color={hexColor('#003C0F')} />
+  <View flexGrow={1} height={4} y={19} color={'#ff3000'} />
+  <View flexGrow={3} height={4} y={19} color={'#ff30ff'} />
+  <View flexGrow={1} height={4} y={19} color={'#003C0F'} />
 </View>
 ```
 

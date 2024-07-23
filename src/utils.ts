@@ -24,10 +24,3 @@ export function hexColor(color: string | number = ''): number {
 
   return 0x00000000;
 }
-
-/**
- * Converts degrees to radians
- */
-export function deg2rad(deg: number) {
-  return (deg * Math.PI) / 180;
-}

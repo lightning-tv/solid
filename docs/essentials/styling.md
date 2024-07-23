@@ -121,7 +121,9 @@ The following props are aliases to help with layout and ShaderEffects:
 - `flexDirection`: 'row' | 'column'
 - `gap`: number
 - `justifyContent`: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
-- `linearGradient`: any
+- `linearGradient`: LinearGradientEffectProps
+- `radialGradient`: RadialGradientEffectProps
+- `radialProgress`: RadialProgressEffectProps
 - `marginBottom`: number
 - `marginLeft`: number
 - `marginRight`: number
@@ -134,7 +136,7 @@ The following props are aliases to help with layout and ShaderEffects:
 
 ### Colors
 
-RGBA number 0xRRGGBBAA. If you want to use hex, `import { hexColor } from '@lightningtv/solid'` and do `hexColor('#c0ffee')` to convert colors to RGBA. Please know all hex colors are #RRGGBB so they are easy to convert to 0xRRGGBBAA and usually AA is ff for full alpha. By default, every node without a src attribute will have their color set to `0x00000000` making it transparent. If you have an element which sets it's src attribute after creation, you need to update color to `0xffffffff` so it's not transparent.
+RGBA number 0xRRGGBBAA and hex are fully supported with the [Vite Hex Plugin](https://github.com/lightning-tv/vite-hex-transform). If you have dynamic colors being set after transpile you'll need to use `hexColor`, `import { hexColor } from '@lightningtv/solid'` and do `hexColor('#c0ffee')` to convert colors to RGBA. Please know all hex colors are #RRGGBB so they are easy to convert to 0xRRGGBBAA and usually AA is ff for full alpha. By default, every node without a src attribute will have their color set to `0x00000000` making it transparent. If you have an element which sets it's src attribute after creation, you need to update color to `0xffffffff` so it's not transparent.
 
 ## Effects
 
@@ -162,9 +164,11 @@ const style = {
 `linearGradient` is another special effect that can be used like a style with following syntax.
 
 ```
+import { deg2Rad } from '@lightningjs/renderer/utils'
+
 linearGradient:
     {
-      angle: 225,
+      angle: deg2Rad(225),
       stops: [0.1, 0.5],
       colors: [
         0xff0000ff, 0x00000000,
