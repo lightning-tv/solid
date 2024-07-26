@@ -1,5 +1,10 @@
 import { assertTruthy } from '@lightningjs/renderer/utils';
-import { ElementNode, NodeType, log, type ElementText } from '@lightningtv/core';
+import {
+  ElementNode,
+  NodeType,
+  log,
+  type ElementText,
+} from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
 export default {
@@ -23,7 +28,7 @@ export default {
   insertNode(parent: ElementNode, node: SolidNode, anchor: SolidNode): void {
     log('INSERT: ', parent, node, anchor);
 
-    parent.children.insert(node, anchor);
+    parent.insertChild(node, anchor);
     node._queueDelete = false;
 
     if (node instanceof ElementNode) {
@@ -38,7 +43,7 @@ export default {
   },
   removeNode(parent: ElementNode, node: SolidNode): void {
     log('REMOVE: ', parent, node);
-    parent.children.remove(node);
+    parent.removeChild(node);
     node._queueDelete = true;
     if (node instanceof ElementNode) {
       // Solid replacesNodes to move them (via insert and remove),
