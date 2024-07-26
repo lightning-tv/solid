@@ -2,7 +2,6 @@ import type { INode } from '@lightningjs/renderer';
 import {
   ElementNode,
   activeElement,
-  setActiveElement,
   rootNode,
   Config,
 } from '@lightningtv/solid';
@@ -150,7 +149,7 @@ export function useMouse(
             activeElmParent.children.indexOf(activeElm);
         }
 
-        setActiveElement(activeElm);
+        activeElm.setFocus();
       }
     }
   });
