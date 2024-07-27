@@ -15,6 +15,7 @@ import {
 } from 'solid-js';
 import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
 import type { SolidNode } from './types.js';
+import { setActiveElement } from './activeElement.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
@@ -31,6 +32,8 @@ export function createRenderer(
   node?: HTMLElement | string,
 ) {
   renderer = startLightningRenderer(rendererOptions, node || 'app');
+  //Prevent this from happening automatically
+  Config.setActiveElement = setActiveElement;
   rootNode.lng = renderer.root!;
   rootNode.rendered = true;
   return {
