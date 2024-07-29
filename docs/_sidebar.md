@@ -1,6 +1,7 @@
 - Welcome
   - [Overview](/intro/intro.md)
   - [Getting started](/intro/getting_started.md)
+  - [Device Support](/intro/device_support.md)
   - [Solid / Blits Framework Comparison](/intro/solidvsblits.md)
 - Essentials
   - [Rendering Hello World](/essentials/render.md)
