@@ -92,9 +92,8 @@ Note: `alignItems` supports `flexStart`, `flexEnd`, and `center`, but requires t
 
 ## Layout Callbacks
 
-When a container with `display: flex` undergoes layout during initial rendering, `updateLayout` is called to calculate the flex layout. You can use the `onBeforeLayout` and `onLayout` hooks to update the element with the following signature: `(node, { width, height })`.
+When a container with `display: flex` undergoes layout during initial rendering, `updateLayout` is called to calculate the flex layout. You can use `onLayout` hooks to update the element with after flex has performed it's calculations and all text nodes have been loaded.
 
-- **`onBeforeLayout`**: Use this callback to resize the parent node before flex is calculated. Return `true` to force the parent to call `parent.updateLayout` and resize.
 - **`onLayout`**: Use this callback to update the element after flex calculation.
 
 If you ever need to re-render a child element, call `updateLayout` on the parent to perform the layout again. You can also set `updateLayoutOn` prop to a signal which calls updateLayout whenever the prop changes. Lastly, when a flex container has an element added or removed, it will automatically call `updateLayout`.

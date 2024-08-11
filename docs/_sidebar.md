@@ -22,5 +22,4 @@
   - [Focus Manager](/primitives/useFocusManager.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Mouse Input](/primitives/useMouse.md)
-  - [Container Padding](/primitives/withPadding.md)
   - [Portal](/primitives/portal.md)

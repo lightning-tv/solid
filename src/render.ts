@@ -4,6 +4,8 @@ import {
   type IntrinsicNodeProps,
   type IntrinsicTextProps,
   startLightningRenderer,
+  type RendererMain,
+  type RendererMainSettings,
 } from '@lightningtv/core';
 import nodeOpts from './solidOpts.js';
 import {
@@ -13,7 +15,6 @@ import {
   type JSXElement,
   type ValidComponent,
 } from 'solid-js';
-import type { RendererMain, RendererMainSettings } from '@lightningjs/renderer';
 import type { SolidNode } from './types.js';
 import { setActiveElement } from './activeElement.js';
 

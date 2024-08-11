@@ -164,7 +164,7 @@ const style = {
 `linearGradient` is another special effect that can be used like a style with following syntax.
 
 ```
-import { deg2Rad } from '@lightningjs/renderer/utils'
+import { deg2Rad } from '@lightningjs/solid'
 
 linearGradient:
     {
