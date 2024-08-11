@@ -60,7 +60,6 @@ resolve: {
       "@lightningtv/solid",
       "@lightningtv/solid/primitives",
       "@lightningjs/solid-ui",
-      "@lightningjs/renderer",
     ],
   },
 ```

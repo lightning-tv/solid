@@ -86,19 +86,4 @@ function App() {
 
 ## use: (Directives) in Solid
 
-SolidJS has built in [Directives](https://www.solidjs.com/docs/latest/api#use___) support via `use:` property. These only work on root elements `node` and `text`. Meaning you can't use `View` or `Text`. Here's how to use the `withPadding` directive
-
-```jsx
-import { withPadding } from '@lightningtv/solid';
-withPadding; // prevent treeshaking
-
-<node // Use node instead of View
-  use:withPadding={[10, 15]}
-  {...props}
-  style={{
-    color: '#00000099',
-    borderRadius: 8,
-    border: { width: 2, color: '#ffffff' },
-  }}
->
-```
+SolidJS has built in [Directives](https://www.solidjs.com/docs/latest/api#use___) support via `use:` property. These only work on root elements `node` and `text`. Meaning you can't use `View` or `Text`. It is a callback function which receives a ref to the node.

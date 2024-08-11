@@ -10,7 +10,6 @@ For detailed information, refer to the [SolidJS Lifecycle documentation](https:/
 
 ```jsx
   onCreate: (target: ElementNode) // available on each node
-  onBeforeLayout: (this: ElementNode, target: ElementNode, child?: ElementNode, dimensions?: Dimensions) => boolean
   onLayout: (this: ElementNode, target: ElementNode, child?: ElementNode, dimensions?: Dimensions)
 ```
 

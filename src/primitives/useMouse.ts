@@ -1,4 +1,4 @@
-import type { INode } from '@lightningjs/renderer';
+import type { INode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,

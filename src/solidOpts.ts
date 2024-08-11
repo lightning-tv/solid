@@ -1,4 +1,4 @@
-import { assertTruthy } from '@lightningjs/renderer/utils';
+import { assertTruthy } from '@lightningtv/core';
 import {
   ElementNode,
   NodeType,
@@ -32,7 +32,7 @@ export default {
     node._queueDelete = false;
 
     if (node instanceof ElementNode) {
-      parent.rendered && node.render();
+      parent.rendered && node.render(true);
     } else if (parent.isTextNode()) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
