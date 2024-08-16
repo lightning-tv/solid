@@ -11,7 +11,7 @@
 
 # Evaluating Lightning 3 Frameworks
 
-Lightning 3 provides the flexibility to choose between bringing your own framework (SolidJS, Vue, or React) or utilizing the official Blits framework developed from scratch by the Core Lightning team. How should you make this decision?
+Lightning 3 provides the flexibility to choose between bringing your own framework (SolidJS, Vue, or React) or utilizing the official Blits framework developed from scratch by the Lightning team. How should you make this decision?
 
 ## Established vs. New
 

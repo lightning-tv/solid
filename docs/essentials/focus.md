@@ -2,7 +2,15 @@
 
 ## `activeElement`
 
-At any time, only one element can have focus: the `activeElement`. `activeElement` is a global Solid signal that points to the element with focus. You can set focus on any element with `elm.setFocus()`.
+At any time, only one element can have focus: the `activeElement`. `activeElement` is a global Solid signal that points to the element with focus. You can set focus on any element by adding an `autofocus` attribute or imperatively with `elm.setFocus()` method.
+
+## `autofocus`
+
+The `autofocus` attribute can be added to any element to give it focus when created. Ideally, you'd have one element you'd want to receive focus when page changes occur, or new elements are added. The `autofocus` attribute can also take a signal which will cause the element to refocus when the signal changes. This is useful for dynamic data loading and needing to reset focus on a Row or Column component.
+
+## `skipFocus`
+
+Adding `skipFocus` to any element will prevent it from receiving focus. This is primarily used by Row & Column components to have children which should be skipped on key presses.
 
 ### Example
 
@@ -49,3 +57,14 @@ The Child element can also have a `forwardFocus` attribute to keep passing focus
 ## Add Keyhandling
 
 Keyhandling is added with [useFocusManager](/primitives/useFocusManager.md). It's important to note that keyhandling simple changes the `activeElement`.
+
+## Debugging Focus
+
+You can set
+
+```js
+Config.focusDebug = true;
+Config.rendererOptions.enableInspector = true;
+```
+
+To enable focus debugging. This will add a border around the activeElement and additional borders up the focusPath. You'll also need to be using the useFocusManager.

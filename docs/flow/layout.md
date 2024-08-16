@@ -4,6 +4,8 @@ To ensure that elements are rendered on the screen correctly, they must have the
 
 - **`x`**: The x position of the element in pixels, relative to its parent. Negative values are allowed.
 - **`y`**: The y position of the element in pixels, relative to its parent. Negative values are allowed.
+- **`right`**: Sets mountX: 1 and the x position of the element relative to its parent from the right of the container.
+- **`bottom`**: Sets mountY: 1 and the y position of the element relative to its parent from the bottom of the container.
 - **`width`**: The width of the element in pixels.
 - **`height`**: The height of the element in pixels.
 
@@ -79,7 +81,7 @@ We can also have multiple elements with flexGrow property. Flex will divide up t
 Produces:
 ![Flex Grow](../images/flexGrow-multiple.png)
 
-### Item-Specific Properties
+### Item-Specific Properties in flex containers
 
 To control the layout further, you can use the following properties on individual items:
 
