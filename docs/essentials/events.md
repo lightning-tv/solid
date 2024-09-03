@@ -13,7 +13,7 @@ For detailed information, refer to the [SolidJS Lifecycle documentation](https:/
   onLayout: (this: ElementNode, target: ElementNode, child?: ElementNode, dimensions?: Dimensions)
 ```
 
-Learn more about the [layout events](/layout.md)
+Learn more about the [layout events](/flow/layout?id=layout-callbacks)
 
 ## Renderer Events
 
