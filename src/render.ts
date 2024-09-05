@@ -29,13 +29,13 @@ const render = function (code: () => JSXElement) {
 };
 
 export function createRenderer(
-  rendererOptions: RendererMainSettings,
+  rendererOptions: RendererMainSettings | undefined,
   node?: HTMLElement | string,
 ) {
-  renderer = startLightningRenderer(
-    rendererOptions || Config.rendererOptions,
-    node || 'app',
-  );
+  const options =
+    rendererOptions || (Config.rendererOptions as RendererMainSettings);
+
+  renderer = startLightningRenderer(options, node || 'app');
   //Prevent this from happening automatically
   Config.setActiveElement = setActiveElement;
   rootNode.lng = renderer.root!;

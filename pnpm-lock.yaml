@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lightningtv/core':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.8.19)
@@ -97,12 +97,12 @@ packages:
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
 
-  '@lightningjs/renderer@2.0.0':
-    resolution: {integrity: sha512-7AKxd+CuDwfkROK+NTX1VpD4YueKYfFdTJxtY+e9mUEi9YGhgf2YrzWDFPVA3ub3godXRSJvu2L/24rAPcqr3w==}
+  '@lightningjs/renderer@2.1.0':
+    resolution: {integrity: sha512-jJfI9Q9hpQq/PCpt3yYnYuE2JUrVRjzZsbqyszsZxrwJL62V7ULAOvtDSaGlul6/tyK/RWiTg1VOEAlY/5udVQ==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.0.0':
-    resolution: {integrity: sha512-aBzCpgOCOFD37KxYTqPYp3IpDbOKb5JE/RaSCDRiwkLldXunvBHP6k8F+nSGtWe/MludcEex6nkZY/YhJTSRCA==}
+  '@lightningtv/core@2.0.1':
+    resolution: {integrity: sha512-G9Ry5UYDnzJkbSo0aJLQRbuBR9KmHmJKMUGSiCzDJFQleXa5eVYzQlXJ5+wNwd7AryTkAG57J8cVmQ/OiL7Hzg==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -861,11 +861,11 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@lightningjs/renderer@2.0.0': {}
+  '@lightningjs/renderer@2.1.0': {}
 
-  '@lightningtv/core@2.0.0':
+  '@lightningtv/core@2.0.1':
     dependencies:
-      '@lightningjs/renderer': 2.0.0
+      '@lightningjs/renderer': 2.1.0
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
