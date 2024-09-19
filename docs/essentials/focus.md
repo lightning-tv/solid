@@ -1,8 +1,14 @@
 # Focus / Key Handling (or Remotes)
 
+Focus happens very differently than you're used to with HTML / CSS. Since everything happens in a Canvas tag - we mimic focus with a bit of Javascript logic, starting with the `activeElement`
+
 ## `activeElement`
 
-At any time, only one element can have focus: the `activeElement`. `activeElement` is a global Solid signal that points to the element with focus. You can set focus on any element by adding an `autofocus` attribute or imperatively with `elm.setFocus()` method.
+At any time, only one element can have focus: the `activeElement`. `activeElement` is a global Solid signal that points to the element with focus. You can set focus on any element by adding an `autofocus` attribute or imperatively with `elm.setFocus()` method. However, calling setFocus on each element would be painful, so you'd want to use components like Row and Column from [solid-ui](https://github.com/rdkcentral/solid-ui).
+
+## Keyhandling with useFocusManager
+
+Keyhandling is added with [useFocusManager](/primitives/useFocusManager.md). It's important to note that keyhandling simply add onKey handling. The real magic is from Row & Column components having built in onRight / onLeft & onUp / onDown key handlers respectively, which simply changes the `activeElement` of it's children.
 
 ## `autofocus`
 
