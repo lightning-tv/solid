@@ -29,7 +29,7 @@ const render = function (code: () => JSXElement) {
 };
 
 export function createRenderer(
-  rendererOptions: RendererMainSettings | undefined,
+  rendererOptions?: RendererMainSettings,
   node?: HTMLElement | string,
 ) {
   const options =

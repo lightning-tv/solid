@@ -6,11 +6,13 @@ import {
   getOwner,
   runWithOwner,
 } from 'solid-js';
+import { Config } from '@lightningtv/core';
+import type { ElementNode } from '@lightningtv/core';
 import {
   useFocusManager as useFocusManagerCore,
-  Config,
-} from '@lightningtv/core';
-import type { KeyMap, KeyHoldOptions, ElementNode } from '@lightningtv/core';
+  type KeyMap,
+  type KeyHoldOptions,
+} from '@lightningtv/core/focusManager';
 import { activeElement, setActiveElement } from '../activeElement.js';
 
 const [focusPath, setFocusPath] = createSignal<ElementNode[]>([]);
