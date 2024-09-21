@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lightningtv/core':
-        specifier: ^2.1.0
-        version: 2.1.0(@lightningjs/renderer@2.1.0)
+        specifier: ^2.1.1
+        version: 2.1.1(@lightningjs/renderer@2.1.0)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.8.19)
@@ -101,8 +101,8 @@ packages:
     resolution: {integrity: sha512-jJfI9Q9hpQq/PCpt3yYnYuE2JUrVRjzZsbqyszsZxrwJL62V7ULAOvtDSaGlul6/tyK/RWiTg1VOEAlY/5udVQ==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.1.0':
-    resolution: {integrity: sha512-PHUvq7ubZ9Oq2e6sqr+q3C8FYGuQ4iU9RcogLVQ+gH/FEWBF303i8T9gUSV2Dp5sggBJDbdoRMfOcrscUdjKfQ==}
+  '@lightningtv/core@2.1.1':
+    resolution: {integrity: sha512-/Os9fw2Ds7oAQTqtRW3kCIGjzMlmwulXKi0SikRRq2/tFXFsbBJ2q5Q21wFPKAkfN4YS5iYca6YDPlp3pxZPPA==}
     peerDependencies:
       '@lightningjs/renderer': ^2.1.2
 
@@ -865,7 +865,7 @@ snapshots:
 
   '@lightningjs/renderer@2.1.0': {}
 
-  '@lightningtv/core@2.1.0(@lightningjs/renderer@2.1.0)':
+  '@lightningtv/core@2.1.1(@lightningjs/renderer@2.1.0)':
     dependencies:
       '@lightningjs/renderer': 2.1.0
 
