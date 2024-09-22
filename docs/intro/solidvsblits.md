@@ -19,7 +19,9 @@ Opting for a framework with a long track record means leveraging a solution that
 
 ## Device Compatibility
 
-Consider the devices you need to cater to. SolidJS has been rigorously tested and confirmed to function on Chrome 49 (which introduced Proxy support) and can operate on Chrome 38 with certain limitations like avoiding splitProps. On the other hand, Blits is designed to function with Chrome 38 but hasn't been tested.
+SolidJS has been tested and confirmed working as far back as Chrome 38. It can go back to even older browsers. This will get you same device coverage as Blits.
+
+<img src="images/Chrome38.png" alt="Solid Demo App on Chrome 38">
 
 ## Performance Considerations
 
