@@ -96,3 +96,27 @@ onMount(() => {
   Config.animationsEnabled = true;
 });
 ```
+
+## Animation Callbacks
+
+You can hook into specific animation lifecycle events, such as when an animation starts or finishes, using the `onAnimationStarted` and `onAnimationFinished` callbacks. These callbacks allow you to execute custom logic at key moments during the animation cycle.
+
+### `onAnimationStarted`
+
+The `onAnimationStarted` callback is triggered when an animation begins. If you have defined a function for this callback, it will automatically be called when the animation starts.
+
+- `this`: ElementNode the onAnimationStarted callback is on
+- `controller`: The animation controller object handling the current animation.
+- `name`: The name of the animation.
+- `value`: The initial value associated with the animation.
+
+### `onAnimationFinished`
+
+The `onAnimationFinished` callback is triggered once the animation has completed. This can be used to clean up or trigger any subsequent actions.
+
+- `this`: ElementNode the onAnimationFinished callback is on
+- `controller`: The animation controller object handling the current animation.
+- `name`: The name of the animation.
+- `value`: The final value associated with the animation.
+
+These callbacks give you more granular control over animations and provide hooks to inject additional behavior when specific animation states are reached.
