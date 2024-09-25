@@ -2,6 +2,7 @@ import type { INode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
+  isElementNode,
   rootNode,
   Config,
 } from '@lightningtv/solid';
@@ -44,10 +45,10 @@ const handleClick = (e: MouseEvent): void => {
     testCollision(
       e.clientX,
       e.clientY,
-      (active.lng as INode).absX * precision,
-      (active.lng as INode).absY * precision,
-      active.width! * precision,
-      active.height! * precision,
+      (typeof active.lng.absX === 'number' ? active.lng.absX : 0) * precision,
+      (typeof active.lng.absY === 'number' ? active.lng.absY : 0) * precision,
+      (active.width ?? 0) * precision,
+      (active.height ?? 0) * precision,
     )
   ) {
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
@@ -91,10 +92,14 @@ function getChildrenByPosition(
         testCollision(
           x,
           y,
-          (currentNode.lng as INode).absX * precision,
-          (currentNode.lng as INode).absY * precision,
-          currentNode.width! * precision,
-          currentNode.height! * precision,
+          (typeof currentNode.lng.absX === 'number'
+            ? currentNode.lng.absX
+            : 0) * precision,
+          (typeof currentNode.lng.absY === 'number'
+            ? currentNode.lng.absY
+            : 0) * precision,
+          (currentNode.width ?? 0) * precision,
+          (currentNode.height ?? 0) * precision,
         )
       ) {
         currentLevelNodes.push(currentNode);
@@ -104,17 +109,22 @@ function getChildrenByPosition(
     const size = currentLevelNodes.length;
     if (size === 0) {
       break;
-    } else if (size > 1) {
-      // Find the node with the highest zIndex
-      currentLevelNodes.sort((a, b) => (b.zIndex || 0) - (a.zIndex || 0));
     }
+    const maxZIndex = currentLevelNodes.reduce((prev, current) =>
+      (prev.zIndex ?? -1) > (current.zIndex ?? -1) ? prev : current,
+    );
 
-    const highestZIndexNode = currentLevelNodes[0] as ElementNode;
-    result.push(highestZIndexNode);
-    if (highestZIndexNode.isTextNode()) {
+    const highestZIndexNode = currentLevelNodes
+      .filter((e) => e.zIndex === maxZIndex.zIndex)
+      .pop();
+
+    if (highestZIndexNode) {
+      result.push(highestZIndexNode);
+    }
+    if (!highestZIndexNode || highestZIndexNode.isTextNode()) {
       queue = [];
     } else {
-      queue = highestZIndexNode.children as ElementNode[];
+      queue = highestZIndexNode.children.filter(isElementNode);
     }
   }
 
@@ -136,20 +146,25 @@ export function useMouse(
       );
 
       if (result.length) {
-        let activeElm = result[result.length - 1] as ElementNode;
+        let activeElm = result[result.length - 1];
 
-        while (activeElm.parent?.forwardStates) {
-          activeElm = activeElm.parent;
+        while (activeElm) {
+          const elmParent = activeElm.parent;
+          if (elmParent?.forwardStates) {
+            activeElm = activeElm.parent;
+          } else {
+            break;
+          }
         }
 
         // Update Row & Column Selected property
-        const activeElmParent = activeElm.parent;
-        if (activeElmParent?.selected !== undefined) {
+        const activeElmParent = activeElm?.parent;
+        if (activeElm && activeElmParent?.selected !== undefined) {
           activeElmParent.selected =
             activeElmParent.children.indexOf(activeElm);
         }
 
-        activeElm.setFocus();
+        activeElm?.setFocus();
       }
     }
   });
