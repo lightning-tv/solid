@@ -13,16 +13,6 @@
 
 Lightning 3 provides the flexibility to choose between bringing your own framework (SolidJS, Vue, or React) or utilizing the official Blits framework developed from scratch by the Lightning team. How should you make this decision?
 
-## Established vs. New
-
-Opting for a framework with a long track record means leveraging a solution that has addressed numerous challenges, enjoys robust community support, and offers extensive code samples. Typically, it's advisable to select an established framework unless the newcomer offers a fundamentally different solution, which isn't the case with Blits. Furthermore, opting for an open-source framework allows you to apply your expertise to various web projects beyond just Lightning-specific ones. Both SolidJS and Vue are well-established frameworks with ample tooling and developer resources, facilitating quick adoption. SolidJS is already operational with multiple production applications in progress, while Blits is in the beta phase, still developing features that SolidJS already offers.
-
-## Device Compatibility
-
-SolidJS has been tested and confirmed working as far back as Chrome 38. It can go back to even older browsers. This will get you same device coverage as Blits.
-
-<img src="images/Chrome38.jpeg" alt="Solid Demo App on Chrome 38">
-
 ## Performance Considerations
 
 Performance is paramount, especially on low-end devices. SolidJS boasts approximately 2 to 3 times faster performance compared to Blits, and it also offers a smaller JavaScript footprint (~10kb gzipped), leading to quicker startup times.
@@ -52,6 +42,16 @@ Performance is paramount, especially on low-end devices. SolidJS boasts approxim
     <img src="images/Blits-bundleSize.png" alt="Blits Bundle Size">
   </figure>
 </div>
+
+## Device Compatibility
+
+SolidJS has been tested and confirmed working as far back as Chrome 38. It can go back to even older browsers. This will get you same device coverage as Blits.
+
+<img src="images/Chrome38.jpeg" alt="Solid Demo App on Chrome 38">
+
+## Established vs. New
+
+Opting for a framework with a long track record means leveraging a solution that has addressed numerous challenges, enjoys robust community support, and offers extensive code samples. Typically, it's advisable to select an established framework unless the newcomer offers a fundamentally different solution, which isn't the case with Blits. Furthermore, opting for an open-source framework allows you to apply your expertise to various web projects beyond just Lightning-specific ones. SolidJS is a well-established framework with ample tooling and developer resources, facilitating quick adoption. SolidJS is already operational with multiple production applications in progress, while Blits is still developing features that SolidJS already offers (Flex??).
 
 ## Debugging Apps
 
