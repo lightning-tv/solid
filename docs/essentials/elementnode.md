@@ -2,7 +2,7 @@
 
 All JSX code is compiled into `ElementNode` class objects, which extend the Lightning 3 Renderer nodes.
 
-![Solid to Renderer Nodes](images/SolidElementNode.jpg)
+<img src="images/SolidElementNode.jpg" alt="Solid To Renderer Node Creation">
 
 ```jsx
 let container;
