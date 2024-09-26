@@ -21,7 +21,7 @@ Opting for a framework with a long track record means leveraging a solution that
 
 SolidJS has been tested and confirmed working as far back as Chrome 38. It can go back to even older browsers. This will get you same device coverage as Blits.
 
-<img src="images/Chrome38.png" alt="Solid Demo App on Chrome 38">
+<img src="images/Chrome38.jpeg" alt="Solid Demo App on Chrome 38">
 
 ## Performance Considerations
 

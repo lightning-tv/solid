@@ -14,6 +14,29 @@ Keyhandling is added with [useFocusManager](/primitives/useFocusManager.md). It'
 
 The `autofocus` attribute can be added to any element to give it focus when created. Ideally, you'd have one element you'd want to receive focus when page changes occur, or new elements are added. The `autofocus` attribute can also take a signal which will cause the element to refocus when the signal changes. This is useful for dynamic data loading and needing to reset focus on a Row or Column component.
 
+```jsx
+<Column
+  id="BrowseColumn"
+  plinko
+  announce="All Trending - Week"
+  y={columnY()}
+  scroll="none"
+  autofocus={provider()}
+  style={styles.Column}
+>
+  <For each={provider().pages()}>
+    {(items) => (
+      <TileRow
+        items={items}
+        width={1620}
+        onFocus={onRowFocus}
+        onEnter={onEnter}
+      />
+    )}
+  </For>
+</Column>
+```
+
 ## `skipFocus`
 
 Adding `skipFocus` to any element will prevent it from receiving focus. This is primarily used by Row & Column components to have children which should be skipped on key presses.
@@ -69,8 +92,9 @@ Keyhandling is added with [useFocusManager](/primitives/useFocusManager.md). It'
 You can set
 
 ```js
+import { Inspector } from '@lightningjs/renderer/inspector';
 Config.focusDebug = true;
-Config.rendererOptions.enableInspector = true;
+Config.rendererOptions.inspector = Inspector;
 ```
 
 To enable focus debugging. This will add a border around the activeElement and additional borders up the focusPath. You'll also need to be using the useFocusManager.
