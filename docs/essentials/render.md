@@ -29,20 +29,30 @@ Before calling the Render function, you can set rendererOptions.
 
 ```jsx
 import { render, Config, Text } from '@lightningtv/solid';
+import {
+  WebGlCoreRenderer,
+  SdfTextRenderer,
+} from '@lightningjs/renderer/webgl';
+import { Inspector } from '@lightningjs/renderer/inspector';
 
 Config.rendererOptions = {
-  coreExtensionModule: coreExtensionModuleUrl,
-  numImageWorkers: 2,
+  fpsUpdateInterval: logFps ? 1000 : 0,
+  fontEngines: [SdfTextRenderer],
+  renderEngine: WebGlCoreRenderer,
+  inspector: Inspector,
+  // textureMemory: {
+  //   criticalThreshold: 80e6,
+  // },
+  numImageWorkers, // temp fix for renderer bug
   // Set the resolution based on window height
   // 720p = 0.666667, 1080p = 1, 1440p = 1.5, 2160p = 2
-  deviceLogicalPixelRatio: window.innerHeight / 1080,
-  enableInspector: true,
-  // Increase to preload images coming from offscreen
-  boundsMargin: 20,
+  deviceLogicalPixelRatio: 1,
+  devicePhysicalPixelRatio: 1,
 };
-
 render(() => <Text>Hello World</Text>);
 ```
+
+For the latest renderer options read the official [renderer documentation](https://www.lightningjs.io/api/renderer/interfaces/Renderer.RendererMainSettings.html)
 
 ### Config.rendererOptions
 
@@ -70,15 +80,8 @@ render(() => <Text>Hello World</Text>);
 
   - _Default_: `0x00000000`
 
-- **coreExtensionModule**: Path to a custom core module to use.
-
-  - _Default_: `null`
-
-- **experimental_FinalizationRegistryTextureUsageTracker**: Enables experimental texture usage tracking for garbage collection using FinalizationRegistry. Not recommended for production.
-
-  - _Default_: `false`
-
-- **textureCleanupOptions**: Options for manual texture usage tracking.
+- **Texture Memory Manager Settings**:
+  textureMemory?: Partial<TextureMemoryManagerSettings>;
 
 - **fpsUpdateInterval**: Interval in milliseconds for receiving FPS updates. Set to `0` to disable.
 
@@ -92,9 +95,18 @@ render(() => <Text>Hello World</Text>);
 
   - _Default_: `2`
 
-- **enableInspector**: Enables an inspector to replicate and inspect the state of nodes in the renderer.
+- **inspector**
+  Optional. Allows inspection of the state of Nodes in the renderer, replicating the node state.
+  Type: `typeof Inspector | false`.
 
-  - _Default_: `false`
+- **renderEngine**
+  Defines the rendering engine (WebGL or Canvas). WebGL is more performant, while Canvas is more broadly supported.
+  Type: `typeof CanvasCoreRenderer | typeof WebGlCoreRenderer`.
 
-- **renderMode**: Specifies the rendering mode.
-  - Options: `'webgl'`, `'canvas'`
+- **quadBufferSize**
+  Specifies the quad buffer size in bytes.
+  Default: `4 * 1024 * 1024`.
+
+- **fontEngines**
+  Defines font engines for text rendering (CanvasTextRenderer for Canvas, SdfTextRenderer for WebGL). Enables tree shaking for unused engines.
+  Default: `[]`. Type: `(typeof SdfTextRenderer | typeof CanvasTextRenderer)[]`.
