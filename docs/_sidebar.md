@@ -5,6 +5,7 @@
   - [Solid / Blits Framework Comparison](/intro/solidvsblits.md)
 - Essentials
   - [Rendering Hello World](/essentials/render.md)
+  - [ElementNode](/essentials/elementnode.md)
   - [Components](/essentials/components.md)
   - [Images](/essentials/images.md)
   - [Text](/essentials/text.md)
