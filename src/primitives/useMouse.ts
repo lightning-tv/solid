@@ -126,13 +126,11 @@ function getChildrenByPosition(
       }
     }
 
-    if (highestZIndexNode) {
+    if (highestZIndexNode && !highestZIndexNode.isTextNode()) {
       result.push(highestZIndexNode);
-    }
-    if (!highestZIndexNode || highestZIndexNode.isTextNode()) {
-      queue = [];
-    } else {
       queue = highestZIndexNode.children;
+    } else {
+      queue = [];
     }
   }
 
