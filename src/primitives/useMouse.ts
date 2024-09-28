@@ -90,6 +90,7 @@ function getChildrenByPosition(
       if (
         isElementNode(currentNode) &&
         currentNode.alpha !== 0 &&
+        !currentNode.skipFocus &&
         testCollision(
           x,
           y,
@@ -107,13 +108,23 @@ function getChildrenByPosition(
     if (size === 0) {
       break;
     }
-    const maxZIndex = currentLevelNodes.reduce((prev, current) =>
-      (prev.zIndex ?? -1) > (current.zIndex ?? -1) ? prev : current,
-    );
 
-    const highestZIndexNode = currentLevelNodes
-      .filter((e) => e.zIndex === maxZIndex.zIndex)
-      .pop();
+    let highestZIndexNode = null;
+    if (size === 1) {
+      highestZIndexNode = currentLevelNodes[0];
+    } else {
+      let maxZIndex = -1;
+
+      for (const node of currentLevelNodes) {
+        const zIndex = node.zIndex ?? -1;
+        if (zIndex > maxZIndex) {
+          maxZIndex = zIndex;
+          highestZIndexNode = node;
+        } else if (zIndex === maxZIndex) {
+          highestZIndexNode = node;
+        }
+      }
+    }
 
     if (highestZIndexNode) {
       result.push(highestZIndexNode);
@@ -139,7 +150,7 @@ export function useMouse(
   createEffect(() => {
     if (scheduled()) {
       const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
-        (el) => (el.focus || el.onFocus || el.onEnter) && !el.skipFocus,
+        (el) => el.focus || el.onFocus || el.onEnter,
       );
 
       if (result.length) {
