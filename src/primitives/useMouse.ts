@@ -1,4 +1,4 @@
-import type { INode } from '@lightningtv/core';
+import type { ElementText, INode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
@@ -41,14 +41,14 @@ const handleClick = (e: MouseEvent): void => {
   const active = activeElement();
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
   if (
-    active &&
+    active instanceof ElementNode &&
     testCollision(
       e.clientX,
       e.clientY,
-      (typeof active.lng.absX === 'number' ? active.lng.absX : 0) * precision,
-      (typeof active.lng.absY === 'number' ? active.lng.absY : 0) * precision,
-      (active.width ?? 0) * precision,
-      (active.height ?? 0) * precision,
+      (active.lng.absX as number) || 0 * precision,
+      (active.lng.absY as number) || 0 * precision,
+      active.width || 0 * precision,
+      active.height || 0 * precision,
     )
   ) {
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
@@ -80,7 +80,7 @@ function getChildrenByPosition(
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
 
   // Queue for BFS
-  let queue: ElementNode[] = [node];
+  let queue: (ElementNode | ElementText)[] = [node];
 
   while (queue.length > 0) {
     // Process nodes at the current level
@@ -88,18 +88,15 @@ function getChildrenByPosition(
 
     for (const currentNode of queue) {
       if (
+        isElementNode(currentNode) &&
         currentNode.alpha !== 0 &&
         testCollision(
           x,
           y,
-          (typeof currentNode.lng.absX === 'number'
-            ? currentNode.lng.absX
-            : 0) * precision,
-          (typeof currentNode.lng.absY === 'number'
-            ? currentNode.lng.absY
-            : 0) * precision,
-          (currentNode.width ?? 0) * precision,
-          (currentNode.height ?? 0) * precision,
+          (currentNode.lng.absX as number) || 0 * precision,
+          (currentNode.lng.absY as number) || 0 * precision,
+          (currentNode.width || 0) * precision,
+          (currentNode.height || 0) * precision,
         )
       ) {
         currentLevelNodes.push(currentNode);
@@ -124,7 +121,7 @@ function getChildrenByPosition(
     if (!highestZIndexNode || highestZIndexNode.isTextNode()) {
       queue = [];
     } else {
-      queue = highestZIndexNode.children.filter(isElementNode);
+      queue = highestZIndexNode.children;
     }
   }
 
