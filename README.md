@@ -22,7 +22,7 @@ Tested and working on Chrome < 38 and could go earlier
 
 ## Playground
 
-[playground.solidjs.com](https://playground.solidjs.com/anonymous/ad962850-b492-4f6f-ac68-668469f5f22e)
+[playground.solidjs.com](https://playground.solidjs.com/anonymous/b36869ea-e7df-4f7a-af34-67222bc04271)
 
 ## Quick Start
 
