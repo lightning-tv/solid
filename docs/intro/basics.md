@@ -4,11 +4,11 @@
 
 ![Solid & Lightning](../images/basics/solid-lightning.svg)
 
-## What About Blits?
+#### What About Blits?
 
 Blits is the "official" framework of Lightning, developed by the Lightning team from scratch. It's a frontend framework that uses the Lightning renderer in much the same way the SolidJS integration does, just with different syntax and features. It's similar to how Vue and React are both frontend frameworks that use web DOM and CSS to build web apps. Now, let's dive into how we'd use SolidJS with Lightning.
 
-### Quick Start
+## Quick Start
 
 To kick things off, let’s set up a SolidJS app with a starter template built specifically for Lightning.
 
@@ -30,7 +30,7 @@ Once inside the starter template, you’ll notice a few key files:
 
 You’ll also see that we’re using TypeScript by default (hence `.ts` and `.tsx` file extensions). If you’re using VS Code, you’ll enjoy the sweet auto-completion for most of the code, making it even easier to get going!
 
-### Configuring the Renderer
+## Configuring the Renderer
 
 Let’s take a peek inside `index.tsx` to see some of the Lightning-specific configurations.
 
@@ -57,7 +57,7 @@ Here, we’re setting up a few important things:
 - We’re customizing font settings for all `<Text>` nodes.
 - The `rendererOptions` allow us to pass options to the Lightning renderer, including the number of image workers, font engines, and pixel ratios.
 
-### Routing with SolidJS Router
+## Routing with SolidJS Router
 
 Routing in SolidJS is handled with the popular [SolidJS Router](https://github.com/solidjs/solid-router), why write your own? It’s robust, fast, and flexible.
 
@@ -98,7 +98,7 @@ render(() => (
 
 Here, any route under `/main` will include a left-side navigation bar, but routes outside of that won’t. There is lots the router can do and I recommend you check out their [official documentation](https://github.com/solidjs/solid-router).
 
-### Focus Management and Accessibility
+## Focus Management and Accessibility
 
 In `App.jsx`, we start seeing the power of SolidJS and Lightning’s ecosystem working together. Take a look at this:
 
@@ -128,7 +128,7 @@ The `useFocusManager` is the go-to for handling key events, like those from remo
 
 `useMouse` adds support for remote controls like the LG Magic Mouse, while `useAnnouncer` integrates accessibility features, like screen reader voice-out for focused elements. All this out of the box.
 
-### The Power of JSX
+## The Power of JSX
 
 SolidJS embraces JSX for templating, which makes the development process feel super natural and fluid. JSX is well supported in editors and has been widely adopted thanks to React. Why change a good thing...
 
@@ -149,7 +149,7 @@ return (
 
 Here, our `<View>` is handling all sorts of actions, like toggling the announcer or navigating between routes. It’s also a great example of how key events naturally bubble up through the DOM, with parent components catching unhandled events from their children. This is our main App wrapper, and `props.children` is filled with a Page.
 
-### Page Components
+## Page Components
 
 Pages in SolidJS are nothing more than components themselves—simple functions that take in props. You can import any components you need and simply return them as part of your page. No need to register pages in any special way; it's all just components under the hood.
 
@@ -163,7 +163,7 @@ export default HelloWorld;
 
 See how simple that is? The `HelloWorld` page is just a function that receives `props` (an object with key-value pairs) to pass around. There’s no need to define what those props are ahead of time; just treat them like a dynamic object. And the best part? There’s no performance overhead for calling these functions. You can create as many components as you want and use them freely without worrying about extra resource consumption. SolidJS’s reactivity engine ensures everything is blazing fast.
 
-### Core Components: `<View>` and `<Text>`
+## Core Components: `<View>` and `<Text>`
 
 There are two key components that you’ll rely on when building apps in Solid with Lightning: `<View>` and `<Text>`. These correspond to the core Lightning renderer primitives (everything's a node or text in the renderer). Let's build a simple button:
 
@@ -179,7 +179,7 @@ Each attribute gets passed straight through to the Lightning renderer. And remem
 
 ![Button](../images/basics/Button1.png)
 
-### Reusable Components: A Button
+## Reusable Components: A Button
 
 Reusability is one of the things that makes frontend frameworks so much fun. Let’s make our button component reusable.
 
@@ -197,7 +197,7 @@ export function Button(props) {
 
 Now we have a simple button component that accepts props, making it easy to customize and reuse throughout our app. Yup, it's just a function returning JSX. The same as pages. There is no performance overhead to creating components as they are just functions. But what if we wanted different colors or widths?
 
-### Adding Styles for Flexibility
+## Adding Styles for Flexibility
 
 We can improve our button’s flexibility by introducing a style object. This also has the benefit of keeping our styles separate from the UI, similar to how CSS works with HTML. We could import our styles from another file or leave them inline - choice is yours.
 
@@ -246,7 +246,7 @@ One problem we have no is all the buttons are a set size... let's fix that.
 
 ![Button Contained](../images/basics/ButtonContained.png)
 
-### Layout with Flex
+## Layout with Flex
 
 Flex is a fundamental tool for building layouts. By using [flex implementation](https://lightning-tv.github.io/solid/#/flow/layout?id=flex) for Solid, we can create layouts that are responsive and easy to manage. Let’s make a button that resizes based on the size of it's text:
 
@@ -307,7 +307,7 @@ Pretty powerful stuff. Could you imagine doing this without flex? Using callback
 
 With flex, everything just lays out how you'd expect.
 
-### SolidJS Signals: Reactivity Made Simple
+## SolidJS Signals: Reactivity Made Simple
 
 One of the killer features of SolidJS is its fine-grained reactivity system, which lets you manage state effortlessly.
 
@@ -332,7 +332,7 @@ export default HelloWorld;
 
 See that `createSignal` function? That’s how we handle state changes. Solid’s reactivity is incredibly efficient, only updating the parts of the DOM that need to change. Oh, and that "state" doesn't have to be part of the component. They can be global or pulled in from a shared `state.js` file. You can easily separate your app state from your UI, no tight coupling.
 
-### Fancy Focus Effects
+## Fancy Focus Effects
 
 Want to add a little flair to your buttons? Let’s throw in some transitions and focus styles.
 
@@ -363,7 +363,7 @@ export function Button(props) {
 
 Now, when the button is focused, it’ll smoothly scale up and increase in opacity — perfect for drawing attention to UI elements. Let's wrap this up bringing it all together:
 
-### Dynamic Content with `<For>`
+## Dynamic Content with `<For>`
 
 Let’s say you want to dynamically generate buttons based on a list of items. SolidJS provides the `<For>` directive to handle this easily.
 
@@ -412,7 +412,7 @@ const HelloWorld = () => {
 export default HelloWorld;
 ```
 
-[Row of Buttons](../images/basics/row_buttons.mov)
+![Row of Buttons](../images/basics/row_buttons.mov)
 
 With SolidJS’s fine-grained reactivity, generating dynamic content like this is a breeze. And with Lightning’s powerful rendering engine, you’re guaranteed smooth, lightning-fast performance — pun intended!
 
