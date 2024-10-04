@@ -11,7 +11,11 @@ export type SolidNode = ElementNode | ElementText;
 export type SolidStyles = Styles;
 
 declare module '@lightningtv/core' {
-  interface IntrinsicNodeProps {
+  interface NodeProps {
     children?: JSXElement | undefined;
+  }
+
+  interface TextProps {
+    children?: string | undefined;
   }
 }
