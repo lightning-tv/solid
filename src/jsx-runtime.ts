@@ -9,6 +9,6 @@ declare module 'solid-js' {
       text: TextProps;
     }
 
-    interface IntrinsicAttributes extends ElementNode {}
+    interface IntrinsicAttributes extends Omit<NodeProps, 'children'> {}
   }
 }
