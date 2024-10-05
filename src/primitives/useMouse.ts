@@ -1,4 +1,4 @@
-import type { ElementText, INode } from '@lightningtv/core';
+import type { ElementText, INode, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
@@ -80,7 +80,7 @@ function getChildrenByPosition(
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
 
   // Queue for BFS
-  let queue: (ElementNode | ElementText)[] = [node];
+  let queue: (ElementNode | ElementText | TextNode)[] = [node];
 
   while (queue.length > 0) {
     // Process nodes at the current level

@@ -1,4 +1,4 @@
-import { assertTruthy } from '@lightningtv/core';
+import { assertTruthy, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   NodeType,
@@ -11,11 +11,11 @@ export default {
   createElement(name: string): ElementNode {
     return new ElementNode(name);
   },
-  createTextNode(text: string): ElementText {
+  createTextNode(text: string): TextNode {
     // A text node is just a string - not the <text> node
-    return { _type: NodeType.Text, text, parent: undefined };
+    return { _type: NodeType.Text, text };
   },
-  replaceText(node: ElementText, value: string): void {
+  replaceText(node: TextNode, value: string): void {
     log('Replace Text: ', node, value);
     node.text = value;
     const parent = node.parent;
@@ -52,17 +52,17 @@ export default {
       queueMicrotask(() => node.destroy());
     }
   },
-  getParentNode(node: SolidNode): ElementNode | undefined {
+  getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
     return node.parent;
   },
   getFirstChild(node: ElementNode): SolidNode | undefined {
-    return node.children[0];
+    return node.children[0] as SolidNode;
   },
   getNextSibling(node: SolidNode): SolidNode | undefined {
     const children = node.parent!.children || [];
     const index = children.indexOf(node) + 1;
     if (index < children.length) {
-      return children[index];
+      return children[index] as SolidNode;
     }
     return undefined;
   },
