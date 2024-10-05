@@ -16,6 +16,6 @@ declare module '@lightningtv/core' {
   }
 
   interface TextProps {
-    children?: string | undefined;
+    children?: string | string[] | undefined;
   }
 }
