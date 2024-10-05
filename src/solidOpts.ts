@@ -1,4 +1,4 @@
-import { assertTruthy, TextNode } from '@lightningtv/core';
+import { assertTruthy, isElementText, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   NodeType,
@@ -33,13 +33,13 @@ export default {
 
     if (node instanceof ElementNode) {
       parent.rendered && node.render(true);
-    } else if (parent.isTextNode()) {
+    } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
     }
   },
-  isTextNode(node: ElementNode): boolean {
-    return node.isTextNode();
+  isTextNode(node: SolidNode): boolean {
+    return isElementText(node);
   },
   removeNode(parent: ElementNode, node: SolidNode): void {
     log('REMOVE: ', parent, node);
@@ -60,7 +60,7 @@ export default {
   },
   getNextSibling(node: SolidNode): SolidNode | undefined {
     const children = node.parent!.children || [];
-    const index = children.indexOf(node) + 1;
+    const index = children.indexOf(node as any) + 1;
     if (index < children.length) {
       return children[index] as SolidNode;
     }
