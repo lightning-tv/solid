@@ -1,9 +1,11 @@
-import { assertTruthy, isElementText, TextNode } from '@lightningtv/core';
 import {
+  assertTruthy,
+  isElementText,
   ElementNode,
   NodeType,
   log,
   type ElementText,
+  type TextNode,
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
