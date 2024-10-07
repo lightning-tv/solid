@@ -6,9 +6,11 @@
 
 Is a UI framework for [Lightning 3 Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
 
-## Main Website
+## Linkes:
 
 [ConnectedTV Dev](https://lightningtv.dev/)
+
+[SolidJS Discord](https://discord.gg/gXQRQqBu) - Lightning TV channel
 
 ## Documentation
 
