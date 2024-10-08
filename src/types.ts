@@ -1,8 +1,8 @@
 import {
-  ElementNode,
+  type ElementNode,
   type Styles,
   type ElementText,
-  TextNode,
+  type TextNode,
 } from '@lightningtv/core';
 import type { JSXElement } from 'solid-js';
 import { createRenderer } from 'solid-js/universal';
