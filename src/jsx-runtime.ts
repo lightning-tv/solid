@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import type { IntrinsicNodeProps, IntrinsicTextProps } from '@lightningtv/core';
+import type { NodeProps, TextProps } from '@lightningtv/core';
 
 declare module 'solid-js' {
   namespace JSX {
     interface IntrinsicElements {
-      node: Partial<IntrinsicNodeProps>;
-      view: Partial<IntrinsicNodeProps>;
-      text: Partial<IntrinsicTextProps>;
+      node: NodeProps;
+      view: NodeProps;
+      text: TextProps;
     }
+
+    interface IntrinsicAttributes extends Omit<NodeProps, 'children'> {}
   }
 }

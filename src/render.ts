@@ -1,8 +1,8 @@
 import { createRenderer as solidCreateRenderer } from 'solid-js/universal';
 import {
   Config,
-  type IntrinsicNodeProps,
-  type IntrinsicTextProps,
+  type NodeProps,
+  type TextProps,
   startLightningRenderer,
   type RendererMain,
   type RendererMainSettings,
@@ -96,13 +96,13 @@ export function Dynamic<T>(
 }
 
 // Dont use JSX as it creates circular dependencies and causes trouble with the playground.
-export const View = (props: IntrinsicNodeProps) => {
+export const View = (props: NodeProps) => {
   const el = createElement('node');
   spread(el, props, false);
   return el as unknown as JSXElement;
 };
 
-export const Text = (props: IntrinsicTextProps) => {
+export const Text = (props: TextProps) => {
   const el = createElement('text');
   spread(el, props, false);
   return el as unknown as JSXElement;

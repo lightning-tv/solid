@@ -1,9 +1,11 @@
-import { assertTruthy } from '@lightningtv/core';
 import {
+  assertTruthy,
+  isElementText,
   ElementNode,
   NodeType,
   log,
   type ElementText,
+  type TextNode,
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
@@ -11,11 +13,11 @@ export default {
   createElement(name: string): ElementNode {
     return new ElementNode(name);
   },
-  createTextNode(text: string): ElementText {
+  createTextNode(text: string): TextNode {
     // A text node is just a string - not the <text> node
-    return { _type: NodeType.Text, text, parent: undefined };
+    return { _type: NodeType.Text, text };
   },
-  replaceText(node: ElementText, value: string): void {
+  replaceText(node: TextNode, value: string): void {
     log('Replace Text: ', node, value);
     node.text = value;
     const parent = node.parent;
@@ -33,13 +35,13 @@ export default {
 
     if (node instanceof ElementNode) {
       parent.rendered && node.render(true);
-    } else if (parent.isTextNode()) {
+    } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
     }
   },
-  isTextNode(node: ElementNode): boolean {
-    return node.isTextNode();
+  isTextNode(node: SolidNode): boolean {
+    return isElementText(node);
   },
   removeNode(parent: ElementNode, node: SolidNode): void {
     log('REMOVE: ', parent, node);
@@ -52,17 +54,17 @@ export default {
       queueMicrotask(() => node.destroy());
     }
   },
-  getParentNode(node: SolidNode): ElementNode | undefined {
+  getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
     return node.parent;
   },
   getFirstChild(node: ElementNode): SolidNode | undefined {
-    return node.children[0];
+    return node.children[0] as SolidNode;
   },
   getNextSibling(node: SolidNode): SolidNode | undefined {
     const children = node.parent!.children || [];
-    const index = children.indexOf(node) + 1;
+    const index = children.indexOf(node as any) + 1;
     if (index < children.length) {
-      return children[index];
+      return children[index] as SolidNode;
     }
     return undefined;
   },

@@ -15,7 +15,7 @@ declare module '@lightningtv/solid' {
    * Augment the existing ElementNode interface with our own
    * Announcer-specific properties.
    */
-  interface IntrinsicCommonProps {
+  interface ElementNode {
     announce?: SpeechType;
     announceContext?: SpeechType;
     title?: SpeechType;
