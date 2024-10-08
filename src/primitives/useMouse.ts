@@ -3,6 +3,7 @@ import {
   ElementNode,
   activeElement,
   isElementNode,
+  isTextNode,
   rootNode,
   Config,
 } from '@lightningtv/solid';
@@ -126,7 +127,7 @@ function getChildrenByPosition(
       }
     }
 
-    if (highestZIndexNode && !highestZIndexNode.isTextNode()) {
+    if (highestZIndexNode && !isTextNode(highestZIndexNode)) {
       result.push(highestZIndexNode);
       queue = highestZIndexNode.children;
     } else {
