@@ -21,7 +21,7 @@ In addition to the Lifecycle events from SolidJS, the Lightning Renderer offers 
 
 ```jsx
 <View onEvents={[
-  ['loaded', (element, eventInfo) => { console.log('load was called')}]
+  ['loaded', (element, eventInfo) => { console.log('load was called')}],
   ['failed', (element, eventInfo) => { console.log('fail was called')}]
 ]}>
 ```
