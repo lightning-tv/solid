@@ -22,7 +22,9 @@ const Button = {
 };
 ```
 
-When `Button` is focused via the [useFocusManager](/primitives/useFocusManager.md), the `focus` state will be added to the button, causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set. Be sure to set defaults on the original styles if applying a new style via state.
+When `Button` is focused via the [useFocusManager](/primitives/useFocusManager.md), the `focus` state will be added to the button, causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set.
+
+> Be sure to set defaults on the original styles if applying a new style via state. Example: clipping: false, focus: { clipping: true }
 
 States can be added to components declaratively:
 
