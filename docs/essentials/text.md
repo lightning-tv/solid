@@ -54,16 +54,27 @@ You can also use any custom font that you want, to give your App the unique look
 Then you'll need to register the custom font in the AppCoreExtensions file:
 
 ```js
-  stage.fontManager.addFontFace(
-  new SdfTrFontFace("msdf", {
-    fontFamily: "ComicSans",
-    descriptors: {
-      weight: 400,
-    },
-    atlasDataUrl: "fonts/ComicSans-Regular.msdf.json",
-    atlasUrl: "fonts/ComicSans-Regular.msdf.png",
-    stage,
-  }),
+  import { loadFonts } from "@lightningtv/solid";
+  const fonts = [
+{ type: 'msdf',
+  fontFamily: 'Roboto',
+  descriptors: {
+    weight: 700,
+  },
+  atlasDataUrl: basePath + 'fonts/Roboto-Bold.msdf.json',
+  atlasUrl: basePath + 'fonts/Roboto-Bold.msdf.png',
+} as const,
+{ type:    'msdf',
+  fontFamily: 'Roboto',
+  descriptors: {
+    weight: 400,
+  },
+  atlasDataUrl: basePath + 'fonts/Roboto-Regular.msdf.json',
+  atlasUrl: basePath + 'fonts/Roboto-Regular.msdf.png',
+} as const];
+
+// must be called after createRenderer but before render
+loadFonts(fonts);
 ```
 
 From this moment on you'll be able to use the font `ComicSans` anywhere in your App:
