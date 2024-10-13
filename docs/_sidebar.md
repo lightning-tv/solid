@@ -23,5 +23,6 @@
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
   - [LazyUp](/primitives/lazyUp.md)
+  - [Dynamic](/primitives/dynamic.md)
   - [Mouse Input](/primitives/useMouse.md)
   - [Portal](/primitives/portal.md)
