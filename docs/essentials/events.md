@@ -9,10 +9,12 @@ For detailed information, refer to the [SolidJS Lifecycle documentation](https:/
 ## Built in Events
 
 ```jsx
-  onCreate: (target: ElementNode) // available on each node
+  onCreate: (this: ElementNode, target: ElementNode)
+  onDestroy: (this: ElementNode, target: ElementNode) => Promise<any> | void;
   onLayout: (this: ElementNode, target: ElementNode, child?: ElementNode, dimensions?: Dimensions)
 ```
 
+Learn more about using [onDestroy](/flow/ondestroy)
 Learn more about the [layout events](/flow/layout?id=layout-callbacks)
 
 ## Renderer Events
