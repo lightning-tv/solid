@@ -39,7 +39,7 @@ The `autofocus` attribute can be added to any element to give it focus when crea
 
 ## `skipFocus`
 
-Adding `skipFocus` to any element will prevent it from receiving focus. This is primarily used by Row & Column components to have children which should be skipped on key presses.
+Adding `skipFocus` to any element will prevent it from receiving focus. This is primarily used by Row & Column components to have children which should be skipped on key presses and useMouse.
 
 ### Example
 
