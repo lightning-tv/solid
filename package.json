@@ -1,6 +1,6 @@
 {
   "name": "@lightningtv/solid",
-  "version": "2.2.1",
+  "version": "2.2.2-beta.1",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "source": "src/index.ts",
@@ -70,7 +70,8 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "solid-js": "*"
+    "solid-js": "*",
+    "@solidjs/router": "^0.14.10"
   },
   "repository": {
     "type": "git",

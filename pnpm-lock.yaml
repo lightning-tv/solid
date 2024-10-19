@@ -20,6 +20,9 @@ importers:
       '@solid-primitives/scheduled':
         specifier: ^1.4.3
         version: 1.4.3(solid-js@1.8.19)
+      '@solidjs/router':
+        specifier: ^0.14.10
+        version: 0.14.10(solid-js@1.8.19)
     devDependencies:
       '@eslint/js':
         specifier: ^9.8.0
@@ -151,6 +154,11 @@ packages:
     resolution: {integrity: sha512-CqAwKb2T5Vi72+rhebSsqNZ9o67buYRdEJrIFzRXz3U59QqezuuxPsyzTSVCacwS5Pf109VRsgCJQoxKRoECZQ==}
     peerDependencies:
       solid-js: ^1.6.12
+
+  '@solidjs/router@0.14.10':
+    resolution: {integrity: sha512-5B8LVgvvXijfXyXWPVLUm7RQ05BhjIpAyRkYVDZtrR3OaSvftXobWc6qSEwk4ICLoGi/IE9CUp2LUdCBIs9AXg==}
+    peerDependencies:
+      solid-js: ^1.8.6
 
   '@typescript-eslint/eslint-plugin@7.17.0':
     resolution: {integrity: sha512-pyiDhEuLM3PuANxH7uNYan1AaFs5XE0zw1hq69JBvGvE7gSuEoQl1ydtEe/XQeoC3GQxLXyOVa5kNOATgM638A==}
@@ -911,6 +919,10 @@ snapshots:
       solid-js: 1.8.19
 
   '@solid-primitives/utils@6.2.3(solid-js@1.8.19)':
+    dependencies:
+      solid-js: 1.8.19
+
+  '@solidjs/router@0.14.10(solid-js@1.8.19)':
     dependencies:
       solid-js: 1.8.19
 

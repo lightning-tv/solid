@@ -5,4 +5,5 @@ export * from './useMouse.js';
 export * from './portal.jsx';
 export * from './LazyUp.jsx';
 export * from './sprite.js';
+export * from './router.js';
 export type { KeyHandler } from '@lightningtv/core/focusManager';
