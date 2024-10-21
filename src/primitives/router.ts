@@ -27,6 +27,7 @@ export type HashRouterProps = BaseRouterProps & {
   actionBase?: string;
   explicitLinks?: boolean;
   preload?: boolean;
+  forceProxy?: boolean;
 };
 
 export function bindEvent(
@@ -66,14 +67,15 @@ export function HashRouter(props: HashRouterProps): JSX.Element {
       renderPath: (path) => `#${path}`,
       parsePath: hashParser,
       beforeLeave,
-      paramsWrapper: SUPPORTS_PROXY
-        ? undefined
-        : (buildParams, branches) => {
-            return createMemoWithoutProxy(
-              buildParams,
-              collectDynamicParams(branches()),
-            );
-          },
+      paramsWrapper:
+        props.forceProxy || !SUPPORTS_PROXY
+          ? (buildParams, branches) => {
+              return createMemoWithoutProxy(
+                buildParams,
+                collectDynamicParams(branches()),
+              );
+            }
+          : undefined,
     },
   })(props);
 }
