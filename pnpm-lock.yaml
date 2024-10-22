@@ -8,9 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@lightningjs/renderer':
+        specifier: ^2.4.0
+        version: 2.4.0
       '@lightningtv/core':
-        specifier: ^2.2.1
-        version: 2.2.1(@lightningjs/renderer@2.1.0)
+        specifier: ^2.3.1
+        version: 2.3.1(@lightningjs/renderer@2.4.0)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.8.19)
@@ -100,14 +103,14 @@ packages:
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
 
-  '@lightningjs/renderer@2.1.0':
-    resolution: {integrity: sha512-jJfI9Q9hpQq/PCpt3yYnYuE2JUrVRjzZsbqyszsZxrwJL62V7ULAOvtDSaGlul6/tyK/RWiTg1VOEAlY/5udVQ==}
+  '@lightningjs/renderer@2.4.0':
+    resolution: {integrity: sha512-boh3I5imH3zXngef7bwVguGkcjs2TeDzAd3wWW+nls7LzXudG8BKPN6bGblyobP2vDVYugEhWEH3BSHH/pp5bQ==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.2.1':
-    resolution: {integrity: sha512-SaTOmHIT8szeutLUIIEsAr7O3LsUjaipmvcw8IHcGDfQRUXVxx4sxYomP8VdV/5I27xIU09hdZbllSfwg+Hu+g==}
+  '@lightningtv/core@2.3.1':
+    resolution: {integrity: sha512-nnIPuVU1sW9iacSJLsA+xFLdd7uMw6tWfch9iZf2papk7ZetFsXNc1wpx6f83Y6CuvXWUbM0uO3wQ0GanTl2mw==}
     peerDependencies:
-      '@lightningjs/renderer': ^2.3.1
+      '@lightningjs/renderer': ^2.4.0
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -871,11 +874,11 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.0': {}
 
-  '@lightningjs/renderer@2.1.0': {}
+  '@lightningjs/renderer@2.4.0': {}
 
-  '@lightningtv/core@2.2.1(@lightningjs/renderer@2.1.0)':
+  '@lightningtv/core@2.3.1(@lightningjs/renderer@2.4.0)':
     dependencies:
-      '@lightningjs/renderer': 2.1.0
+      '@lightningjs/renderer': 2.4.0
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
