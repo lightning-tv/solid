@@ -29,21 +29,115 @@ const [alpha, setAlpha] = createSignal(1);
 </View>;
 ```
 
-The `style` attribute accepts an object of properties that are passed to the Lightning Renderer when the component is initially created. Once set, the `style` object remains read-only and will not be reapplied if it changes after the initial creation. This read-only nature allows the `style` object to be reused across multiple components. However, properties specified directly in the JSX will take precedence over those in the `style` object, enabling you to override styles for individual components. After the component is created, you can update properties via signals or imperatively using a reference to the component.
+The `style` attribute accepts an object of properties that are passed to the Lightning Renderer when the component is initially created. Once set, the `style` object remains **read-only** and will not be reapplied if it changes after the initial creation. This read-only nature allows the `style` object to be reused across multiple components. However, properties specified directly in the JSX will take precedence over those in the `style` object, enabling you to override styles for individual components. After the component is created, you can update properties via signals or imperatively using a reference to the component.
 
 For UI component libraries, you can also pass an array (including nested arrays) to the `style` attribute, facilitating easy chaining of styles. Note that this does not perform a deep merge, so any state-specific styles will be overridden by the top-level style. Additionally, styles are applied in the order they appear in the array, meaning `props.style` will override `styles.Container`.
 
 ```jsx
 const Top: Component<TopProps> = (props: TopProps) => {
+  // Need the createMemo otherwise it creates a new array each time
+  const compStyles = createMemo(() => [props.style, styles.Container]);
   return (
     <ChildComp
       {...props}
-      style={[props.style, styles.Container]}
+      style={compStyles()}
       onSelectedChanged={chainFunctions(props.onSelectedChanged, withScrolling(props.y as number))}
     />
   );
 };
 ```
+
+## Style Patterns to Avoid
+
+Style objects should remain read-only and should not be created or modified inline within components. Below are some anti-patterns to avoid and examples of how to do it the right way.
+
+### 1. Avoid Spreading Style Objects
+
+**Don’t do this:**
+
+```jsx
+return (
+  <ChildComp
+    {...props}
+    // No reason to create new style objects, avoid spreading
+    style={{ ...styles }}
+  />
+);
+```
+
+**Do this instead:**
+
+- Pass the style object directly without creating a new object:
+
+```jsx
+return (
+  <ChildComp
+    {...props}
+    style={styles} // Use styles directly
+  />
+);
+```
+
+### 2. Avoid Combining Multiple Styles Inline
+
+**Don’t do this:**
+
+```jsx
+return (
+  <ChildComp
+    {...props}
+    // Don't combine two styles inline, store this as a const outside the function and pass a single object
+    style={{ ...otherStyles, ...styles }}
+  />
+);
+```
+
+**Do this instead:**
+
+- Combine the styles once outside the component render function:
+
+```jsx
+// Ideally don't do this inside of a component definition as it will create this for each instance
+const combinedStyles = { ...otherStyles, ...styles };
+
+return (
+  <ChildComp
+    {...props}
+    style={combinedStyles} // Use the combined styles from outside
+  />
+);
+```
+
+### 3. Avoid Overriding Single Style Props Inline
+
+**Don’t do this:**
+
+```jsx
+return (
+  <ChildComp
+    {...props}
+    // Any single props can be specified as an attribute on the component, don't override style
+    style={{...styles, props.width}}
+  />
+);
+```
+
+**Do this instead:**
+
+- Define the individual style as a prop and pass it separately:
+
+```jsx
+return (
+  <ChildComp
+    {...props}
+    style={styles} // Pass the main style object
+    // Additionally, this isn't needed since we're spreading {...props}
+    width={props.width} // Pass individual styles separately as props
+  />
+);
+```
+
+By following these best practices, you’ll keep style objects immutable, improve performance, and ensure more predictable rendering behavior.
 
 ## List of Properties
 
