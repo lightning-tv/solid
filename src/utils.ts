@@ -26,14 +26,16 @@ export function hexColor(color: string | number = ''): number {
   return 0x00000000;
 }
 
-export function combineStyles(...styles: (Styles | undefined)[]): Styles {
+export function combineStyles<T extends Styles>(
+  ...styles: (T | undefined)[]
+): T {
   return createMemo(() => flattenStyles(styles))();
 }
 
-function flattenStyles(
-  obj: Styles | undefined | (Styles | undefined)[],
-  result: Styles = {},
-): Styles {
+function flattenStyles<T extends Styles>(
+  obj: T | undefined | (T | undefined)[],
+  result: T = {} as T,
+): T {
   if (isArray(obj)) {
     obj.forEach((item) => {
       flattenStyles(item, result);
