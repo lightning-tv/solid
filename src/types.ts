@@ -11,6 +11,12 @@ export type SolidRendererOptions = Parameters<
   typeof createRenderer<SolidNode>
 >[0];
 
+export interface RenderedNode extends ElementNode {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 export type SolidNode = ElementNode | ElementText | TextNode;
 
 export type SolidStyles = Styles;
