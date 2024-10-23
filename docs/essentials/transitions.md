@@ -101,22 +101,44 @@ onMount(() => {
 
 You can hook into specific animation lifecycle events, such as when an animation starts or finishes, using the `onAnimationStarted` and `onAnimationFinished` callbacks. These callbacks allow you to execute custom logic at key moments during the animation cycle.
 
-### `onAnimationStarted`
+### `onAnimation`
 
-The `onAnimationStarted` callback is triggered when an animation begins. If you have defined a function for this callback, it will automatically be called when the animation starts.
+The `onAnimation` callback is triggered during various stages of an animation. If you have defined a function for this callback, it will be automatically called during these specific animation events: `'animating'`, `'tick'`, or `'stopped'`.
 
-- `this`: ElementNode the onAnimationStarted callback is on
-- `controller`: The animation controller object handling the current animation.
-- `name`: The name of the animation.
-- `value`: The initial value associated with the animation.
+#### Available Events:
 
-### `onAnimationFinished`
+- **`animating`**: Triggered when the animation is in progress.
+- **`tick`**: Triggered at each tick or frame update of the animation.
+- **`stopped`**: Triggered when the animation stops.
 
-The `onAnimationFinished` callback is triggered once the animation has completed. This can be used to clean up or trigger any subsequent actions.
+Each of these events can have its own handler function.
 
-- `this`: ElementNode the onAnimationFinished callback is on
-- `controller`: The animation controller object handling the current animation.
-- `name`: The name of the animation.
-- `value`: The final value associated with the animation.
+#### Event Handler Parameters:
 
-These callbacks give you more granular control over animations and provide hooks to inject additional behavior when specific animation states are reached.
+- **`this`**: The `ElementNode` on which the animation event is being handled.
+- **`controller`**: The animation controller object handling the current animation.
+- **`name`**: The name of the animation being executed.
+- **`endValue`**: The final value associated with the animation (or the current value for events like `tick`).
+- **`props`** (optional): Additional properties or configuration passed to the animation.
+
+#### Example Usage:
+
+```js
+onAnimation: {
+  animating: (controller, name, endValue, props) => {
+    console.log(`Animation ${name} is animating`);
+  },
+  tick: (controller, name, endValue, props) => {
+    console.log(`Animation ${name} tick at value: ${endValue}`);
+  },
+  stopped: (controller, name, endValue, props) => {
+    console.log(`Animation ${name} stopped`);
+  },
+}
+```
+
+In this example:
+
+- The `animating` event is triggered when the animation starts running.
+- The `tick` event is fired on every frame or update cycle.
+- The `stopped` event fires when the animation ends.
