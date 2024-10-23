@@ -1,4 +1,5 @@
-import { isInteger } from '@lightningtv/core';
+import { isInteger, isArray, type Styles } from '@lightningtv/core';
+import { createMemo } from 'solid-js';
 
 /**
  * Converts a color string to a color number value.
@@ -23,4 +24,29 @@ export function hexColor(color: string | number = ''): number {
   }
 
   return 0x00000000;
+}
+
+export function combineStyles(...styles: (Styles | undefined)[]): Styles {
+  return createMemo(() => flattenStyles(styles))();
+}
+
+function flattenStyles(
+  obj: Styles | undefined | (Styles | undefined)[],
+  result: Styles = {},
+): Styles {
+  if (isArray(obj)) {
+    obj.forEach((item) => {
+      flattenStyles(item, result);
+    });
+  } else if (obj) {
+    // handle the case where the object is not an array
+    for (const key in obj) {
+      // be careful of 0 values
+      if (result[key] === undefined) {
+        result[key as keyof Styles] = obj[key as keyof Styles]!;
+      }
+    }
+  }
+
+  return result;
 }
