@@ -34,13 +34,14 @@ The `style` attribute accepts an object of properties that are passed to the Lig
 For UI component libraries, you can also pass an array (including nested arrays) to the `style` attribute, facilitating easy chaining of styles. Note that this does not perform a deep merge, so any state-specific styles will be overridden by the top-level style. Additionally, styles are applied in the order they appear in the array, meaning `props.style` will override `styles.Container`.
 
 ```jsx
+import { combineStyles } from '@lightningtv/solid';
 const Top: Component<TopProps> = (props: TopProps) => {
   // Need the createMemo otherwise it creates a new array each time
-  const compStyles = createMemo(() => [props.style, styles.Container]);
+  const compStyles = combineStyles(props.style, styles.Container);
   return (
     <ChildComp
       {...props}
-      style={compStyles()}
+      style={compStyles}
       onSelectedChanged={chainFunctions(props.onSelectedChanged, withScrolling(props.y as number))}
     />
   );

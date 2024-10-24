@@ -1,5 +1,5 @@
 import { isInteger, isArray, type Styles } from '@lightningtv/core';
-import { createMemo } from 'solid-js';
+import { createMemo, untrack } from 'solid-js';
 
 /**
  * Converts a color string to a color number value.
@@ -27,6 +27,12 @@ export function hexColor(color: string | number = ''): number {
 }
 
 export function combineStyles<T extends Styles>(
+  ...styles: (T | undefined)[]
+): T {
+  return untrack(() => flattenStyles(styles));
+}
+
+export function combineStylesReactive<T extends Styles>(
   ...styles: (T | undefined)[]
 ): T {
   return createMemo(() => flattenStyles(styles))();
