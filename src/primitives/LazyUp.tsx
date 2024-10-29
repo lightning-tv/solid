@@ -27,7 +27,7 @@ export function LazyUp<T extends readonly any[], U extends JSX.Element>(
     'children',
   ]);
 
-  const [offset, setOffset] = createSignal(0);
+  const [offset, setOffset] = createSignal(props.selected || 0);
 
   const items = createMemo(() => {
     if (p.each) {
