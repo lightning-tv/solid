@@ -40,14 +40,14 @@ So, how do these apps measure up in real-world performance? I tested both versio
 <div style="display: flex; justify-content: center; gap: 30px">
   <figure>
     <figcaption>
-      <a href="https://lightning-tv.github.io/solid-demo-app/#/tmdb" target="_blank">Solid Timeline</a>
+      Solid Timeline
     </figcaption>
     <img src="images/compare/Solid-Timeline.png" alt="Solid Timeline">
   </figure>
 
   <figure>
     <figcaption>
-      <a href="https://blits-demo.lightningjs.io/#/demos/tmdb" target="_blank">Blits Timeline</a>
+      Blits Timeline
     </figcaption>
     <img src="images/compare/Blits-Timeline.png" alt="Blits Timeline">
   </figure>
@@ -62,14 +62,14 @@ SolidJS takes things a step further by allowing **parallel data fetching** with 
 <div style="display: flex; justify-content: center; gap: 30px">
   <figure>
     <figcaption>Solid Home</figcaption>
-    <img src="images/compare/Solid-Timeline.png" alt="Solid Home">
+    <img src="images/compare/Solid-Home.png" alt="Solid Home">
   </figure>
 
   <figure>
     <figcaption>
-      <a href="https://blits-demo.lightningjs.io/#/demos/tmdb" target="_blank">Solid Entity</a>
+      Solid Entity
     </figcaption>
-    <img src="images/compare/Blits-Timeline.png" alt="Solid Entity">
+    <img src="images/compare/Solid-Entity.png" alt="Solid Entity">
   </figure>
 </div>
 
@@ -149,7 +149,7 @@ export function TitleRow(props: TileRowProps) {
 
 ## Conclusion
 
-SolidJS and Blits are both frameworks built on top of the Lightning 3 Renderer. But for speed, flexibility, and developer-friendly design, **SolidJS** stands out. Its open-source router, parallel data fetching, and reusable components make it a robust choice for real-world applications.
+SolidJS and Blits are both frameworks built on top of the Lightning 3 Renderer, allowing for immediate rendering with WebGL. But for speed, flexibility, and developer-friendly design, **SolidJS** stands out. Its open-source router, parallel data fetching, and reusable components make it a robust choice for real-world applications.
 
 ---
 
