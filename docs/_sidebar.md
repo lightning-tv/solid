@@ -3,6 +3,7 @@
   - [Basics](/intro/basics.md)
   - [Getting started](/intro/getting_started.md)
   - [Device Support](/intro/device_support.md)
+  - [Real World Performance](/intro/realworldperformance.md)
   - [Solid / Blits Framework Comparison](/intro/solidvsblits.md)
 - Essentials
   - [Rendering Hello World](/essentials/render.md)

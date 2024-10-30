@@ -418,5 +418,5 @@ That’s just scratching the surface of what you can do with **SolidJS** and **L
 
 - **Official Website**: [lightningtv.dev](https://lightningtv.dev)
 - **GitHub Repository**: [github.com/lightning-tv/solid](https://github.com/lightning-tv/solid)
-- **Join the Community**: [Discord](https://discord.gg/PJ4MBvJeXN)
+- **Join the Community**: [Discord](https://discord.gg/HEqckxcB)
 - **Connect with me**: [Chris Lorenzo on LinkedIn](https://www.linkedin.com/in/chris-lorenzo/)
