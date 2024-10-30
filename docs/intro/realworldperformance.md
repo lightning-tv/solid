@@ -73,7 +73,7 @@ SolidJS takes things a step further by allowing **parallel data fetching** with 
   </figure>
 </div>
 
-Unfortunately, the Blits app doesn't have an Entity page, so no comparisons can be made. But right now the Blits Router doesn't support **render as you fetch**, so pages will need to load first and then data requested, leading to a poor user experience.
+Unfortunately, the Blits app doesn't have an Entity page, so no comparisons can be made. But right now the Blits Router doesn't support **render as you fetch**, so pages will need to load first and then data requested, leading to a slower page transition experience.
 
 ## Developer Experience
 
@@ -93,7 +93,8 @@ export function tmdbData() {
 
   const featured: RowItem = {
     title: "Popular Movies",
-    // fetchPopular calls TMDB and returns a Promise, createResource turns promises into Signals
+    // fetchPopular calls TMDB and returns a Promise,
+    // createResource turns promises into Signals
     items: createResource(() => fetchPopular("movie"))[0],
     type: "Poster",
     height: 328,
@@ -116,35 +117,60 @@ This setup keeps UI components pure, focusing on display logic and leaving data 
 
 ### Reusable Components
 
-Solid’s ecosystem also includes versatile components like `<LazyUp>` and `<Dynamic>`. Here’s how a Lazy and Dynamic row might look using these components:
+Solid’s ecosystem also includes versatile components like `<LazyUp>` and `<Dynamic>`. Here’s how we use these components to build the TDMB page:
 
 ```jsx
-export function TitleRow(props: TileRowProps) {
-  return (
-    <View height={props.height} forwardFocus={1} marginTop={30}>
-      <Text skipFocus style={titleRowStyles}>
-        {props.title}
-      </Text>
+<LazyUp
+  y={500}
+  component={Column}
+  direction="column"
+  upCount={3}
+  each={props.data.rows}
+  id="BrowseColumn"
+  onSelectedChanged={onSelectedChanged}
+  autofocus={props.data.rows[0].items()}
+  gap={40}
+  transition={{ y: yTransition }}
+  style={styles.Column}
+>
+  {(row) =>
+    row().type === 'Hero' ? (
       <LazyUp
         component={Row}
         direction="row"
-        gap={20}
-        upCount={11}
-        each={props.items}
+        gap={80}
+        upCount={3}
+        scroll="center"
+        centerScroll
+        each={row().items()}
         y={50}
+        height={row().height}
       >
-        {(item) => (
-          <Dynamic component={typeToComponent[props.row.type]} {...item()} />
-        )}
+        {(item) => <Hero {...item()} />}
       </LazyUp>
-    </View>
-  );
-}
+    ) : (
+      <TitleRow
+        row={row()}
+        title={row().title}
+        height={row().height}
+        items={row().items()}
+      />
+    )
+  }
+</LazyUp>
 ```
 
-- **`<LazyUp>`**: Lazy-loads items in the row or column, reducing initial render time.
+- **`<LazyUp>`**: Lazy-loads items in the Row or Column component, reducing initial render time.
 - **`<Dynamic>`**: Dynamically renders components based on the item type, allowing single Column with different Row types like `Poster` or `Hero`.
 
+And with the Row and Column components, you get access to new features like `scroll="center"` and `centerScroll`. `scroll="center"` aligns all items to the center of the screen, while `centerScroll` can be added to a single item to center it on the screen (useful for large Posters). For example:
+
+<div style="display: flex; justify-content: center; gap: 30px">
+  <figure>
+    <figcaption>Solid Rows</figcaption>
+    <img src="images/compare/Solid-Rows.png" alt="Solid Rows">
+  </figure>
+</div>
 ---
 
 ## Conclusion
