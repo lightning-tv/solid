@@ -6,6 +6,7 @@
   img:hover {
       -webkit-transform: scale(1.8);
       transform: scale(1.8);
+      z-index: 5;
   }
 </style>
 
