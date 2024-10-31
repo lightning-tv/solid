@@ -9,13 +9,13 @@
   }
 </style>
 
-# Lightning 3: Solid & Blits in the Real World
+# Lightning 3: Solid & Blits Performance in the Real World
 
 When it comes to **SolidJS** and **Blits**, a common question is: which is better suited for building performant, scalable TV applications? To help answer this, let’s dive into a head-to-head comparison using the **TMDB (The Movie Database)** example app, exploring each framework’s performance, developer experience, and more.
 
 ## Overview: Solid vs. Blits
 
-While not identical, the Solid and Blits TMDB versions are close enough to allow for a fair comparison. The **Solid** app includes a left navigation drawer, titles above rows, and leverages **Solid-UI components** and **SolidJS Router**. While these extra features should give Blits a performance lead, Solid maintains it's edge.
+While not identical, the Solid and Blits TMDB versions are close enough to allow for a fair comparison. The **Solid** app includes a left navigation drawer, titles above rows, and leverages **Solid-UI components**. While these extra features should give Blits a performance lead, Solid maintains it's edge.
 
 <div style="display: flex; justify-content: center; gap: 30px">
   <figure>
@@ -130,7 +130,7 @@ This approach makes UI components easy to test by allowing you to provide differ
 
 **Blits**
 
-In Blits, data fetching happens directly within the page component, using asynchronous API calls inside a `ready` hook.
+Data fetching happens directly within the page component, using asynchronous API calls inside a `ready` hook.
 
 ```js
 hooks: {
@@ -159,6 +159,8 @@ hooks: {
 Here, Blits loads the page first, then calls the ready hook before fetching data, delaying an initial render for the user.
 
 ### Components
+
+**Blits**
 
 In Blits, you'll need to write your own logic to handle interactions and reactivity, they recommend you use their reference app or copy paste their sample components.
 
@@ -194,6 +196,8 @@ input: {
   },
 },
 ```
+
+**Solid**
 
 Solid’s ecosystem includes useful components like Row and Column that handle focus and keypress interactions automatically. With these, you get new features like `scroll="center"` to align items and `centerScroll` for positioning a single item at the screen’s center. For example with big Hero Posters:
 
