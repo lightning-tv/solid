@@ -6,6 +6,7 @@
   img:hover {
       -webkit-transform: scale(1.8);
       transform: scale(1.8);
+      position: relative;
       z-index: 5;
   }
 </style>
@@ -157,7 +158,7 @@ hooks: {
 }
 ```
 
-Here, Blits loads the page first, then calls the ready hook before fetching data, delaying an initial render for the user.
+Here, Blits loads the page first, then calls the ready hook before fetching data. The fetching and manipulation of data is very similar. However, state for blits must be inside a component using the `state` prop. SolidJS supports truely global signals that are decoupled from components.
 
 ### Components
 
@@ -200,7 +201,13 @@ input: {
 
 **Solid**
 
-Solid’s ecosystem includes useful components like Row and Column that handle focus and keypress interactions automatically. With these, you get new features like `scroll="center"` to align items and `centerScroll` for positioning a single item at the screen’s center. For example with big Hero Posters:
+Solid’s ecosystem includes useful components like Row and Column that handle focus and keypress interactions automatically. With these, you get access to recently added new features like `scroll="center"` and `centerScroll` for positioning a single item at the screen’s center. For example with big Hero Posters:
+
+```jsx
+<Row gap={80} scroll="center" y={50} height={800}>
+  <For each={row.items}>{(item) => <Hero {...item} />}</For>
+</Row>
+```
 
 <div style="display: flex; justify-content: center; gap: 30px">
   <figure>
@@ -209,16 +216,16 @@ Solid’s ecosystem includes useful components like Row and Column that handle f
   </figure>
 </div>
 
-Next we have `<LazyUp>` and `<Dynamic>`. Here’s how we use these components to build the TDMB page:
+Additionally, you'll want to check out `<LazyUp>` and `<Dynamic>` components. Here's an example of their usage in TMDB:
 
 ```jsx
 <LazyUp
-  y={500}
+  id="BrowseColumn"
   component={Column}
   direction="column"
+  y={500}
   upCount={3}
   each={props.data.rows}
-  id="BrowseColumn"
   onSelectedChanged={onSelectedChanged}
   autofocus={props.data.rows[0].items()}
   gap={40}
@@ -252,13 +259,13 @@ Next we have `<LazyUp>` and `<Dynamic>`. Here’s how we use these components to
 </LazyUp>
 ```
 
-- **`<LazyUp>`**: Lazy-loads items in the `Row` or `Column` component, reducing initial render time.
-  - The `upCount` property specifies how many items (e.g., `Poster`) are displayed on the screen at a time.
+- **`<LazyUp>`**: Lazy-renders items in the `Row` or `Column` component, reducing initial render time. Useful if you have a lot of Rows and only need to display 2 or 3.
+  - The `upCount` property specifies how many items (e.g., `Rows` or `Poster`) are visible on the screen at load time.
 - **`<Dynamic>`**: Dynamically renders components based on the item type, allowing a single `Column` to display different `Row` types, such as `Poster` or `Hero`.
 
 ## Conclusion
 
-SolidJS and Blits are both frameworks built on top of the Lightning 3 Renderer, allowing for immediate rendering with WebGL. But for speed, flexibility, and developer-friendly design, **SolidJS** stands out. Its open-source router, parallel data fetching, and reusable components make it a robust choice for real-world applications.
+SolidJS and Blits are both frameworks built on top of the Lightning 3 Renderer, allowing for immediate rendering with WebGL. But for speed, flexibility, and developer-friendly design, **SolidJS** stands out. Its open-source router, parallel data fetching, and reusable components make it a robust choice for quickly building real-world applications.
 
 For a hands-on experience, check out the live [Solid TMDB demo](https://lightning-tv.github.io/solid-demo-app/#/tmdb) and the [Blits TMDB demo](https://blits-demo.lightningjs.io/#/demos/tmdb) to see the differences firsthand!
 
