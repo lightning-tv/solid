@@ -110,17 +110,18 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   }
 }
 
-function textToSpeech(toSpeak: SpeechType) {
+function textToSpeech(toSpeak: SpeechType, lang: string) {
   if (voiceOutDisabled) {
     return;
   }
 
-  return (currentlySpeaking = SpeechEngine(toSpeak));
+  return (currentlySpeaking = SpeechEngine(toSpeak, lang));
 }
 
 export interface Announcer {
   debug: boolean;
   enabled: boolean;
+  lang: string;
   cancel: VoidFunction;
   clearPrevFocus: (depth?: number) => void;
   speak: (
@@ -138,6 +139,7 @@ export interface Announcer {
 export const Announcer: Announcer = {
   debug: false,
   enabled: true,
+  lang: 'en-US',
   cancel: function () {
     currentlySpeaking && currentlySpeaking.cancel();
   },
@@ -145,14 +147,14 @@ export const Announcer: Announcer = {
     prevFocusPath = prevFocusPath.slice(0, depth);
     resetFocusPathTimer();
   },
-  speak: function (text, { append = false, notification = false } = {}) {
+  speak: function (text, { append = false, notification = false} = {}) {
     if (Announcer.onFocusChange && Announcer.enabled) {
       Announcer.onFocusChange.flush();
       if (append && currentlySpeaking && currentlySpeaking.active) {
         currentlySpeaking.append(text);
       } else {
         Announcer.cancel();
-        textToSpeech(text);
+        textToSpeech(text, Announcer.lang);
       }
 
       if (notification) {
