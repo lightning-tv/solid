@@ -13,7 +13,7 @@ const RowStyles: NodeStyles = {
   display: 'flex',
   gap: 30,
   transition: {
-    y: {
+    x: {
       duration: 250,
       easing: 'ease-in-out',
     },
