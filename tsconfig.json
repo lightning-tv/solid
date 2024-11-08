@@ -23,6 +23,9 @@
     "resolveJsonModule": true,
     "composite": true,
 
+    //"noImplicitAny": false,
+    //"strictNullChecks": false,
+
     // jsx
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
