@@ -24,7 +24,7 @@ const ColumnStyles: NodeStyles = {
 const onUp = handleNavigation('up');
 const onDown = handleNavigation('down');
 const scroll = withScrolling(false);
-const Column: Component<ColumnProps> = (props) => {
+export const Column: Component<ColumnProps> = (props) => {
   return (
     <View
       {...props}
@@ -47,5 +47,3 @@ const Column: Component<ColumnProps> = (props) => {
     />
   );
 };
-
-export default Column;

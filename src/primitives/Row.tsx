@@ -24,7 +24,7 @@ const onLeft = handleNavigation('left');
 const onRight = handleNavigation('right');
 const scroll = withScrolling(true);
 
-const Row: Component<RowProps> = (props) => {
+export const Row: Component<RowProps> = (props) => {
   return (
     <View
       {...props}
@@ -47,5 +47,3 @@ const Row: Component<RowProps> = (props) => {
     />
   );
 };
-
-export default Row;
