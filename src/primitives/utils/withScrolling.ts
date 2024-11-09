@@ -40,7 +40,12 @@ export function withScrolling(isRow: boolean) {
       componentRef = selected as ScrollableElement;
       selected = componentRef.selected || 0;
     }
-    if (!componentRef || !componentRef.children.length) return;
+    if (
+      !componentRef ||
+      componentRef.scroll === 'none' ||
+      !componentRef.children.length
+    )
+      return;
 
     const lng = componentRef.lng as INode;
     const screenSize = isRow ? lng.stage.root.width : lng.stage.root.height;
@@ -77,7 +82,7 @@ export function withScrolling(isRow: boolean) {
     const containerSize = componentRef[dimension] ?? 0;
     const maxOffset = Math.min(
       screenSize - containerSize - screenOffset - 2 * gap,
-      0,
+      offset,
     );
 
     // Determine the next element based on whether incrementing or decrementing
@@ -104,10 +109,11 @@ export function withScrolling(isRow: boolean) {
       if (
         isIncrementing &&
         componentRef.scrollIndex &&
-        componentRef.scrollIndex > 0 &&
-        componentRef.selected >= componentRef.scrollIndex
+        componentRef.scrollIndex > 0
       ) {
-        nextPosition = rootPosition - selectedSize - gap;
+        if (componentRef.selected >= componentRef.scrollIndex) {
+          nextPosition = rootPosition - selectedSize - gap;
+        }
       } else if (isIncrementing) {
         nextPosition = -selectedPosition + offset;
       } else {
