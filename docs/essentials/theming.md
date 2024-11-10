@@ -26,11 +26,11 @@ You can also use the state system to apply styles dynamically based on the curre
 ```jsx
 const styles = {
   ...defaultStyles,
-  dark: { color: '#000' },
-  light: { color: '#FFF' }
+  $dark: { color: '#000' },
+  $light: { color: '#FFF' }
 };
 
-style={styles} states={{ dark: true }} // Apply all styles defined in the 'dark' object
+style={styles} states={{ $dark: true }} // Apply all styles defined in the 'dark' object
 ```
 
 In this approach, the theme state (e.g., `dark` or `light`) is defined in the `states` object, and you can toggle between themes dynamically. This method is especially useful when allowing user interaction, such as switching themes via a toggle button.

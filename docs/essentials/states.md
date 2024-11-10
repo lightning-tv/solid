@@ -2,7 +2,7 @@
 
 In your application, components can exhibit various states, similar to how a button might be enabled, disabled, or focused. These states enable components to dynamically apply different styles, enhancing their visual representation and behavior based on user interaction or application logic.
 
-States are applied from the style object with a matching name:
+States are applied from the style object with a matching name and must be prefixed with `$`:
 
 ```jsx
 const Button = {
@@ -11,27 +11,27 @@ const Button = {
   color: 0x546160ff,
   alpha: 0.8,
   scale: 1,
-  focus: {
+  $focus: {
     color: 0x58807dff,
     scale: 1.1,
     alpha: 1,
   },
-  disabled: {
+  $disabled: {
     color: 0x333333ff,
   },
 };
 ```
 
-When `Button` is focused via the [useFocusManager](/primitives/useFocusManager.md), the `focus` state will be added to the button, causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set.
+When `Button` is focused via the [useFocusManager](/primitives/useFocusManager.md), the `$focus` state will be added to the button, causing the focus styles to be applied. And when focus is removed, the original styles on the element will be set.
 
 > Be sure to set defaults on the original styles if applying a new style via state. Example: clipping: false, focus: { clipping: true }
 
 States can be added to components declaratively:
 
 ```jsx
-<Button states={{ active: true, happy: false, disabled: false }}>Movies</Button>
-<Button states={'active'}>Sports</Button>
-<Button states='happy'>News</Button>
+<Button states={{ $active: true, $happy: false, $disabled: false }}>Movies</Button>
+<Button states={'$active'}>Sports</Button>
+<Button states='$happy'>News</Button>
 ```
 
 Or imperatively:
@@ -40,19 +40,19 @@ Or imperatively:
 let myButton;
 
 createEffect(() => {
-  myButton.states.add('focus');
+  myButton.states.add('$focus');
 
   // Check for a state
-  if (myButton.states.has('focus')) {
-    myButton.states.remove('focus');
+  if (myButton.states.has('$focus')) {
+    myButton.states.remove('$focus');
   }
 
-  myButton.states.add('disabled');
+  myButton.states.add('$disabled');
   // is and has are identical
-  myButton.states.is('disabled');
+  myButton.states.is('$disabled');
 
   // toggle disabled on / off
-  myButton.states.toggle('disabled');
+  myButton.states.toggle('$disabled');
 });
 <View ref={myButton} style={Button} />;
 ```
@@ -75,7 +75,7 @@ function Button(props) {
       scale: { duration: 1500, delay: 200, easing: 'easy-in' },
       alpha: { duration: 1500, delay: 200, easing: 'easy-in' },
     },
-    focus: {
+    $focus: {
       color: [0x58807dff, { duration: 2000 }],
       scale: 1.2,
       alpha: 1,
@@ -91,7 +91,7 @@ function Button(props) {
     color: 0xf6f6f9ff,
     height: Button.height,
     width: Button.width,
-    focus: {
+    $focus: {
       color: 0xffffffff,
     },
   };

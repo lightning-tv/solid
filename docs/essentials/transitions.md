@@ -97,18 +97,14 @@ onMount(() => {
 });
 ```
 
-## Animation Callbacks
-
-You can hook into specific animation lifecycle events, such as when an animation starts or finishes, using the `onAnimationStarted` and `onAnimationFinished` callbacks. These callbacks allow you to execute custom logic at key moments during the animation cycle.
-
-### `onAnimation`
+## Animation Callbacks `onAnimation`
 
 The `onAnimation` callback is triggered during various stages of an animation. If you have defined a function for this callback, it will be automatically called during these specific animation events: `'animating'`, `'tick'`, or `'stopped'`.
 
 #### Available Events:
 
-- **`animating`**: Triggered when the animation is in progress.
-- **`tick`**: Triggered at each tick or frame update of the animation.
+- **`animating`**: Triggered when the animation starts.
+- **`tick`**: Triggered at each tick or frame update of the animation, passes in the progress.
 - **`stopped`**: Triggered when the animation stops.
 
 Each of these events can have its own handler function.

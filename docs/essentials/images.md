@@ -35,10 +35,10 @@ const Thumbnail = (props) => (
     node.src = fallbackImage;
   };
 
-  const onEvents = [
-      ['load', handleLoad],
-      ['fail', handleFail],
-    ];
+  const onEvent = {
+    loaded: handleLoad,
+    failed: handleFail,
+  };
 
   <View
     width={200}

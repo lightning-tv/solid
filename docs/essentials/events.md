@@ -21,13 +21,13 @@ Learn more about using [onDestroy](/flow/ondestroy) and the [layout events](/flo
 
 ## Renderer Events
 
-In addition to the lifecycle events from SolidJS, the Lightning Renderer offers additional custom events for you to tie into using the `onEvents` object. These events provide information about element visibility and state within the renderer.
+In addition to the lifecycle events from SolidJS, the Lightning Renderer offers additional custom events for you to tie into using the `onEvent` object. These events provide information about element visibility and state within the renderer.
 
 ### Example Usage:
 
 ```jsx
 <View
-  onEvents={{
+  onEvent={{
     loaded: (element, eventInfo) => {
       console.log('load was called');
     },
