@@ -67,7 +67,7 @@ export function handleNavigation(
 
     if (this.selected === -1) {
       this.selected = lastSelected;
-      if (this.children[this.selected]?.states!.has('focus')) {
+      if (this.children[this.selected]?.states!.has('$focus')) {
         // This child is already focused, so bubble up to next handler
         return false;
       }
