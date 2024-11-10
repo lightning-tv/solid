@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@lightningjs/renderer':
-        specifier: ^2.4.0
-        version: 2.4.0
+        specifier: ^2.6.0
+        version: 2.6.2
       '@lightningtv/core':
-        specifier: ^2.4.8
-        version: 2.4.8(@lightningjs/renderer@2.4.0)
+        specifier: ^2.5.0
+        version: 2.5.0(@lightningjs/renderer@2.6.2)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -24,8 +24,8 @@ importers:
         specifier: ^1.4.4
         version: 1.4.4(solid-js@1.9.3)
       '@solidjs/router':
-        specifier: ^0.14.10
-        version: 0.14.10(solid-js@1.8.19)
+        specifier: ^0.15.1
+        version: 0.15.1(solid-js@1.9.3)
     devDependencies:
       '@eslint/js':
         specifier: ^9.14.0
@@ -123,12 +123,12 @@ packages:
     resolution: {integrity: sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==}
     engines: {node: '>=18.18'}
 
-  '@lightningjs/renderer@2.4.0':
-    resolution: {integrity: sha512-boh3I5imH3zXngef7bwVguGkcjs2TeDzAd3wWW+nls7LzXudG8BKPN6bGblyobP2vDVYugEhWEH3BSHH/pp5bQ==}
+  '@lightningjs/renderer@2.6.2':
+    resolution: {integrity: sha512-agu9jV8hhbF/Ld8BJSogOJIQZBoSUzow+3BtP4NptqC3l1aV6RQr1rwpXQF12ITYjUi3CrfA7eV76GIiLAkOAA==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.4.8':
-    resolution: {integrity: sha512-Vgr7epgTMB7AkK+uiDJbfRxoaCl6Jbi0Rtj9vJXTQi51i7ojY9XoVpeNKBl6ECnBL4ntPU50TuET5GB+FaRXWQ==}
+  '@lightningtv/core@2.5.0':
+    resolution: {integrity: sha512-SwLF4myQc7CkP59Ts7P/+Jga6NCwzyp1uzT5zHUWEGIbRkfBNds32+U+1Dpl4oL4Tuw9o6UQwwjEI+jRMIsjhQ==}
     peerDependencies:
       '@lightningjs/renderer': ^2.4.0
 
@@ -178,8 +178,8 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
-  '@solidjs/router@0.14.10':
-    resolution: {integrity: sha512-5B8LVgvvXijfXyXWPVLUm7RQ05BhjIpAyRkYVDZtrR3OaSvftXobWc6qSEwk4ICLoGi/IE9CUp2LUdCBIs9AXg==}
+  '@solidjs/router@0.15.1':
+    resolution: {integrity: sha512-lb5BRBqQqii/1dQCglx2K68xLkgu7QcrcajWKuuEx6FHTsK/hp5IgVhjy6RzPMLj+SFyrrRi/ldirCFNxtzh0Q==}
     peerDependencies:
       solid-js: ^1.8.6
 
@@ -712,21 +712,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  seroval-plugins@1.1.0:
-    resolution: {integrity: sha512-KtcJg590L3X3dd7ixs6am4UGVcV69TyjYhHtanIdQJq4dy2OceWXmmvWrYx7oFDNe+LNdxdWd0I5BQXuV5fBhA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      seroval: ^1.0
-
   seroval-plugins@1.1.1:
     resolution: {integrity: sha512-qNSy1+nUj7hsCOon7AO4wdAIo9P0jrzAMp18XhiOzA6/uO5TKtP7ScozVJ8T293oRIvi5wyCHSM4TrJo/c/GJA==}
     engines: {node: '>=10'}
     peerDependencies:
       seroval: ^1.0
-
-  seroval@1.1.0:
-    resolution: {integrity: sha512-74Wpe+hhPx4V8NFe00I2Fu9gTJopKoH5vE7nCqFzVgKOXV8AnN23T58K79QLYQotzGpH93UZ+UN2Y11j9huZJg==}
-    engines: {node: '>=10'}
 
   seroval@1.1.1:
     resolution: {integrity: sha512-rqEO6FZk8mv7Hyv4UCj3FD3b6Waqft605TLfsCe/BiaylRpyyMC0b+uA5TJKawX3KzMrdi3wsLbCaLplrQmBvQ==}
@@ -751,9 +741,6 @@ packages:
   slice-ansi@7.1.0:
     resolution: {integrity: sha512-bSiSngZ/jWeX93BqeIAbImyTbEihizcwNjFoRUIY/T1wWQsfsm2Vw1agPKylXvQTU7iASGdHhyqRlqQzfz+Htg==}
     engines: {node: '>=18'}
-
-  solid-js@1.8.19:
-    resolution: {integrity: sha512-h8z/TvTQYsf894LM9Iau/ZW2iAKrCzAWDwjPhMcXnonmW1OIIihc28wp82b1wwei1p81fH5+gnfNOe8RzLbDRQ==}
 
   solid-js@1.9.3:
     resolution: {integrity: sha512-5ba3taPoZGt9GY3YlsCB24kCg0Lv/rie/HTD4kG6h4daZZz7+yK02xn8Vx8dLYBc9i6Ps5JwAbEiqjmKaLB3Ag==}
@@ -899,11 +886,11 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@lightningjs/renderer@2.4.0': {}
+  '@lightningjs/renderer@2.6.2': {}
 
-  '@lightningtv/core@2.4.8(@lightningjs/renderer@2.4.0)':
+  '@lightningtv/core@2.5.0(@lightningjs/renderer@2.6.2)':
     dependencies:
-      '@lightningjs/renderer': 2.4.0
+      '@lightningjs/renderer': 2.6.2
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -950,9 +937,9 @@ snapshots:
     dependencies:
       solid-js: 1.9.3
 
-  '@solidjs/router@0.14.10(solid-js@1.8.19)':
+  '@solidjs/router@0.15.1(solid-js@1.9.3)':
     dependencies:
-      solid-js: 1.8.19
+      solid-js: 1.9.3
 
   '@types/estree@1.0.6': {}
 
@@ -1472,15 +1459,9 @@ snapshots:
 
   semver@7.6.3: {}
 
-  seroval-plugins@1.1.0(seroval@1.1.0):
-    dependencies:
-      seroval: 1.1.0
-
   seroval-plugins@1.1.1(seroval@1.1.1):
     dependencies:
       seroval: 1.1.1
-
-  seroval@1.1.0: {}
 
   seroval@1.1.1: {}
 
@@ -1501,12 +1482,6 @@ snapshots:
     dependencies:
       ansi-styles: 6.2.1
       is-fullwidth-code-point: 5.0.0
-
-  solid-js@1.8.19:
-    dependencies:
-      csstype: 3.1.3
-      seroval: 1.1.0
-      seroval-plugins: 1.1.0(seroval@1.1.0)
 
   solid-js@1.9.3:
     dependencies:

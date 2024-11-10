@@ -1,6 +1,6 @@
 {
   "name": "@lightningtv/solid",
-  "version": "2.4.9",
+  "version": "2.5.0",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "source": "src/index.ts",
@@ -42,7 +42,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^2.4.8",
+    "@lightningtv/core": "^2.5.0",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/mouse": "^2.0.20",
     "@solid-primitives/scheduled": "^1.4.4"
@@ -70,8 +70,8 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningjs/renderer": "^2.4.0",
-    "@solidjs/router": "^0.14.10",
+    "@lightningjs/renderer": "^2.6.0",
+    "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },
   "repository": {
