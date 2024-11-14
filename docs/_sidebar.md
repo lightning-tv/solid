@@ -30,3 +30,4 @@
   - [Mouse Input](/primitives/useMouse.md)
   - [Portal](/primitives/portal.md)
   - [Router](/primitives/router.md)
+  - [Visible](/primitives/visible.md)
