@@ -12,6 +12,7 @@
   - [Images](/essentials/images.md)
   - [Text](/essentials/text.md)
   - [Styling](/essentials/styling.md)
+  - [Effects](/essentials/effects.md)
   - [Theming](/essentials/theming.md)
   - [Events](/essentials/events.md)
   - [Focus / Key Handling](/essentials/focus.md)
