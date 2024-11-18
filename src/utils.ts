@@ -29,6 +29,24 @@ export function hexColor(color: string | number = ''): number {
 export function combineStyles<T extends Styles>(
   style1: T | undefined,
   style2: T | undefined,
+): T {
+  if (!style1) {
+    return style2!;
+  }
+
+  if (!style2) {
+    return style1;
+  }
+
+  return {
+    ...style2,
+    ...style1,
+  };
+}
+
+export function combineStylesMemo<T extends Styles>(
+  style1: T | undefined,
+  style2: T | undefined,
 ): Accessor<T> {
   if (!style1) {
     return () => style2!;

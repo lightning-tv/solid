@@ -73,4 +73,4 @@ import { deg2Rad } from '@lightningjs/solid';
 />
 ```
 
-You can have as many stops or colors as you like. Please note linearGradients strongly affect performance at the moment.
+You can have as many stops or colors as you like.

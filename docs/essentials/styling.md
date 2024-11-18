@@ -42,7 +42,7 @@ const Top: Component<TopProps> = (props: TopProps) => {
     <ChildComp
       {...props}
       style={compStyles}
-      onSelectedChanged={chainFunctions(props.onSelectedChanged, withScrolling(props.y as number))}
+      onSelectedChanged={/* @once */ chainFunctions(props.onSelectedChanged, withScrolling(props.y as number))}
     />
   );
 };
@@ -235,40 +235,58 @@ RGBA number 0xRRGGBBAA and hex are fully supported with the [Vite Hex Plugin](ht
 
 ## Effects
 
-### Border and borderRadius
+## Border and borderRadius
 
 `border` and `borderRadius` are special props which create effects for the DynamicShader found in the Lightning Renderer. These props can be set on the JSX or style object. The order in which you set the props determine how they are applied in the shader. Meaning you probably want to set borderRadius first. You can also set individual borders via `borderLeft`, `borderRight`, `borderTop`, `borderBottom`. These properties do not support animations.
 
-```
+```js
 const style = {
   borderRadius: 30,
-  border: { width: 10, color: 0x000000ff }
-}
+  border: { width: 10, color: 0x000000ff },
+};
 
 // or
 
 const style = {
   borderLeft: { width: 10, color: 0x000000ff },
-  borderRight: { width: 10, color: 0x000000ff }
-}
-
+  borderRight: { width: 10, color: 0x000000ff },
+};
 ```
 
-### linearGradient
+## Linear Gradient & Radial Gradient
 
-`linearGradient` is another special effect that can be used like a style with following syntax.
+`linearGradient` and `radialGradient` are effects that can be used by setting the effects prop.
 
-```
-import { deg2Rad } from '@lightningjs/solid'
+```jsx
+import { deg2Rad } from '@lightningjs/solid';
 
-linearGradient:
-    {
+<View
+  effects={{
+    linearGradient: {
       angle: deg2Rad(225),
+      width: 300,
+      height: 300,
       stops: [0.1, 0.5],
-      colors: [
-        0xff0000ff, 0x00000000,
-      ],
+      colors: [0xff0000ff, 0x00000000],
     },
+  }}
+/>;
 ```
 
-You can have as many stops or colors as you like. Note: linearGradient has a high performance price at this time. Instead, use PNG with alpha transparency.
+```jsx
+<View
+  width={300}
+  height={300}
+  effects={{
+    radialGradient: {
+      pivot: [225],
+      width: 300,
+      height: 300,
+      stops: [0.1, 0.5],
+      colors: [0xff0000ff, 0x00000000],
+    },
+  }}
+/>
+```
+
+You can have as many stops or colors as you like.

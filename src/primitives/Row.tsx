@@ -29,21 +29,26 @@ export const Row: Component<RowProps> = (props) => {
     <View
       {...props}
       selected={props.selected || 0}
-      onLeft={chainFunctions(props.onLeft, onLeft)}
-      onRight={chainFunctions(props.onRight, onRight)}
-      onFocus={chainFunctions(
-        props.onFocus,
-        props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
-      )}
+      onLeft={/* @once */ chainFunctions(props.onLeft, onLeft)}
+      onRight={/* @once */ chainFunctions(props.onRight, onRight)}
+      onFocus={
+        /* @once */ chainFunctions(
+          props.onFocus,
+          props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
+        )
+      }
       forwardFocus={onGridFocus}
       onLayout={
+        /* @once */
         props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
       }
-      onSelectedChanged={chainFunctions(
-        props.onSelectedChanged,
-        props.scroll !== 'none' ? scroll : undefined,
-      )}
-      style={combineStyles(props.style, RowStyles)()}
+      onSelectedChanged={
+        /* @once */ chainFunctions(
+          props.onSelectedChanged,
+          props.scroll !== 'none' ? scroll : undefined,
+        )
+      }
+      style={/* @once */ combineStyles(props.style, RowStyles)}
     />
   );
 };

@@ -28,22 +28,27 @@ export const Column: Component<ColumnProps> = (props) => {
   return (
     <View
       {...props}
-      onUp={chainFunctions(props.onUp, onUp)}
-      onDown={chainFunctions(props.onDown, onDown)}
+      onUp={/* @once */ chainFunctions(props.onUp, onUp)}
+      onDown={/* @once */ chainFunctions(props.onDown, onDown)}
       selected={props.selected || 0}
       forwardFocus={onGridFocus}
-      onFocus={chainFunctions(
-        props.onFocus,
-        props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
-      )}
+      onFocus={
+        /* @once */ chainFunctions(
+          props.onFocus,
+          props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
+        )
+      }
       onLayout={
+        /* @once */
         props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
       }
-      onSelectedChanged={chainFunctions(
-        props.onSelectedChanged,
-        props.scroll !== 'none' ? scroll : undefined,
-      )}
-      style={combineStyles(props.style, ColumnStyles)()}
+      onSelectedChanged={
+        /* @once */ chainFunctions(
+          props.onSelectedChanged,
+          props.scroll !== 'none' ? scroll : undefined,
+        )
+      }
+      style={/* @once */ combineStyles(props.style, ColumnStyles)}
     />
   );
 };
