@@ -1,5 +1,5 @@
-import { isInteger, isArray, type Styles } from '@lightningtv/core';
-import { createMemo, untrack } from 'solid-js';
+import { isInteger, type Styles } from '@lightningtv/core';
+import { Accessor, createMemo } from 'solid-js';
 
 /**
  * Converts a color string to a color number value.
@@ -27,34 +27,19 @@ export function hexColor(color: string | number = ''): number {
 }
 
 export function combineStyles<T extends Styles>(
-  ...styles: (T | undefined)[]
-): T {
-  return untrack(() => flattenStyles(styles));
-}
-
-export function combineStylesReactive<T extends Styles>(
-  ...styles: (T | undefined)[]
-): T {
-  return createMemo(() => flattenStyles(styles))();
-}
-
-function flattenStyles<T extends Styles>(
-  obj: T | undefined | (T | undefined)[],
-  result: T = {} as T,
-): T {
-  if (isArray(obj)) {
-    obj.forEach((item) => {
-      flattenStyles(item, result);
-    });
-  } else if (obj) {
-    // handle the case where the object is not an array
-    for (const key in obj) {
-      // be careful of 0 values
-      if (result[key] === undefined) {
-        result[key as keyof Styles] = obj[key as keyof Styles]!;
-      }
-    }
+  style1: T | undefined,
+  style2: T | undefined,
+): Accessor<T> {
+  if (!style1) {
+    return () => style2!;
   }
 
-  return result;
+  if (!style2) {
+    return () => style1;
+  }
+
+  return createMemo(() => ({
+    ...style2,
+    ...style1,
+  }));
 }

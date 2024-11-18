@@ -43,7 +43,7 @@ export const Row: Component<RowProps> = (props) => {
         props.onSelectedChanged,
         props.scroll !== 'none' ? scroll : undefined,
       )}
-      style={combineStyles(props.style, RowStyles)}
+      style={combineStyles(props.style, RowStyles)()}
     />
   );
 };
