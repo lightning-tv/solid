@@ -1,4 +1,4 @@
-import { ElementNode, assertTruthy } from '@lightningtv/core';
+import { ElementNode, assertTruthy, Config } from '@lightningtv/core';
 import { type KeyHandler } from '@lightningtv/core/focusManager';
 import type { NavigableElement, OnSelectedChanged } from '../types.js';
 
@@ -67,7 +67,11 @@ export function handleNavigation(
 
     if (this.selected === -1) {
       this.selected = lastSelected;
-      if (this.children[this.selected]?.states!.has('$focus')) {
+      if (
+        this.children[this.selected]?.states!.has(
+          Config.focusStateKey || '$focus',
+        )
+      ) {
         // This child is already focused, so bubble up to next handler
         return false;
       }
