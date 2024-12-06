@@ -30,7 +30,8 @@
     "tsc": "tsc",
     "watch": "tsc -w",
     "prepare": "husky",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "release": "release-it --only-version"
   },
   "keywords": [
     "lightning",
@@ -58,6 +59,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
     "prettier": "^3.4.2",
+    "release-it": "^17.10.0",
     "solid-js": "^1.9.3",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.17.0"
