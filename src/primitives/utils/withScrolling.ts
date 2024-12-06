@@ -10,6 +10,7 @@ export interface ScrollableElement extends ElementNode {
   scrollIndex?: number;
   selected: number;
   offset?: number;
+  endOffset?: number;
   _targetPosition?: number;
   _screenOffset?: number;
 }
@@ -54,6 +55,12 @@ export function withScrolling(isRow: boolean) {
       lastSelected === undefined || lastSelected - 1 !== selected;
 
     if (componentRef._screenOffset === undefined) {
+      if (componentRef.parent!.clipping) {
+        const p = componentRef.parent!;
+        componentRef.endOffset =
+          screenSize - ((isRow ? p.absX : p.absY) || 0) - p[dimension];
+      }
+
       componentRef._screenOffset =
         componentRef.offset ??
         (isRow ? lng.absX : lng.absY) - componentRef[axis];
@@ -81,7 +88,10 @@ export function withScrolling(isRow: boolean) {
     const selectedSizeScaled = selectedSize * selectedScale;
     const containerSize = componentRef[dimension] ?? 0;
     const maxOffset = Math.min(
-      screenSize - containerSize - screenOffset - 2 * gap,
+      screenSize -
+        containerSize -
+        screenOffset -
+        (componentRef.endOffset || 2 * gap),
       offset,
     );
 
@@ -106,13 +116,18 @@ export function withScrolling(isRow: boolean) {
       // If at the last element, align to end
       nextPosition = isIncrementing ? maxOffset : offset;
     } else if (scroll === 'auto') {
-      if (
-        isIncrementing &&
-        componentRef.scrollIndex &&
-        componentRef.scrollIndex > 0
-      ) {
-        if (componentRef.selected >= componentRef.scrollIndex) {
+      if (componentRef.scrollIndex && componentRef.scrollIndex > 0) {
+        // Prevent scrolling if the selected item is within the last scrollIndex items
+        const totalItems = componentRef.children.length;
+        const nearEndIndex = totalItems - componentRef.scrollIndex;
+
+        if (
+          isIncrementing &&
+          componentRef.selected >= componentRef.scrollIndex
+        ) {
           nextPosition = rootPosition - selectedSize - gap;
+        } else if (!isIncrementing && componentRef.selected < nearEndIndex) {
+          nextPosition = rootPosition + selectedSize + gap;
         }
       } else if (isIncrementing) {
         nextPosition = -selectedPosition + offset;
