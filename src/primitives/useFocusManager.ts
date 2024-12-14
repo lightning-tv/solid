@@ -12,7 +12,7 @@ import {
   useFocusManager as useFocusManagerCore,
   type KeyMap,
   type KeyHoldOptions,
-  KeyPressOptions,
+  type KeyPressOptions,
 } from '@lightningtv/core/focusManager';
 import { activeElement, setActiveElement } from '../activeElement.js';
 
