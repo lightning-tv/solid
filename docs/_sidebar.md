@@ -26,9 +26,11 @@
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
+  - [Grid](/primitives/grid.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Dynamic](/primitives/dynamic.md)
   - [Mouse Input](/primitives/useMouse.md)
   - [Portal](/primitives/portal.md)
   - [Router](/primitives/router.md)
+  - [Row and Column](/primitives/row_column.md)
   - [Visible](/primitives/visible.md)
