@@ -12,7 +12,6 @@ import {
   useFocusManager as useFocusManagerCore,
   type KeyMap,
   type KeyHoldOptions,
-  type KeyPressOptions,
 } from '@lightningtv/core/focusManager';
 import { activeElement, setActiveElement } from '../activeElement.js';
 
@@ -21,7 +20,6 @@ export { focusPath };
 
 export const useFocusManager = (
   userKeyMap?: Partial<KeyMap>,
-  keyPressOptions?: KeyPressOptions,
   keyHoldOptions?: KeyHoldOptions,
 ) => {
   const owner = getOwner();
@@ -31,7 +29,6 @@ export const useFocusManager = (
 
   const { cleanup, focusPath: focusPathCore } = useFocusManagerCore({
     userKeyMap,
-    keyPressOptions,
     keyHoldOptions,
     ownerContext,
   });
