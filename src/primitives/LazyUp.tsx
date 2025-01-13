@@ -4,6 +4,7 @@ import {
   createMemo,
   createSignal,
   splitProps,
+  Show,
   type JSX,
   type ValidComponent,
 } from 'solid-js';
@@ -59,8 +60,10 @@ export function LazyUp<T extends readonly any[], U extends JSX.Element>(
   });
 
   return (
-    <Dynamic component={p.component} {...others} {...keyHandlers()}>
-      <Index each={items()} fallback={p.fallback} children={p.children} />
-    </Dynamic>
+    <Show when={items()}>
+      <Dynamic component={p.component} {...others} {...keyHandlers()}>
+        <Index each={items()} fallback={p.fallback} children={p.children} />
+      </Dynamic>
+    </Show>
   );
 }

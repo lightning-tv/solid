@@ -78,7 +78,12 @@ export function withScrolling(isRow: boolean) {
     componentRef.offset = componentRef.offset ?? rootPosition;
     const offset = componentRef.offset;
     selectedElement =
-      selectedElement || (componentRef.children[selected] as ElementNode);
+      selectedElement ||
+      (componentRef.children[selected] as ElementNode | undefined);
+
+    if (!selectedElement) {
+      return;
+    }
     const selectedPosition = selectedElement[axis] ?? 0;
     const selectedSize = selectedElement[dimension] ?? 0;
     const selectedScale =
