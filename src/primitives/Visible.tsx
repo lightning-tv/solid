@@ -1,47 +1,60 @@
 import {
-  ParentComponent,
-  ResolvedJSXElement,
-  createSignal,
-  onCleanup,
-  createRenderEffect,
+  DEV,
   children,
+  createMemo,
+  ChildrenReturn,
+  JSX,
+  untrack,
+  onCleanup,
   createRoot,
-  on,
 } from 'solid-js';
 import { ElementNode } from '@lightningtv/solid';
 
-type VisibleProps = {
-  when: boolean;
-};
-
-export const Visible: ParentComponent<VisibleProps> = (props) => {
-  const [current, setCurrent] = createSignal<{
-    disposer: VoidFunction;
-    childList: ResolvedJSXElement[];
-  }>();
-
-  createRenderEffect(
-    on(
-      () => props.when,
-      (condition) => {
-        if (condition && !current()) {
-          const root = createRoot((dispose) => ({
-            disposer: dispose,
-            childList: children(() => props.children).toArray(),
-          }));
-          setCurrent(root);
+export function Visible<T>(props: {
+  when: T | undefined | null | false;
+  keyed?: boolean;
+  fallback?: JSX.Element;
+  children: JSX.Element;
+}): JSX.Element {
+  let child: ChildrenReturn | undefined;
+  let disposer: VoidFunction | undefined;
+  const keyed = props.keyed;
+  const condition = createMemo<T | undefined | null | boolean>(
+    () => props.when,
+    undefined,
+    DEV
+      ? {
+          equals: (a, b) => (keyed ? a === b : !a === !b),
+          name: "condition"
         }
-        const isHidden = !condition;
-        current()?.childList.forEach((child) => {
-          if (child instanceof ElementNode) {
-            child.hidden = isHidden;
-          }
-        });
-      },
-    ),
+      : { equals: (a, b) => (keyed ? a === b : !a === !b) }
   );
 
-  onCleanup(() => current()?.disposer());
+  onCleanup(() => disposer?.());
 
-  return <>{current()?.childList}</>;
+
+  return createMemo(() => {
+    const c = condition();
+    const isKeyed = untrack(() => !!keyed);
+    if (isKeyed){
+      disposer?.();
+      child = undefined;
+    }
+
+    if (c && !child) {
+      disposer = createRoot((dispose) => {
+        child = children(() => props.children);
+        return dispose;
+      })
+    }
+
+    const isHidden = !c;
+    child?.toArray().forEach((childNode) => {
+      if (childNode instanceof ElementNode) {
+        childNode.hidden = isHidden;
+      }
+    });
+
+    return c ? child : props.fallback;
+  }) as unknown as JSX.Element;
 };
