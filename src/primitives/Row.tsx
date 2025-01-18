@@ -1,5 +1,5 @@
 import { type Component } from 'solid-js';
-import { combineStyles, type NodeStyles, View } from '@lightningtv/solid';
+import { combineStyles, type NodeStyles, View, type ElementNode } from '@lightningtv/solid';
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,
@@ -24,6 +24,12 @@ const onLeft = handleNavigation('left');
 const onRight = handleNavigation('right');
 const scroll = withScrolling(true);
 
+function scrollToIndex(this: ElementNode, index: number) {
+  this.selected = index;
+  scroll(index, this);
+  this.setFocus();
+}
+
 export const Row: Component<RowProps> = (props) => {
   return (
     <View
@@ -38,6 +44,7 @@ export const Row: Component<RowProps> = (props) => {
         )
       }
       forwardFocus={onGridFocus}
+      scrollToIndex={scrollToIndex}
       onLayout={
         /* @once */
         props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout

@@ -44,6 +44,10 @@ The `Row` component accepts the following props:
    - The `Row` applies default styles for a horizontal layout, with gaps between children and smooth transitions for position changes.
    - Custom styles can be merged using the `style` prop, which leverages the `combineStyles` utility.
 
+### scrollToIndex
+
+You can also `scrollToIndex` by using a ref to a Row or Column, simply `myRow.scrollToIndex(3)`
+
 #### Example Usage
 
 ```tsx
@@ -51,12 +55,18 @@ import { Row } from './Row';
 
 export const Example = () => {
   const items = ['Item 1', 'Item 2', 'Item 3'];
+  let myRow;
   const handleSelectionChange = (index: number) => {
     console.log('Selected index:', index);
   };
 
+  setTimeout(() => {
+    myRow.scrollToIndex(2);
+  }, 100);
+
   return (
     <Row
+      ref={myRow}
       selected={0}
       onSelectedChanged={handleSelectionChange}
       scroll="auto"
