@@ -21,7 +21,6 @@ export { focusPath };
 export const useFocusManager = (
   userKeyMap?: Partial<KeyMap>,
   keyHoldOptions?: KeyHoldOptions,
-  propagatedUpKeys?: string[],
 ) => {
   const owner = getOwner();
   const ownerContext = runWithOwner.bind(this, owner);
@@ -30,7 +29,6 @@ export const useFocusManager = (
 
   const { cleanup, focusPath: focusPathCore } = useFocusManagerCore({
     userKeyMap,
-    propagatedUpKeys,
     keyHoldOptions,
     ownerContext,
   });
