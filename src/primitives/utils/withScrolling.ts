@@ -21,23 +21,6 @@ const isNotShown = (node: ElementNode | ElementText) => {
   return node.lng.renderState !== InViewPort;
 };
 
-// clamp between maxOffset and 0
-const clampCenterScroll = (
-  center: number,
-  maxOffset: number,
-  offset: number,
-  axis: string,
-) => {
-  if (axis === 'x') {
-    return Math.min(Math.max(center, maxOffset), offset);
-  }
-  const clamped = Math.min(Math.max(center, maxOffset), offset);
-  console.log('CENTER', center);
-  console.log('MAX OFFSET', maxOffset);
-  console.log(clamped);
-  return clamped;
-};
-
 /*
   Auto Scrolling starts scrolling right away until the last item is shown. Keeping a full view of the list.
   Edge starts scrolling when it reaches the edge of the viewport.
@@ -135,7 +118,8 @@ export function withScrolling(isRow: boolean) {
         -selectedPosition +
         (screenSize - selectedSizeScaled) / 2 -
         screenOffset;
-      nextPosition = clampCenterScroll(centerPosition, maxOffset, offset, axis);
+      // clamp position to avoid going beyond bounds
+      nextPosition = Math.min(Math.max(centerPosition, maxOffset), offset);
     } else if (!nextElement) {
       // If at the last element, align to end
       nextPosition = isIncrementing ? maxOffset : offset;
