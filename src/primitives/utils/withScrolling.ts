@@ -20,7 +20,6 @@ const InViewPort = 8;
 const isNotShown = (node: ElementNode | ElementText) => {
   return node.lng.renderState !== InViewPort;
 };
-
 /*
   Auto Scrolling starts scrolling right away until the last item is shown. Keeping a full view of the list.
   Edge starts scrolling when it reaches the edge of the viewport.
@@ -150,15 +149,10 @@ export function withScrolling(isRow: boolean) {
     }
 
     // Prevent container from moving beyond bounds
-    console.log('PREDICTED POSITION');
-    console.log(nextPosition);
     nextPosition =
       isIncrementing && scroll !== 'always'
         ? Math.max(nextPosition, maxOffset)
         : Math.min(nextPosition, offset);
-
-    console.log('ACTUAL POSITION');
-    console.log(nextPosition);
 
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
