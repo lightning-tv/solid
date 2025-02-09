@@ -24,6 +24,9 @@
   - [Positioning and Layout](/flow/layout.md)
   - [Show / Hidding Elements](/flow/show_hide.md)
   - [Destroy Animations](/flow/ondestroy.md)
+- Build & Deploy
+  - [Legacy Devices](/deploy/legacy.md)
+  - [Tizen](/deploy/tizen.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
