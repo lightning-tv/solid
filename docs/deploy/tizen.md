@@ -45,6 +45,33 @@ For a fully deployed app, we're going to build our Lightning app and then put it
 
 This will build all the files and place them in the tizen folder (which should be a subfolder of your Lightning project). Once your app is built via vite, you can package your app using the Tizen tools. Right click on the tizen folder and select `Tizen: Run Project` which should package and run the application on your target TV device.
 
+Here is a sample config.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://yourdomain/Template01" version="0.2.1" viewmodes="maximized">
+   <name>Solid Demo App</name>
+   <icon src="icon.png"></icon>
+   <content src="index.html"></content>
+   <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"></feature>
+   <tizen:setting screen-orientation="landscape" context-menu="enable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"></tizen:setting>
+   <tizen:application id="bOtIKaCrZa.tizen" package="bOtIKaCrZa" required_version="2.3"></tizen:application>
+   <tizen:privilege name="http://tizen.org/privilege/application.launch"></tizen:privilege>
+   <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"></tizen:metadata>
+   <tizen:metadata key="http://tizen.org/metadata/app_ui_type/base_screen_resolution" value="extensive"></tizen:metadata>
+   <tizen:content-security-policy>
+   default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval';
+  style-src 'self' 'unsafe-inline';
+  object-src 'none';
+  connect-src 'self' https://api.themoviedb.org/3/;
+   </tizen:content-security-policy>
+   <tizen:profile name="tv"></tizen:profile>
+</widget>
+```
+
+Make sure you have an acceptable CSP policy to make sure you can access the API otherwise it will be blocked.
+
 ## Debugging Tizen Apps
 
 There is a **Debug Project** action available, which runs the app on a target device and launches your browser for debugging. However, older Tizen devices may have issues. In such cases, you may need an older browser version, available here: [Brave Browser v1.2.42](https://github.com/brave/brave-browser/releases/tag/v1.2.42). Note that it auto-updates, so you may need to reinstall often.
