@@ -57,19 +57,28 @@ When a key is pressed:
 2. It calls the `on${key}` handler first.
 3. If the key is not handled, it calls the generic `onKeyPress` on the active element and then propagates up through the focus path until the key press is handled.
 
-The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, finalFocusedElm) => boolean`
+The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, finalFocusedElm: ElementNode) => boolean`
 
 To stop the propagation of a key press, the handler must return `true`. Any other return value or no return value will continue to propagate the key press through the focus path, looking for additional handlers.
 
+### Key Release
+
+On release of a key:
+
+1. The `keyMap` looks for the key name and its corresponding value.
+2. It calls the `on${key}Release` handler first.
+
+Note: There is no generic `onKeyRelease`.
+
 ### Hold Key Handling
 
-By default only the Enter key is tracked for Hold. You can specify which keys you'd like tracked for Hold events as the second param to `useFocusManager`.
+You can specify which keys you'd like tracked for Hold events as the second param to `useFocusManager`.
 
 1. The `keyHoldMap` looks for the key name and its corresponding value.
-2. It calls the `on${keyHold}` handler first.
+2. It calls the `on${keyHold}` handler after `holdThreshold` || 500 ms.
 3. If the key is not handled, it calls the generic `onKeyHold` on the active element and then propagates up through the focus path until the key press is handled.
 
-The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, finalFocusedElm) => boolean`
+The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, finalFocusedElm: ElementNode) => boolean`
 
 To stop the propagation of a key press, the handler must return `true`. Any other return value or no return value will continue to propagate the key press through the focus path, looking for additional handlers.
 
@@ -108,13 +117,22 @@ import { useFocusManager } from '@lightningtv/solid';
 import { Button } from '@lightningjs/solid-ui';
 
 const App = () => {
-  const focusPath = useFocusManager({
-    Left: ['ArrowLeft', 37],
-    Right: ['ArrowRight', 39],
-    Up: ['ArrowUp', 38],
-    Down: ['ArrowDown', 40],
-    Enter: 'Enter',
-    Last: 'l',
+  useFocusManager({
+    Announcer: ["a"],
+    Menu: ["m"],
+    Escape: ["Escape", 27],
+    Backspace: ["Backspace", 8],
+    Left: ["ArrowLeft", 37],
+    Right: ["ArrowRight", 39],
+    Up: ["ArrowUp", 38],
+    Down: ["ArrowDown", 40],
+    Enter: ["Enter", 13],
+  } as unknown as KeyMap, {
+    userKeyHoldMap: {
+      EnterHold: [ 'Enter', 13 ],
+      BackHold: [ 'b', 66 ],
+    } as unknown as KeyHoldMap,
+    holdThreshold: 1000,
   });
 
   return (
