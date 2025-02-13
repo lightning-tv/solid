@@ -33,6 +33,8 @@ export const Grid = <T,>(props: {
       } else {
         setFocusedIndex(focusedIndex() % columns());
       }
+    } else {
+      return false;
     }
     const focusedElm = elm.children[focusedIndex()] as ElementNode;
     focusedElm.setFocus();
