@@ -1,25 +1,25 @@
-import { Component, ValidComponent, For, createSignal, createMemo } from "solid-js";
-import { View, Dynamic } from "@lightningtv/solid";
-import { createEffect } from "solid-js";
+import { ValidComponent, For, createSignal, createMemo } from "solid-js";
+import { View, Dynamic, type NodeProps, type ElementNode, isFunction } from "@lightningtv/solid";
 
-export const Grid: Component<{
+export const Grid = <T,>(props: {
   item: ValidComponent;
-  itemHeight: number;
-  itemWidth: number;
+  itemHeight?: number;
+  itemWidth?: number;
   itemOffset?: number;
-  items: Array<{ id: string }>;
+  items: T[];
   columns?: number;
   looping?: boolean;
-  refocusParent?: () => void;
-}> = props => {
-  const [focusedIndex, setFocusedIndex] = createSignal(0, { equals: false });
+  onSelectedChanged?: (index: number, grid: ElementNode, elm?: ElementNode) => void;
+} & NodeProps) => {
+  const [focusedIndex, setFocusedIndex] = createSignal(0);
   const baseColumns = 4;
 
   const columns = createMemo(() => props.columns || baseColumns);
-  const totalWidth = createMemo(() => (props.itemWidth || 300) + (props.itemOffset || 0));
-  const totalHeight = createMemo(() => (props.itemHeight || 300) + (props.itemOffset || 0));
+  const totalWidth = createMemo(() => (props.itemWidth ?? 300) + (props.itemOffset ?? 0));
+  const totalHeight = createMemo(() => (props.itemHeight ?? 300) + (props.itemOffset ?? 0));
 
-  const moveFocus = (delta: number) => {
+  const moveFocus = (delta: number, elm: ElementNode) => {
+    if (!props.items || props.items.length === 0) return false;
     const newIndex = focusedIndex() + delta;
 
     if (newIndex >= 0 && newIndex < props.items.length) {
@@ -27,69 +27,70 @@ export const Grid: Component<{
     } else if (props.looping) {
       const totalItems = props.items.length;
       if (delta < 0) {
-        // Handle wrap to the last row
-        const lastRowStart = totalItems - (totalItems % columns());
+        const lastRowStart = totalItems - (totalItems % columns()) || totalItems - columns();
         const target = lastRowStart + (focusedIndex() % columns());
         setFocusedIndex(target < totalItems ? target : target - columns());
       } else {
-        // Handle wrap to the first row
         setFocusedIndex(focusedIndex() % columns());
       }
-    } else if (props.refocusParent) {
-      props.refocusParent();
     }
+    const focusedElm = elm.children[focusedIndex()] as ElementNode;
+    focusedElm.setFocus();
+    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm,focusedIndex(), elm, focusedElm);
+    return true;
   };
 
-  const handleHorizontalFocus = (delta: number) => {
-    if (!props.items) {
-      return;
-    }
+  const handleHorizontalFocus = (delta: number, elm: ElementNode) => {
+    if (!props.items || props.items.length === 0) return false;
     const newIndex = focusedIndex() + delta;
     const isWithinRow = Math.floor(newIndex / columns()) === Math.floor(focusedIndex() / columns());
+
     if (newIndex >= 0 && newIndex < props.items.length && isWithinRow) {
       setFocusedIndex(newIndex);
     } else if (props.looping) {
       const rowStart = Math.floor(focusedIndex() / columns()) * columns();
-      const rowEnd = rowStart + columns() - 1;
-      setFocusedIndex(
-        delta > 0 ? (newIndex > rowEnd ? rowStart : newIndex) : newIndex < rowStart ? rowEnd : newIndex,
-      );
-    } else if (props.refocusParent) {
-      props.refocusParent();
+      const rowEnd = Math.min(rowStart + columns() - 1, props.items.length - 1);
+      setFocusedIndex(delta > 0 ? (newIndex > rowEnd ? rowStart : newIndex) : newIndex < rowStart ? rowEnd : newIndex);
+    } else {
+      return false;
     }
+    const focusedElm = elm.children[focusedIndex()] as ElementNode;
+    focusedElm.setFocus();
+    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm,focusedIndex(), elm, focusedElm);
+    return true;
   };
 
-  let gridRef;
-  createEffect(() => {
-    const index = focusedIndex();
-    gridRef!.children[index]?.setFocus();
-  });
+  function onFocus(this: ElementNode) {
+    handleHorizontalFocus(0, this);
+  }
+
+  const scrollY = createMemo(() => -Math.floor(focusedIndex() / columns()) * totalHeight() + (props.y || 0));
 
   return (
     <View
       {...props}
-      ref={gridRef}
-      onUp={() => moveFocus(-columns())}
-      onDown={() => moveFocus(columns())}
-      onLeft={() => handleHorizontalFocus(-1)}
-      onRight={() => handleHorizontalFocus(1)}
-      onFocus={() => handleHorizontalFocus(0)}
+      onUp={(_e, elm) => moveFocus(-columns(), elm)}
+      onDown={(_e, elm) => moveFocus(columns(), elm)}
+      onLeft={(_e, elm) => handleHorizontalFocus(-1, elm)}
+      onRight={(_e, elm) => handleHorizontalFocus(1, elm)}
+      onFocus={onFocus}
       strictBounds={false}
-      x={20}
-      y={-Math.floor(focusedIndex() / columns()) * totalHeight() + 20}
+      y={scrollY()}
       transition={{ y: true }}
     >
       <For each={props.items}>
-        {(item, index) => (
-          <Dynamic
-            component={props.item}
-            item={item}
-            x={(index() % columns()) * totalWidth()}
-            y={Math.floor(index() / columns()) * totalHeight()}
-            width={props.itemWidth}
-            height={props.itemHeight}
-          />
-        )}
+        {(item, index) => {
+          return (
+            <Dynamic
+              component={props.item}
+              item={item}
+              x={(index() % columns()) * totalWidth()}
+              y={Math.floor(index() / columns()) * totalHeight()}
+              width={props.itemWidth}
+              height={props.itemHeight}
+            />
+          );
+        }}
       </For>
     </View>
   );
