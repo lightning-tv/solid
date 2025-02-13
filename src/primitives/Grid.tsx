@@ -82,12 +82,12 @@ export const Grid = <T,>(props: {
         {(item, index) => {
           return (
             <Dynamic
+              {...item}
               component={props.item}
-              item={item}
-              x={(index() % columns()) * totalWidth()}
-              y={Math.floor(index() / columns()) * totalHeight()}
               width={props.itemWidth}
               height={props.itemHeight}
+              x={(index() % columns()) * totalWidth()}
+              y={Math.floor(index() / columns()) * totalHeight()}
             />
           );
         }}
