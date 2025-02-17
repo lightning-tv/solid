@@ -113,10 +113,12 @@ export function withScrolling(isRow: boolean) {
     } else if (scroll === 'always') {
       nextPosition = -selectedPosition + offset;
     } else if (scroll === 'center') {
-      nextPosition =
+      const centerPosition =
         -selectedPosition +
         (screenSize - selectedSizeScaled) / 2 -
         screenOffset;
+      // clamp position to avoid going beyond bounds
+      nextPosition = Math.min(Math.max(centerPosition, maxOffset), offset);
     } else if (!nextElement) {
       // If at the last element, align to end
       nextPosition = isIncrementing ? maxOffset : offset;
