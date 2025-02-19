@@ -1,7 +1,7 @@
 import { renderer, type TextureMap } from '@lightningtv/core';
 
 export interface SpriteDef {
-  name: string;
+  name: string | number;
   x: number;
   y: number;
   width: number;
