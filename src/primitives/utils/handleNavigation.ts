@@ -2,30 +2,27 @@ import { ElementNode, assertTruthy, Config } from '@lightningtv/core';
 import { type KeyHandler } from '@lightningtv/core/focusManager';
 import type { NavigableElement, OnSelectedChanged } from '../types.js';
 
-export function onGridFocus(this: ElementNode) {
-  if (!this || this.children.length === 0) return false;
+export function onGridFocus(onSelectedChanged: OnSelectedChanged | undefined) {
+  return function (this: ElementNode) {
+    if (!this || this.children.length === 0) return false;
 
-  this.selected = this.selected || 0;
-  let child = this.selected ? this.children[this.selected] : this.selectedNode;
+    this.selected = this.selected || 0;
+    let child = this.selected
+      ? this.children[this.selected]
+      : this.selectedNode;
 
-  while (child?.skipFocus) {
-    this.selected++;
-    child = this.children[this.selected];
-  }
-  if (!(child instanceof ElementNode)) return false;
-  child.setFocus();
-  return true;
-}
+    while (child?.skipFocus) {
+      this.selected++;
+      child = this.children[this.selected];
+    }
+    if (!(child instanceof ElementNode)) return false;
+    child.setFocus();
 
-// Converts params from onFocus to onSelectedChanged
-export function handleOnSelect(onSelectedChanged: OnSelectedChanged) {
-  return function (this: NavigableElement) {
-    return onSelectedChanged.call(
-      this,
-      this.selected,
-      this,
-      this.children[this.selected] as ElementNode,
-    );
+    if (onSelectedChanged) {
+      const grid = this as NavigableElement;
+      onSelectedChanged.call(grid, grid.selected, grid, child);
+    }
+    return true;
   };
 }
 

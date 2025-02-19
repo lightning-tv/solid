@@ -3,7 +3,6 @@ import { combineStyles, type NodeStyles, View, type ElementNode } from '@lightni
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,
-  handleOnSelect,
   onGridFocus,
 } from './utils/handleNavigation.js';
 import { withScrolling } from './utils/withScrolling.js';
@@ -37,13 +36,7 @@ export const Row: Component<RowProps> = (props) => {
       selected={props.selected || 0}
       onLeft={/* @once */ chainFunctions(props.onLeft, onLeft)}
       onRight={/* @once */ chainFunctions(props.onRight, onRight)}
-      onFocus={
-        /* @once */ chainFunctions(
-          props.onFocus,
-          props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
-        )
-      }
-      forwardFocus={onGridFocus}
+      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
       scrollToIndex={scrollToIndex}
       onLayout={
         /* @once */

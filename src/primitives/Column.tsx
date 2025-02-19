@@ -3,7 +3,6 @@ import { ElementNode, View, combineStyles, type NodeStyles } from '@lightningtv/
 import {
   handleNavigation,
   onGridFocus,
-  handleOnSelect,
 } from './utils/handleNavigation.js';
 import { withScrolling } from './utils/withScrolling.js';
 import { chainFunctions } from './utils/chainFunctions.js';
@@ -39,13 +38,7 @@ export const Column: Component<ColumnProps> = (props) => {
       onDown={/* @once */ chainFunctions(props.onDown, onDown)}
       selected={props.selected || 0}
       scrollToIndex={scrollToIndex}
-      forwardFocus={onGridFocus}
-      onFocus={
-        /* @once */ chainFunctions(
-          props.onFocus,
-          props.onSelectedChanged && handleOnSelect(props.onSelectedChanged),
-        )
-      }
+      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
       onLayout={
         /* @once */
         props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
