@@ -9,6 +9,7 @@ export const Grid = <T,>(props: {
   items: T[];
   columns?: number;
   looping?: boolean;
+  scroll?: "auto" | "none";
   onSelectedChanged?: (index: number, grid: ElementNode, elm?: ElementNode) => void;
 } & NodeProps) => {
   const [focusedIndex, setFocusedIndex] = createSignal(0);
@@ -38,7 +39,7 @@ export const Grid = <T,>(props: {
     }
     const focusedElm = elm.children[focusedIndex()] as ElementNode;
     focusedElm.setFocus();
-    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm,focusedIndex(), elm, focusedElm);
+    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm, focusedIndex(), elm, focusedElm);
     return true;
   };
 
@@ -58,7 +59,7 @@ export const Grid = <T,>(props: {
     }
     const focusedElm = elm.children[focusedIndex()] as ElementNode;
     focusedElm.setFocus();
-    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm,focusedIndex(), elm, focusedElm);
+    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm, focusedIndex(), elm, focusedElm);
     return true;
   };
 
@@ -66,10 +67,13 @@ export const Grid = <T,>(props: {
     handleHorizontalFocus(0, this);
   }
 
-  const scrollY = createMemo(() => -Math.floor(focusedIndex() / columns()) * totalHeight() + (props.y || 0));
+  const scrollY = createMemo(() =>
+    props.scroll === "none" ? props.y ?? 0 : -Math.floor(focusedIndex() / columns()) * totalHeight() + (props.y || 0)
+  );
 
   return (
     <View
+      transition={{ y: true }}
       {...props}
       onUp={(_e, elm) => moveFocus(-columns(), elm)}
       onDown={(_e, elm) => moveFocus(columns(), elm)}
@@ -78,24 +82,20 @@ export const Grid = <T,>(props: {
       onFocus={onFocus}
       strictBounds={false}
       y={scrollY()}
-      transition={{ y: true }}
     >
       <For each={props.items}>
-        {(item, index) => {
-          return (
-            <Dynamic
-              {...item}
-              component={props.item}
-              width={props.itemWidth}
-              height={props.itemHeight}
-              x={(index() % columns()) * totalWidth()}
-              y={Math.floor(index() / columns()) * totalHeight()}
-            />
-          );
-        }}
+        {(item, index) => (
+          <Dynamic
+            {...item}
+            component={props.item}
+            width={props.itemWidth}
+            height={props.itemHeight}
+            x={(index() % columns()) * totalWidth()}
+            y={Math.floor(index() / columns()) * totalHeight()}
+          />
+        )}
       </For>
     </View>
   );
 };
 
-export default Grid;
