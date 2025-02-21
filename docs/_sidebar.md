@@ -30,6 +30,7 @@
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
+  - [Focus Stack](/primitives/createFocusStack.md)
   - [Grid](/primitives/grid.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Dynamic](/primitives/dynamic.md)
