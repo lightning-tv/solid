@@ -17,8 +17,8 @@
  * - `restoreFocus()`: Restores focus to the last stored element and removes it from the stack. Returns `true` if successful, `false` otherwise.
  * - `clearFocusStack()`: Empties the focus stack.
  */
-import { createSignal, createContext, useContext, untrack, JSX } from 'solid-js';
-import { activeElement, type ElementNode } from '@lightningtv/solid';
+import { createSignal, createContext, useContext, JSX } from 'solid-js';
+import { type ElementNode } from '@lightningtv/solid';
 
 interface FocusStackContextType {
   storeFocus: (element: ElementNode, prevElement?: ElementNode) => void;
@@ -32,11 +32,7 @@ export function FocusStackProvider(props: { children: JSX.Element}) {
   const [_focusStack, setFocusStack] = createSignal<ElementNode[]>([]);
 
   function storeFocus(element: ElementNode, prevElement?: ElementNode) {
-    if (prevElement && untrack(activeElement) !== prevElement) {
-      setFocusStack((stack) => [...stack, prevElement]);
-    } else if (element && untrack(activeElement) !== element) {
-      setFocusStack((stack) => [...stack, element]);
-    }
+    setFocusStack((stack) => [...stack, prevElement || element]);
   }
 
   function restoreFocus(): boolean {

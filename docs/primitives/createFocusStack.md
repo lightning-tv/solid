@@ -23,16 +23,20 @@ Wrap your application in the `FocusStackProvider` to provide focus management:
 </FocusStackProvider>
 ```
 
+or
+
+```tsx
+<FocusStackProvider>
+  <HashRouter>...</HashRouter>
+</FocusStackProvider>
+```
+
 ### Storing and Restoring Focus
 
 In your Pages and components:
 
 ```tsx
 const { storeFocus, restoreFocus, clearFocusStack } = useFocusStack();
-
-function handleFocus(element) {
-  storeFocus(element);
-}
 
 function handleBack() {
   if (!restoreFocus()) {
@@ -43,6 +47,8 @@ function handleBack() {
 function resetFocusStack() {
   clearFocusStack();
 }
+
+<View forwardFocus={restoreFocus} onBlur={storeFocus}>
 ```
 
 ## API
