@@ -1,6 +1,6 @@
 {
   "name": "@lightningtv/solid",
-  "version": "2.7.5",
+  "version": "2.7.6-0",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "source": "src/index.ts",
