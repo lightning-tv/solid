@@ -27,7 +27,7 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
   props: LazyProps<T, U>,
   keyHandler: (updateOffset: () => void) => Record<string, () => void>
 ) {
-  const [offset, setOffset] = createSignal(props.upCount || 1);
+  const [offset, setOffset] = createSignal(1);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   createEffect(() => setOffset(props.selected || 0));
@@ -47,6 +47,8 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
         loadItems();
       }
     });
+  } else {
+    setOffset(props.upCount);
   }
 
   const items = createMemo(() => (Array.isArray(props.each) ? props.each.slice(0, offset()) : []));
