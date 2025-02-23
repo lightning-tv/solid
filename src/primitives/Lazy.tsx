@@ -18,7 +18,7 @@ type LazyProps<T extends readonly any[], U extends JSX.Element> = ElementNode & 
   component?: ValidComponent;
   upCount: number;
   delay?: number;
-  async?: boolean;
+  sync?: boolean;
   children: (item: T[number], index: number) => U;
 };
 
@@ -27,12 +27,12 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
   props: LazyProps<T, U>,
   keyHandler: (updateOffset: () => void) => Record<string, () => void>
 ) {
-  const [offset, setOffset] = createSignal(0);
+  const [offset, setOffset] = createSignal(props.upCount || 1);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   createEffect(() => setOffset(props.selected || 0));
 
-  if (props.async) {
+  if (!props.sync && props.async !== false) {
     createEffect(() => {
       if (props.each) {
         let count = untrack(offset);
