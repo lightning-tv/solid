@@ -4,7 +4,6 @@ import {
   createMemo,
   createSignal,
   Show,
-  onCleanup,
   type JSX,
   type ValidComponent,
   untrack,
@@ -60,12 +59,14 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
     if (timeoutId) clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
       setOffset((prev) => Math.min(prev + 1, maxOffset));
+      timeoutId = null;
     }, props.delay ?? 0);
   };
 
-  onCleanup(() => {
-    if (timeoutId) clearTimeout(timeoutId);
-  });
+  // Don't need to cleanup because unluckly the timeout didnt finish
+  // onCleanup(() => {
+  //   if (timeoutId) clearTimeout(timeoutId);
+  // });
 
   return (
     <Show when={items().length > 0} fallback={props.fallback}>
