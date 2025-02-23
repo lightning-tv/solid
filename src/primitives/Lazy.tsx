@@ -32,7 +32,7 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
 
   createEffect(() => setOffset(props.selected || 0));
 
-  if (!props.sync && props.async !== false) {
+  if (props.sync !== true) {
     createEffect(() => {
       if (props.each) {
         let count = untrack(offset);
@@ -40,7 +40,7 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
         const loadItems = () => {
           if (count < props.upCount) {
             setOffset(count + 1);
-            timeoutId = setTimeout(loadItems, 1);
+            timeoutId = setTimeout(loadItems, 16); // ~30fps
             count++;
           }
         };
