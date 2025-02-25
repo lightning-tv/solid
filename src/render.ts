@@ -11,12 +11,13 @@ import nodeOpts from './solidOpts.js';
 import {
   splitProps,
   createMemo,
+  createRenderEffect,
   untrack,
   type JSXElement,
   type ValidComponent,
 } from 'solid-js';
 import type { SolidNode } from './types.js';
-import { setActiveElement } from './activeElement.js';
+import { activeElement, setActiveElement } from './activeElement.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
@@ -40,6 +41,11 @@ export function createRenderer(
   Config.setActiveElement = setActiveElement;
   rootNode.lng = renderer.root!;
   rootNode.rendered = true;
+  renderer.on('idle', () => {
+    tasksEnabled = true;
+    processTasks();
+  });
+
   return {
     renderer,
     rootNode,
@@ -60,6 +66,45 @@ export const {
   mergeProps,
   use,
 } = solidRenderer;
+
+type Task = () => void;
+const taskQueue: Task[] = [];
+let tasksEnabled = false;
+
+createRenderEffect(() => {
+  // should change whenever a keypress occurs, so we disable the task queue
+  // until the renderer is idle again.
+  activeElement();
+  tasksEnabled = false;
+});
+
+export function clearTasks(): void {
+  taskQueue.length = 0;
+}
+
+export function scheduleTask(
+  callback: Task,
+  priority: 'high' | 'low' = 'low',
+): void {
+  if (priority === 'high') {
+    taskQueue.unshift(callback);
+  } else {
+    taskQueue.push(callback);
+  }
+  processTasks();
+}
+
+function processTasks(): void {
+  if (tasksEnabled && taskQueue.length) {
+    setTimeout(() => {
+      const task = taskQueue.shift();
+      if (task) {
+        task();
+        processTasks();
+      }
+    }, 0);
+  }
+}
 
 /**
  * renders an arbitrary custom or native component and passes the other props
