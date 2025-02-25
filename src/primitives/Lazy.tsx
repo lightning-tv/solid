@@ -14,7 +14,6 @@ import { Row, Column } from '@lightningtv/solid/primitives';
 type LazyProps<T extends readonly any[], U extends JSX.Element> = ElementNode & {
   each: T | undefined | null | false;
   fallback?: JSX.Element;
-  component?: ValidComponent;
   upCount: number;
   delay?: number;
   sync?: boolean;

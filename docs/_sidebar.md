@@ -32,6 +32,7 @@
   - [Focus Manager](/primitives/useFocusManager.md)
   - [Focus Stack](/primitives/createFocusStack.md)
   - [Grid](/primitives/grid.md)
+  - [Lazy Row and Column](/primitives/lazy.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Dynamic](/primitives/dynamic.md)
   - [Mouse Input](/primitives/useMouse.md)

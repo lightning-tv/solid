@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Please use [Lazy Row and Column](/primitives/lazy.md) component instead.
+
 ## LazyUp Primitive
 
 `LazyUp` is a component designed to lazy render a list of items. Given a row of items which extends off the page, you can set an upCount equal to the number of visible rows or items that are visible on the screen. As the user presses Right or Down, a new item will be rendered to the screen for each keypress. The LazyUp is essentially a `<For>` loop which takes your items array and slices it to upCount, adding one item at a time as the user needs it. This reduces the number of items needed to be created at once speeding up page loads.
