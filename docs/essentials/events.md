@@ -54,10 +54,29 @@ In addition to the lifecycle events from SolidJS, the Lightning Renderer offers 
 
 - **`loaded`**: Fired when the element has successfully loaded.
 - **`failed`**: Fired when the element fails to load.
-- **`freed`**: Fired when the element freed for memory.
+- **`freed`**: Fired when the element is freed for memory.
 - **`inBounds`**: Fired when the element enters the bounds of the visible screen area.
 - **`outOfBounds`**: Fired when the element leaves the visible screen area.
 - **`inViewport`**: Fired when the element enters the viewport (the portion of the screen where content is visible).
 - **`outOfViewport`**: Fired when the element leaves the viewport.
 
 These additional events provide control over element state and position within the Lightning Renderer, allowing you to react to changes such as visibility or load state with custom logic.
+
+## Emitting Custom Events with `emit`
+
+In addition to handling events, components can trigger their own custom events using the `emit` method. This method allows components to communicate with their ancestors by dispatching an event up the hierarchy.
+
+### Usage Example:
+
+```jsx
+nodeRef.emit('customEvent', { message: 'Hello, world!' });
+// function triggerCallback(this: MyComponent, nodeRef, payload) {
+
+<MyComponent onCustomEvent={triggerCallback} />;
+```
+
+### How `emit` Works:
+
+1. It starts at the current component and looks for a handler named `onCustomEvent` (where `CustomEvent` is capitalized).
+2. If a handler exists and returns `true`, the event stops propagating.
+3. Otherwise, it continues up the component tree until it reaches the root or finds a handler that returns `true`.
