@@ -8,27 +8,29 @@ import {
   type ValidComponent,
   untrack,
 } from 'solid-js';
-import { Dynamic, type ElementNode } from '@lightningtv/solid';
+import { Dynamic, type NodeProps } from '@lightningtv/solid';
 import { Row, Column } from '@lightningtv/solid/primitives';
 
-type LazyProps<T extends readonly any[], U extends JSX.Element> = ElementNode & {
+type LazyProps<T extends readonly any[]> = Omit<NodeProps, 'children'> & {
   each: T | undefined | null | false;
   fallback?: JSX.Element;
   upCount: number;
   delay?: number;
   sync?: boolean;
-  children: (item: T[number], index: number) => U;
+  selected?: number;
+  children: (item: T[number], index: number) => JSX.Element;
 };
 
-function createLazy<T extends readonly any[], U extends JSX.Element>(
+function createLazy<T extends readonly any[]>(
   component: ValidComponent,
-  props: LazyProps<T, U>,
+  props: LazyProps<T>,
   keyHandler: (updateOffset: () => void) => Record<string, () => void>
 ) {
-  const [offset, setOffset] = createSignal(0);
+  // Need at least one item so it can be focused
+  const [offset, setOffset] = createSignal(1);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  createEffect(() => setOffset(props.selected || 0));
+  createEffect(() => setOffset(props.selected || 1));
 
   if (props.sync !== true) {
     createEffect(() => {
@@ -68,7 +70,7 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
   // });
 
   return (
-    <Show when={items().length > 0} fallback={props.fallback}>
+    <Show when={items()} fallback={props.fallback}>
       <Dynamic component={component} {...props} {...keyHandler(updateOffset)}>
         <Index each={items()} children={props.children} />
       </Dynamic>
@@ -76,10 +78,10 @@ function createLazy<T extends readonly any[], U extends JSX.Element>(
   );
 }
 
-export function LazyRow<T extends readonly any[], U extends JSX.Element>(props: LazyProps<T, U>) {
+export function LazyRow<T extends readonly any[]>(props: LazyProps<T>) {
   return createLazy(Row, props, (updateOffset) => ({ onRight: updateOffset }));
 }
 
-export function LazyColumn<T extends readonly any[], U extends JSX.Element>(props: LazyProps<T, U>) {
+export function LazyColumn<T extends readonly any[]>(props: LazyProps<T>) {
   return createLazy(Column, props, (updateOffset) => ({ onDown: updateOffset }));
 }
