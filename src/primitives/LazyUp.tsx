@@ -41,9 +41,11 @@ export function LazyUp<T extends readonly any[], U extends JSX.Element>(
     }
   });
 
+  console.log('LazyUp is deprecated. Please use LazyRow or LazyColumn instead.');
+
   const isRow = createMemo(() => {
     return (
-      others.direction === 'row' ||
+      others.direction !== undefined && others.direction === 'row' ||
       others.style?.flexDirection === 'row' ||
       others.flexDirection === 'row'
     );
