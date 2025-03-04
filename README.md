@@ -10,7 +10,7 @@ Is a UI framework for [Lightning 3 Renderer](https://lightningjs.io/) built with
 
 [ConnectedTV Dev](https://lightningtv.dev/)
 
-Join the [SolidJS Discord](https://discord.gg/gXQRQqBu) - #Lightning TV channel and message chiefcll
+Join the [SolidJS Discord](https://discord.com/invite/solidjs) - #Lightning TV channel and message chiefcll
 
 ## Documentation
 

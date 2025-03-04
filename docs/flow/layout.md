@@ -45,6 +45,7 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 
 - **`alignItems`**: 'flexStart' | 'flexEnd' | 'center'
 - **`display`**: 'flex' | 'block' (to disable flex on Row & Column)
+- **`direction`**: 'ltr' | 'rtl' display items from left to right or right to left. ltr is the default.
 - **`flexDirection`**: 'row' | 'column'
 - **`flexBoundary`**: 'contain' | 'fixed' (Default updates container size based on children size with `justifyContent: flexStart | flexEnd`. Set to `fixed` to use parent width when width isn't set.)
 - **`flexItem`**: boolean (Set to `false` on a child to exclude it from flex calculations.)
