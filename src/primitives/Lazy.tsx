@@ -71,7 +71,7 @@ function createLazy<T extends readonly any[]>(
 
   return (
     <Show when={items()} fallback={props.fallback}>
-      <Dynamic component={component} {...props} {...keyHandler(updateOffset)}>
+      <Dynamic component={component} {...props} {/* @once */ ...keyHandler(updateOffset)}>
         <Index each={items()} children={props.children} />
       </Dynamic>
     </Show>
