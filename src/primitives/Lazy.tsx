@@ -69,9 +69,11 @@ function createLazy<T extends readonly any[]>(
   //   if (timeoutId) clearTimeout(timeoutId);
   // });
 
+  const handler = keyHandler(updateOffset);
+
   return (
     <Show when={items()} fallback={props.fallback}>
-      <Dynamic component={component} {...props} {/* @once */ ...keyHandler(updateOffset)}>
+      <Dynamic component={component} {...props} {/* @once */ ...handler}>
         <Index each={items()} children={props.children} />
       </Dynamic>
     </Show>
