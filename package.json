@@ -8,12 +8,12 @@
   "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
     },
     "./primitives": {
-      "types": "./src/primitives/index.ts",
-      "import": "./src/primitives/index.ts"
+      "types": "./dist/src/primitives/index.d.ts",
+      "import": "./dist/src/primitives/index.js"
     }
   },
   "sideEffects": false,
