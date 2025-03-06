@@ -10,6 +10,7 @@ export * from './router.js';
 export * from './Column.jsx';
 export * from './Row.jsx';
 export * from './Grid.jsx';
+export * from './FPSCounter.jsx';
 export * from './createFocusStack.jsx';
 export { withScrolling } from './utils/withScrolling.js';
 export { chainFunctions } from './utils/chainFunctions.js';
