@@ -2,9 +2,9 @@
   <img src="https://assets.solidjs.com/banner?project=Library&type=@lightningtv/solid" alt="SolidJS Lightning" />
 </p>
 
-# SolidJS Lightning
+# SolidJS for LightningJS
 
-Is a UI framework for [Lightning 3 Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
+Is a UI framework for [LightningJS 3 Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, with incredible performance.
 
 ## Need Support?
 
