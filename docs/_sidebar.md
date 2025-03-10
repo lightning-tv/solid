@@ -20,7 +20,7 @@
   - [States](/essentials/states.md)
   - [Transitions (animations)](/essentials/transitions.md)
   - [Screen Resolution](/essentials/screen_resolution.md)
-  - [Task Scheduler](/essentials/taskschedular.md)
+  - [Task Scheduler](/essentials/taskscheduler.md)
 - Control Flow
   - [Positioning and Layout](/flow/layout.md)
   - [Show / Hidding Elements](/flow/show_hide.md)
