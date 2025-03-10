@@ -78,6 +78,10 @@ createRenderEffect(() => {
   tasksEnabled = false;
 });
 
+export function setTasksEnabled(enabled: boolean): void {
+  tasksEnabled = enabled;
+}
+
 export function clearTasks(): void {
   taskQueue.length = 0;
 }
@@ -102,7 +106,7 @@ function processTasks(): void {
         task();
         processTasks();
       }
-    }, 0);
+    }, Config.taskDelay || 50);
   }
 }
 

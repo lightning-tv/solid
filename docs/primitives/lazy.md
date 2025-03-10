@@ -28,6 +28,7 @@ import { LazyRow } from '@lightningtv/solid/primitives';
 - **upCount** (`number`): Number of items to render initially.
 - **delay** (`number`): Delay in milliseconds before loading additional items (default: `0`).
 - **sync** (`boolean`): If `true`, preloads `upCount` items immediately instead of incrementally loading.
+- **eagerLoad** (`boolean`): If `true`, loads all the items after upCount using scheduleTask.
 - **children** (`(item: T[number], index: number) => JSX.Element`): A function that returns a JSX element for each item.
 
 ### Performance Optimization

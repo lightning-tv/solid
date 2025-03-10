@@ -8,7 +8,7 @@ import {
   type ValidComponent,
   untrack,
 } from 'solid-js';
-import { Dynamic, type NodeProps } from '@lightningtv/solid';
+import { Dynamic, scheduleTask, type NodeProps } from '@lightningtv/solid';
 import { Row, Column } from '@lightningtv/solid/primitives';
 
 type LazyProps<T extends readonly any[]> = Omit<NodeProps, 'children'> & {
@@ -17,6 +17,7 @@ type LazyProps<T extends readonly any[]> = Omit<NodeProps, 'children'> & {
   upCount: number;
   delay?: number;
   sync?: boolean;
+  eagerLoad?: boolean;
   selected?: number;
   children: (item: T[number], index: number) => JSX.Element;
 };
@@ -32,7 +33,9 @@ function createLazy<T extends readonly any[]>(
 
   createEffect(() => setOffset(props.selected || 1));
 
-  if (props.sync !== true) {
+  if (props.sync) {
+    setOffset(props.upCount);
+  } else {
     createEffect(() => {
       if (props.each) {
         let count = untrack(offset);
@@ -40,15 +43,18 @@ function createLazy<T extends readonly any[]>(
         const loadItems = () => {
           if (count < props.upCount) {
             setOffset(count + 1);
-            timeoutId = setTimeout(loadItems, 16); // ~30fps
+            timeoutId = setTimeout(loadItems, 16); // ~60fps
             count++;
+          } else if (props.eagerLoad) {
+            const maxOffset = props.each ? props.each.length - 1 : 0;
+            if (offset() >= maxOffset) return;
+            setOffset((prev) => Math.min(prev + 1, maxOffset));
+            scheduleTask(loadItems);
           }
         };
         loadItems();
       }
     });
-  } else {
-    setOffset(props.upCount);
   }
 
   const items = createMemo(() => (Array.isArray(props.each) ? props.each.slice(0, offset()) : []));
@@ -63,11 +69,6 @@ function createLazy<T extends readonly any[]>(
       timeoutId = null;
     }, props.delay ?? 0);
   };
-
-  // Don't need to cleanup because unluckly the timeout didnt finish
-  // onCleanup(() => {
-  //   if (timeoutId) clearTimeout(timeoutId);
-  // });
 
   const handler = keyHandler(updateOffset);
 

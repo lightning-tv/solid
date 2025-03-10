@@ -29,4 +29,8 @@ declare module '@lightningtv/core' {
   interface TextProps {
     children?: string | string[] | undefined;
   }
+
+  interface Config {
+    taskDelay?: number;
+  }
 }
