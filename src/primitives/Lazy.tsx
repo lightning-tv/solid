@@ -46,8 +46,8 @@ function createLazy<T extends readonly any[]>(
             timeoutId = setTimeout(loadItems, 16); // ~60fps
             count++;
           } else if (props.eagerLoad) {
-            const maxOffset = props.each ? props.each.length - 1 : 0;
-            if (offset() >= maxOffset) return;
+            const maxOffset = props.each ? props.each.length : 0;
+            if (offset() > maxOffset) return;
             setOffset((prev) => Math.min(prev + 1, maxOffset));
             scheduleTask(loadItems);
           }
@@ -60,8 +60,8 @@ function createLazy<T extends readonly any[]>(
   const items = createMemo(() => (Array.isArray(props.each) ? props.each.slice(0, offset()) : []));
 
   const updateOffset = () => {
-    const maxOffset = props.each ? props.each.length - 1 : 0;
-    if (offset() >= maxOffset) return;
+    const maxOffset = props.each ? props.each.length : 0;
+    if (offset() > maxOffset) return;
 
     if (timeoutId) clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
