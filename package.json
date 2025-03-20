@@ -43,7 +43,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/core": "^2.7.5",
+    "@lightningtv/core": "^3.0.0-0",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/mouse": "^2.0.20",
     "@solid-primitives/scheduled": "^1.4.4"
@@ -72,7 +72,7 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningjs/renderer": "^2.6.0",
+    "@lightningjs/renderer": "^3.0.0-beta3",
     "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },

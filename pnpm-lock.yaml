@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@lightningjs/renderer':
-        specifier: ^2.6.0
-        version: 2.6.2
+        specifier: ^3.0.0-beta3
+        version: 3.0.0-beta3
       '@lightningtv/core':
-        specifier: ^2.7.5
-        version: 2.7.5(@lightningjs/renderer@2.6.2)
+        specifier: ^3.0.0-0
+        version: 3.0.0-0(@lightningjs/renderer@3.0.0-beta3)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -141,14 +141,14 @@ packages:
     resolution: {integrity: sha512-tKd+jsmhq21AP1LhexC0pPwsCxEhGgAkg28byjJAd+xhmIs8LUX8JbUc3vBf3PhLxWiB5EvyBE5X7JSPAqMAqg==}
     engines: {node: '>=18'}
 
-  '@lightningjs/renderer@2.6.2':
-    resolution: {integrity: sha512-agu9jV8hhbF/Ld8BJSogOJIQZBoSUzow+3BtP4NptqC3l1aV6RQr1rwpXQF12ITYjUi3CrfA7eV76GIiLAkOAA==}
-    engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
+  '@lightningjs/renderer@3.0.0-beta3':
+    resolution: {integrity: sha512-zesySXNd4TVVegR2qd3Ps8KPjN93NUo035AXji0p4pPmPLJHr/ZDD/S1cmxbRMW33FI9FpDzGIzoWo8pcwpuPA==}
+    engines: {node: '>= 18.0.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.7.5':
-    resolution: {integrity: sha512-GKWM1yfzzxNB7mV0+X80rTVIoOqQrAEDlaaQnsAg05bT4H+4M9t5Y3vvekRV73YRcACZF9wGPiXeTNI7lqnvIQ==}
+  '@lightningtv/core@3.0.0-0':
+    resolution: {integrity: sha512-X3hpsE39AJeemAu/VGL8BneeYtY6a33PnyhBBgeSHUBZ4UvImxwZ5d33sp6BZY8xyD7XmB8zpx7Jm4MfJ/88Rg==}
     peerDependencies:
-      '@lightningjs/renderer': ^2.13.0
+      '@lightningjs/renderer': ^3.0.0-beta3
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1666,11 +1666,11 @@ snapshots:
 
   '@inquirer/figures@1.0.8': {}
 
-  '@lightningjs/renderer@2.6.2': {}
+  '@lightningjs/renderer@3.0.0-beta3': {}
 
-  '@lightningtv/core@2.7.5(@lightningjs/renderer@2.6.2)':
+  '@lightningtv/core@3.0.0-0(@lightningjs/renderer@3.0.0-beta3)':
     dependencies:
-      '@lightningjs/renderer': 2.6.2
+      '@lightningjs/renderer': 3.0.0-beta3
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
