@@ -7,6 +7,7 @@ import {
   type JSX,
   type ValidComponent,
   untrack,
+  type Accessor,
 } from 'solid-js';
 import { Dynamic, scheduleTask, type NodeProps } from '@lightningtv/solid';
 import { Row, Column } from '@lightningtv/solid/primitives';
@@ -19,12 +20,12 @@ type LazyProps<T extends readonly any[]> = Omit<NodeProps, 'children'> & {
   sync?: boolean;
   eagerLoad?: boolean;
   selected?: number;
-  children: (item: T[number], index: number) => JSX.Element;
+  children: (item: Accessor<T[number]>, index: number) => JSX.Element;
 };
 
-function createLazy<T extends readonly any[]>(
+function createLazy<T>(
   component: ValidComponent,
-  props: LazyProps<T>,
+  props: LazyProps<readonly T[]>,
   keyHandler: (updateOffset: () => void) => Record<string, () => void>
 ) {
   // Need at least one item so it can be focused
