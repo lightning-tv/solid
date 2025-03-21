@@ -1,5 +1,6 @@
 import type { ElementNode, NodeProps, NodeStyles } from '@lightningtv/solid';
 import type { KeyHandler } from '@lightningtv/core/focusManager';
+
 export type OnSelectedChanged = (
   this: NavigableElement,
   selectedIndex: number,
@@ -7,7 +8,8 @@ export type OnSelectedChanged = (
   active: ElementNode,
   lastSelectedIndex?: number,
 ) => void;
-export interface NavigableProps extends NodeProps {
+
+export interface NavigableProps {
   /** function to be called when the selected of the component changes */
   onSelectedChanged?: OnSelectedChanged;
 
@@ -42,7 +44,10 @@ export interface NavigableProps extends NodeProps {
   wrap?: boolean;
 }
 
-// @ts-expect-error animationSettings is not identical - weird
+declare module '@lightningtv/core' {
+  interface NodeProps extends NavigableProps {}
+}
+
 export interface NavigableElement extends ElementNode, NavigableProps {
   selected: number;
 }
@@ -62,7 +67,7 @@ export interface NavigableStyleProperties {
   itemTransition?: NodeStyles['transition'];
 }
 
-export interface ColumnProps extends NavigableProps, NavigableStyleProperties {
+export interface ColumnProps extends NavigableProps, NavigableStyleProperties, NodeProps {
   /** function to be called on down click */
   onDown?: KeyHandler;
 
@@ -70,7 +75,7 @@ export interface ColumnProps extends NavigableProps, NavigableStyleProperties {
   onUp?: KeyHandler;
 }
 
-export interface RowProps extends NavigableProps, NavigableStyleProperties {
+export interface RowProps extends NavigableProps, NavigableStyleProperties, NodeProps {
   /** function to be called on down click */
   onLeft?: KeyHandler;
 
