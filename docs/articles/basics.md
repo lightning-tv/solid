@@ -1,4 +1,4 @@
-# Lightning 3: The Basics of SolidJS
+# LightningJS 3: The Basics of SolidJS
 
 [SolidJS](https://www.solidjs.com/) is the fastest, full-featured frontend framework available today. It’s often compared to React, the most popular framework, because of their similarities, but SolidJS stands out with its superior performance. This can be a game-changer, especially when developing for low-power devices. That’s why choosing the [SolidJS integration layer](https://github.com/lightning-tv/solid) with the [LightningJS renderer](https://www.lightningjs.io/), is an excellent choice for building high-performance TV apps.
 

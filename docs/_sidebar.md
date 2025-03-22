@@ -1,11 +1,7 @@
-- Welcome
-  - [Overview](/intro/intro.md)
-  - [Basics](/intro/basics.md)
-  - [Getting started](/intro/getting_started.md)
-  - [Device Support](/intro/device_support.md)
-  - [Real World Performance](/intro/realworldperformance.md)
-  - [RDK Firebolt Integration](/intro/firebolt.md)
-  - [Solid / Blits Framework Comparison](/intro/solidvsblits.md)
+- Articles
+  - [Basics](/articles/basics.md)
+  - [Real World Performance](/articles/realworldperformance.md)
+  - [Solid / Blits Framework Comparison](/articles/solidvsblits.md)
 - Essentials
   - [Rendering Hello World](/essentials/render.md)
   - [ElementNode](/essentials/elementnode.md)
@@ -27,6 +23,7 @@
   - [Destroy Animations](/flow/ondestroy.md)
 - Build & Deploy
   - [Legacy Devices](/deploy/legacy.md)
+  - [RDK Firebolt Integration](/deploy/firebolt.md)
   - [Tizen](/deploy/tizen.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
