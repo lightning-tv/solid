@@ -24,8 +24,8 @@
 - Build & Deploy
   - [Legacy Devices](/deploy/legacy.md)
   - [RDK Firebolt Integration](/deploy/firebolt.md)
-  - [Tizen](/deploy/tizen.md)
-  - [WebOs](/deploy/lg.md)
+  - [Tizen/Samsung](/deploy/tizen.md)
+  - [WebOs/LG](/deploy/lg.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
