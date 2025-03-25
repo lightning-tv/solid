@@ -3,17 +3,20 @@
   "version": "2.7.12",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
-  "source": "src/index.ts",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": {
+        "@lightningtv/source": "./src/index.ts",
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      }
     },
     "./primitives": {
-      "types": "./dist/src/primitives/index.d.ts",
-      "import": "./dist/src/primitives/index.js"
+      "import": {
+        "@lightningtv/source": "./src/primitives/index.ts",
+        "types": "./dist/src/primitives/index.d.ts",
+        "default": "./dist/src/primitives/index.js"
+      }
     }
   },
   "sideEffects": false,
