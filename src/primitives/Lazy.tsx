@@ -9,17 +9,16 @@ import {
   untrack,
   type Accessor,
 } from 'solid-js';
-import { Dynamic, scheduleTask, type NodeProps } from '@lightningtv/solid';
+import { Dynamic, type NewOmit, scheduleTask, type NodeProps } from '@lightningtv/solid';
 import { Row, Column } from '@lightningtv/solid/primitives';
 
-type LazyProps<T extends readonly any[]> = Omit<NodeProps, 'children'> & {
+type LazyProps<T extends readonly any[]> = NewOmit<NodeProps, 'children'> & {
   each: T | undefined | null | false;
   fallback?: JSX.Element;
   upCount: number;
   delay?: number;
   sync?: boolean;
   eagerLoad?: boolean;
-  selected?: number;
   children: (item: Accessor<T[number]>, index: number) => JSX.Element;
 };
 
