@@ -38,16 +38,15 @@ function createLazy<T>(
   } else {
     createEffect(() => {
       if (props.each) {
-        let count = untrack(offset);
-
         const loadItems = () => {
+          let count = untrack(offset);
           if (count < props.upCount) {
             setOffset(count + 1);
             timeoutId = setTimeout(loadItems, 16); // ~60fps
             count++;
           } else if (props.eagerLoad) {
             const maxOffset = props.each ? props.each.length : 0;
-            if (offset() > maxOffset) return;
+            if (offset() >= maxOffset) return;
             setOffset((prev) => Math.min(prev + 1, maxOffset));
             scheduleTask(loadItems);
           }
@@ -63,7 +62,17 @@ function createLazy<T>(
     const maxOffset = props.each ? props.each.length : 0;
     if (offset() >= maxOffset) return;
 
-    if (timeoutId) clearTimeout(timeoutId);
+    if (!props.delay) {
+      setOffset((prev) => Math.min(prev + 1, maxOffset));
+      return;
+    }
+
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      //Moving faster than the delay so need to go sync
+      setOffset((prev) => Math.min(prev + 1, maxOffset));
+    }
+
     timeoutId = setTimeout(() => {
       setOffset((prev) => Math.min(prev + 1, maxOffset));
       timeoutId = null;
