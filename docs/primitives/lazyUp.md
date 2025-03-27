@@ -1,4 +1,4 @@
-# DEPRECATED
+# DEPRECATED & Removed in v3
 
 Please use [Lazy Row and Column](/primitives/lazy.md) component instead.
 
