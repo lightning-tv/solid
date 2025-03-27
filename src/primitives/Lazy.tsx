@@ -31,7 +31,7 @@ function createLazy<T>(
   const [offset, setOffset] = createSignal(1);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  createEffect(() => setOffset(props.selected || 1));
+  createEffect(() => setOffset((props.selected || 0) + 1));
 
   if (props.sync) {
     setOffset(props.upCount);
