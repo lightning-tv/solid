@@ -73,8 +73,9 @@ With Solid, what you write is what you debug.
 
 | SolidJS                               | Blits                               |
 | ------------------------------------- | ----------------------------------- |
-| - Flex Layout System                  | - ???                               |
+| - Flex Layout System                  | - Layout Component                  |
 | - Template Show / If Statements       | - Known Issue (not implemented yet) |
 | - Reactive Inline Text Support        | - Known Issue (not implemented yet) |
 | - State Management (stores & Signals) | - Components have computed state    |
 | - Typescript                          | - Definition files                  |
+| - Spreading Props                     | - Must be defined                   |

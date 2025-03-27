@@ -1,10 +1,25 @@
 <p>
-  <img src="https://assets.solidjs.com/banner?project=Library&type=solid-lightning" alt="SolidJS Lightning" />
+  <img src="https://assets.solidjs.com/banner?project=Library&type=solid-lightning" alt="SolidJS LightningJS" />
 </p>
 
-# SolidJS for Lightning 3
+`@lightningtv/solid` is an integration for the [LightningJS 3 Renderer](https://github.com/lightning-js/renderer) built with [SolidJS](https://www.solidjs.com/) [Universal Renderer](https://github.com/solidjs/solid/releases/tag/v1.2.0). It allows you to declaratively construct lightning nodes with SolidJS reactive primitives. It includes everything you need to rapidly build the performant TV Apps.
 
-Solid-Lightning is a UI framework for the [Lightning 3 Renderer](https://github.com/lightning-js/renderer) built with [SolidJS](https://www.solidjs.com/) [Universal Renderer](https://github.com/solidjs/solid/releases/tag/v1.2.0). It allows you to declaratively construct lightning nodes with reactive primitives, just as you would construct a DOM tree in SolidJS.
+## Starter Template
+
+Clone starter template:
+
+```bash
+> npx degit lightning-tv/solid-starter-template my-app
+> cd my-app
+> npm i # or yarn or pnpm
+> npm start # or yarn or pnpm
+```
+
+## In Depth Guides
+
+Read the full [Guide on Medium](https://medium.com/@chiefcll/lightning-3-the-basics-of-solidjs-e6e21d73205e) or watch the video:
+
+[![Watch the video](https://img.youtube.com/vi/9UU7Ntf7Tww/0.jpg)](https://www.youtube.com/watch?v=9UU7Ntf7Tww)
 
 ## Why Solid
 
@@ -12,17 +27,9 @@ Solid-Lightning is a UI framework for the [Lightning 3 Renderer](https://github.
 - Established - Solid is widely used in production since 2018 with large community
   - [Router](https://github.com/solidjs/solid-router)
   - [Primitive Libraries](https://github.com/solidjs-community/solid-primitives)
-  - [Tons of documentations](https://docs.solidjs.com/)
+  - [Documentations](https://docs.solidjs.com/)
   - [Demo App](https://lightning-tv.github.io/solid-demo-app/#/)
   - [Playground](https://playground.solidjs.com/)
 - Familiar and easy to use JSX + React like syntax
 - Typescript
-- [Lightning UI Library](https://github.com/lightning-js/ui-components) of components with Theming
-
-## Solid vs Blits
-
-For further comparison about which framework you should use read [Solid vs Blits](/intro/solidvsblits.md)
-
-### Other Resources
-
-- [Solid UI Components](https://github.com/lightning-js/ui-components)
+- [Sample Lightning UI Library](https://github.com/rdkcentral/solid-ui) of components with Theming

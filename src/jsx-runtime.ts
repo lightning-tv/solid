@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import type { NodeProps, TextProps } from '@lightningtv/core';
+import type { NewOmit, NodeProps, TextProps } from '@lightningtv/core';
 
 declare module 'solid-js' {
   namespace JSX {
@@ -9,6 +9,6 @@ declare module 'solid-js' {
       text: TextProps;
     }
 
-    interface IntrinsicAttributes extends Omit<NodeProps, 'children'> {}
+    interface IntrinsicAttributes extends NewOmit<NodeProps, 'children'> {}
   }
 }

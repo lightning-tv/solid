@@ -1,6 +1,6 @@
 # `onDestroy` Lifecycle Hook
 
-`onDestroy` is a hook that triggers when an element is about to be removed from the canvas. It gives developers an opportunity to perform exit animations before the element is destroyed.
+`onDestroy` is a hook that triggers when an element is about to be removed from the canvas. It gives developers an opportunity to perform exit animations before the element is destroyed. `onDestroy` is only called on the TOP LEVEL node that is being removed and will not be called on any Children being removed for performance reasons. TOP LEVEL nodes are the first child of `<Show>` components or pages.
 
 Check out the full working example: https://lightning-tv.github.io/solid-demo-app/#/destroy
 
