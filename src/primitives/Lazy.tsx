@@ -61,7 +61,7 @@ function createLazy<T>(
 
   const updateOffset = () => {
     const maxOffset = props.each ? props.each.length : 0;
-    if (offset() > maxOffset) return;
+    if (offset() >= maxOffset) return;
 
     if (timeoutId) clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
