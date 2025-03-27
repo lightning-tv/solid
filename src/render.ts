@@ -15,6 +15,7 @@ import {
   untrack,
   type JSXElement,
   type ValidComponent,
+  createRoot,
 } from 'solid-js';
 import type { SolidNode } from './types.js';
 import { activeElement, setActiveElement } from './activeElement.js';
@@ -71,11 +72,13 @@ type Task = () => void;
 const taskQueue: Task[] = [];
 let tasksEnabled = false;
 
-createRenderEffect(() => {
-  // should change whenever a keypress occurs, so we disable the task queue
-  // until the renderer is idle again.
-  activeElement();
-  tasksEnabled = false;
+createRoot(() => {
+  createRenderEffect(() => {
+    // should change whenever a keypress occurs, so we disable the task queue
+    // until the renderer is idle again.
+    activeElement();
+    tasksEnabled = false;
+  });
 });
 
 export function setTasksEnabled(enabled: boolean): void {
