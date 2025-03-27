@@ -63,6 +63,7 @@ export function LazyUp<T extends readonly any[], U extends JSX.Element>(
 
   return (
     <Show when={items()}>
+      {/* @ts-ignore */}
       <Dynamic component={p.component} {...others} {...keyHandlers()}>
         <Index each={items()} fallback={p.fallback} children={p.children} />
       </Dynamic>
