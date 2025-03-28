@@ -30,6 +30,7 @@
   - [Accessibility / Announcer](/primitives/a11y.md)
   - [Focus Manager](/primitives/useFocusManager.md)
   - [Focus Stack](/primitives/createFocusStack.md)
+  - [FPS Counter](/primitives/fpscounter.md)
   - [Grid](/primitives/grid.md)
   - [Lazy Row and Column](/primitives/lazy.md)
   - [LazyUp](/primitives/lazyUp.md)
