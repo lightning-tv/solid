@@ -61,6 +61,9 @@ export const elementInterface: debug.ElementInterface<
       : null;
   },
   getLocation(node) {
+    if (typeof node['data-source-loc'] === 'string') {
+      return debug.parseLocationString(node['data-source-loc']) ?? null;
+    }
     return null;
   },
 };
