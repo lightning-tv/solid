@@ -43,12 +43,12 @@ export const elementInterface: debug.ElementInterface<
     }
 
     if (lng.Config.rendererOptions != null) {
-      let { deviceLogicalPixelRatio } = lng.Config.rendererOptions;
-      if (deviceLogicalPixelRatio != null) {
-        x *= deviceLogicalPixelRatio;
-        y *= deviceLogicalPixelRatio;
-        width *= deviceLogicalPixelRatio;
-        height *= deviceLogicalPixelRatio;
+      let dpr = lng.Config.rendererOptions.deviceLogicalPixelRatio;
+      if (dpr != null) {
+        x *= dpr;
+        y *= dpr;
+        width *= dpr;
+        height *= dpr;
       }
     }
 
