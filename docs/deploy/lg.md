@@ -43,7 +43,7 @@ A recommended approach is a **hosted TV app**, where your entire application is 
 
 ### Deployed TV App
 
-For a fully deployed app, we're going to build our Lightning app and then put it into the lg folder. Here is the vite build script I use for tizen
+For a fully deployed app, we're going to build our Lightning app and then put it into the lg folder. Here is the vite build script I use for lg
 `"build:lg": "vite build --sourcemap=false --base=./ --outDir lg --emptyOutDir false && ares-package lg --outdir lg --no-minify",`
 
 This will build all the files and place them in the lg folder (which should be a subfolder of your Lightning project). Once your app is built via vite, we run ares-package to build the app.
