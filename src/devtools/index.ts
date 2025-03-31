@@ -9,15 +9,23 @@ const EMPTY_CHILDREN: (lng.ElementNode | lng.ElementText)[] = [];
 export const elementInterface: debug.ElementInterface<
   lng.ElementNode | lng.ElementText
 > = {
-  isElement: (node): node is lng.ElementNode | lng.ElementText =>
-    '_type' in node &&
-    (node._type === lng.NodeType.Element ||
-      node._type === lng.NodeType.TextNode),
-  getChildren: (node) =>
-    node instanceof lng.ElementNode ? node.children : EMPTY_CHILDREN,
-  getName: (node) => (node._type === lng.NodeType.Element ? 'view' : 'text'),
-  getParent: (node) => node.parent ?? null,
-  getRect: (node) => {
+  isElement(node): node is lng.ElementNode | lng.ElementText {
+    return (
+      '_type' in node &&
+      (node._type === lng.NodeType.Element ||
+        node._type === lng.NodeType.TextNode)
+    );
+  },
+  getChildren(node) {
+    return node instanceof lng.ElementNode ? node.children : EMPTY_CHILDREN;
+  },
+  getName(node) {
+    return node._type === lng.NodeType.Element ? 'view' : 'text';
+  },
+  getParent(node) {
+    return node.parent ?? null;
+  },
+  getRect(node) {
     let { width, height } = node;
     let x = 0,
       y = 0;
@@ -46,13 +54,13 @@ export const elementInterface: debug.ElementInterface<
 
     return { x, y, width, height };
   },
-  getElementAt: (e) => {
+  getElementAt(e) {
     let target = e.target as any;
     return target != null && target.element instanceof lng.ElementNode
       ? target.element
       : null;
   },
-  getLocation: (node) => {
+  getLocation(node) {
     return null;
   },
 };
