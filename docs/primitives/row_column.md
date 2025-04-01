@@ -6,23 +6,25 @@ This guide will cover the `Row` component in detail. The `Column` component func
 
 ---
 
-### `Row` Component
+### `Row` and `Column` Component
 
 #### Props
 
-The `Row` component accepts the following props:
+The components accept the following props:
 
-| **Prop**            | **Type**                       | **Description**                                             |
-| ------------------- | ------------------------------ | ----------------------------------------------------------- |
-| `children`          | `JSX.Element[]`                | The child elements to render inside the row.                |
-| `selected`          | `number`                       | The index of the currently selected child. Defaults to `0`. |
-| `onLeft`            | `() => void`                   | Callback for when the left navigation key is pressed.       |
-| `onRight`           | `() => void`                   | Callback for when the right navigation key is pressed.      |
-| `onFocus`           | `(event: Event) => void`       | Callback triggered when the row gains focus.                |
-| `onLayout`          | `(layout: Layout) => void`     | Callback triggered during layout updates.                   |
-| `onSelectedChanged` | `(index: number) => void`      | Callback triggered when the selected index changes.         |
-| `style`             | `NodeStyles`                   | Custom styles to apply to the row.                          |
-| `scroll`            | `'auto' \| 'always' \| 'none'` | Defines the scrolling behavior. Default is `'auto'`.        |
+| **Prop**            | **Type**                                                                     | **Description**                                             |
+| ------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `children`          | `JSX.Element[]`                                                              | The child elements to render inside the row.                |
+| `selected`          | `number`                                                                     | The index of the currently selected child. Defaults to `0`. |
+| `onLeft`            | `() => void`                                                                 | Callback for when the left navigation key is pressed.       |
+| `onRight`           | `() => void`                                                                 | Callback for when the right navigation key is pressed.      |
+| `onUp`              | `() => void`                                                                 | Callback for when the up navigation key is pressed.         |
+| `onDown`            | `() => void`                                                                 | Callback for when the down navigation key is pressed.       |
+| `onFocus`           | `(event: Event) => void`                                                     | Callback triggered when the row gains focus.                |
+| `onLayout`          | `(layout: Layout) => void`                                                   | Callback triggered during layout updates.                   |
+| `onSelectedChanged` | `(index: number, self: this, active: boolean, lastSelected: number) => void` | Callback triggered when the selected index changes.         |
+| `style`             | `NodeStyles`                                                                 | Custom styles to apply to the row.                          |
+| `scroll`            | `'auto' \| 'always' \| 'edge' \| 'center' \| 'none'`                         | Defines the scrolling behavior. Default is `'auto'`.        |
 
 #### Behavior
 
