@@ -73,7 +73,7 @@
     "solid-js": "^1.9.3",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.17.0",
-    "@solid-devtools/debugger": "^0.26.0"
+    "@solid-devtools/debugger": "^0.27.0"
   },
   "lint-staged": {
     "*.ts": [
@@ -88,7 +88,7 @@
     "solid-js": "*"
   },
   "optionalDependencies": {
-    "@solid-devtools/debugger": "^0.26.0"
+    "@solid-devtools/debugger": "^0.27.0"
   },
   "repository": {
     "type": "git",
