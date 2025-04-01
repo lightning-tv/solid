@@ -31,6 +31,7 @@ The components accept the following props:
 1. **Navigation**:
 
    - The `Row` listens for left and right navigation events.
+   - The `Column` listens for up and down navigation events.
    - The `onLeft` and `onRight` handlers can be customized, and default navigation logic is provided via `handleNavigation`.
 
 2. **Focus Management**:
