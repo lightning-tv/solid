@@ -5,7 +5,7 @@ import {
   createComputed,
   createResource,
   createSignal,
-} from 'solid-js';
+} from '@lightningtv/solid';
 
 // Adopted from https://github.com/solidjs-community/solid-primitives/blob/main/packages/pagination/src/index.ts
 // As we don't have intersection observer in Lightning, we can't use the original implementation

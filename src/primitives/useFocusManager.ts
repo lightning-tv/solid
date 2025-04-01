@@ -5,7 +5,7 @@ import {
   onCleanup,
   getOwner,
   runWithOwner,
-} from 'solid-js';
+} from '@lightningtv/solid';
 import { Config } from '@lightningtv/core';
 import type { ElementNode } from '@lightningtv/core';
 import {

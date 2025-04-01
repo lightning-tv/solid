@@ -1,4 +1,4 @@
-import { getOwner, runWithOwner, createMemo } from 'solid-js';
+import { getOwner, runWithOwner, createMemo } from '@lightningtv/solid';
 import {
   type BaseRouterProps,
   createRouter,

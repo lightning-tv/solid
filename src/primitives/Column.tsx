@@ -1,5 +1,4 @@
-import { type Component } from 'solid-js';
-import { ElementNode, View, combineStyles, type NodeStyles } from '@lightningtv/solid';
+import { type Component, ElementNode, View, combineStyles, type NodeStyles } from '@lightningtv/solid';
 import {
   handleNavigation,
   onGridFocus,

@@ -26,7 +26,7 @@ export function createSpriteMap(
       y,
       width,
       height,
-    });
+    }) as any;
     return acc;
   }, {});
 }

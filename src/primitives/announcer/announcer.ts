@@ -1,5 +1,4 @@
-import type { ElementNode } from '@lightningtv/solid';
-import { untrack } from 'solid-js';
+import { ElementNode, untrack } from '@lightningtv/solid';
 import SpeechEngine, { type SeriesResult, type SpeechType } from './speech.js';
 import { debounce } from '@solid-primitives/scheduled';
 import { focusPath } from '../useFocusManager.js';
@@ -147,7 +146,7 @@ export const Announcer: Announcer = {
     prevFocusPath = prevFocusPath.slice(0, depth);
     resetFocusPathTimer();
   },
-  speak: function (text, { append = false, notification = false} = {}) {
+  speak: function (text, { append = false, notification = false } = {}) {
     if (Announcer.onFocusChange && Announcer.enabled) {
       Announcer.onFocusChange.flush();
       if (append && currentlySpeaking && currentlySpeaking.active) {

@@ -1,5 +1,4 @@
-import { View, Text, type Stage, type NodeProps, RendererMain } from '@lightningtv/solid';
-import { createSignal } from 'solid-js';
+import { View, Text, type Stage, type NodeProps, RendererMain, createSignal } from '@lightningtv/solid';
 
 const fpsStyle = {
   color: 0x000000ff,

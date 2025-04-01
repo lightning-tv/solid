@@ -17,7 +17,8 @@
         "types": "./dist/src/primitives/index.d.ts",
         "default": "./dist/src/primitives/index.js"
       }
-    }
+    },
+    "./jsx-runtime": "./jsx-runtime.d.ts"
   },
   "sideEffects": false,
   "scripts": {

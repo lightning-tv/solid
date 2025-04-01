@@ -28,8 +28,8 @@
 
     // jsx
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "@lightningtv/solid",
     "types": ["solid-js"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "jsx-runtime.d.ts"]
 }
