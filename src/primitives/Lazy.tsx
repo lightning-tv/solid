@@ -1,15 +1,18 @@
 import {
+  type JSX,
+  Dynamic,
+  type NewOmit,
+  scheduleTask,
+  type NodeProps,
+  ValidComponent,
   Index,
+  Show,
   createEffect,
   createMemo,
   createSignal,
-  Show,
-  type JSX,
-  type ValidComponent,
   untrack,
   type Accessor,
-} from 'solid-js';
-import { Dynamic, type NewOmit, scheduleTask, type NodeProps } from '@lightningtv/solid';
+} from '@lightningtv/solid';
 import { Row, Column } from '@lightningtv/solid/primitives';
 
 type LazyProps<T extends readonly any[]> = NewOmit<NodeProps, 'children'> & {

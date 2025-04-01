@@ -1,4 +1,4 @@
-import { createEffect, on } from 'solid-js';
+import { createEffect, on } from '@lightningtv/solid';
 import { Announcer } from './announcer.js';
 import { focusPath } from '../useFocusManager.js';
 

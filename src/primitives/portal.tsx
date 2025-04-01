@@ -1,5 +1,16 @@
-import { rootNode, type ElementNode, insert } from '@lightningtv/solid';
-import { createEffect, createMemo, createRoot, createSignal, getOwner, JSX, onCleanup, runWithOwner } from 'solid-js';
+import {
+  rootNode,
+  type ElementNode,
+  insert,
+  type JSX,
+  createEffect,
+  createMemo,
+  createRoot,
+  createSignal,
+  getOwner,
+  onCleanup,
+  runWithOwner,
+} from '@lightningtv/solid';
 
 export function Portal(props: { mount?: string; children: JSX.Element }) {
   let content: undefined | (() => JSX.Element);

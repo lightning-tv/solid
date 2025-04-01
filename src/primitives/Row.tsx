@@ -1,5 +1,4 @@
-import { type Component } from 'solid-js';
-import { combineStyles, type NodeStyles, View, type ElementNode } from '@lightningtv/solid';
+import { type Component, combineStyles, type NodeStyles, View, type ElementNode } from '@lightningtv/solid';
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,

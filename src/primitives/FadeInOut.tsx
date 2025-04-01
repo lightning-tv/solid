@@ -1,5 +1,4 @@
-import { ElementNode, NodeProps, View  } from '@lightningtv/solid';
-import { Show } from 'solid-js';
+import { ElementNode, NodeProps, View, Show } from '@lightningtv/solid';
 
 interface Props {
   transition?: {

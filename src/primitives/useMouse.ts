@@ -1,4 +1,4 @@
-import type { ElementText, INode, TextNode } from '@lightningtv/core';
+import type { ElementText, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
@@ -6,11 +6,11 @@ import {
   isTextNode,
   rootNode,
   Config,
+  createEffect,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
-import { createEffect } from 'solid-js';
 
 function createKeyboardEvent(
   key: string,

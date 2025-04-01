@@ -18,7 +18,7 @@ export interface ScrollableElement extends ElementNode {
 // From the renderer, not exported
 const InViewPort = 8;
 const isNotShown = (node: ElementNode | ElementText) => {
-  return node.lng.renderState !== InViewPort;
+  return (node.lng as any).renderState !== InViewPort;
 };
 /*
   Auto Scrolling starts scrolling right away until the last item is shown. Keeping a full view of the list.
