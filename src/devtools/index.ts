@@ -37,14 +37,14 @@ export const elementInterface: debug.ElementInterface<
     while (curr != null) {
       x += curr.x;
       y += curr.y;
+
       if (curr.scaleX != null) {
-        x *= curr.scaleX;
-        width *= curr.scaleX;
+        x += (curr.width / 2) * (1 - curr.scaleX);
       }
       if (curr.scaleY != null) {
-        y *= curr.scaleY;
-        height *= curr.scaleY;
+        y += (curr.height / 2) * (1 - curr.scaleY);
       }
+
       curr = curr.parent;
     }
 
