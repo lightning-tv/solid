@@ -245,22 +245,11 @@ const narrowedError = (name: string) =>
  *
  * @description https://docs.solidjs.com/reference/components/for
  */
-export function For<T extends readonly any[], U extends JSX.Element>(props: {
+export const For = s.For as <T extends readonly any[]>(props: {
   each: T | undefined | null | false;
   fallback?: JSX.Element;
-  children: (item: T[number], index: s.Accessor<number>) => U;
-}) {
-  const fallback = 'fallback' in props && { fallback: () => props.fallback };
-  return (lng.isDev
-    ? s.createMemo(
-        s.mapArray(() => props.each, props.children, fallback || undefined),
-        undefined,
-        { name: 'value' },
-      )
-    : s.createMemo(
-        s.mapArray(() => props.each, props.children, fallback || undefined),
-      )) as unknown as JSX.Element;
-}
+  children: (item: T[number], index: s.Accessor<number>) => JSX.Element;
+}) => JSX.Element;
 
 /**
  * Non-keyed iteration over a list creating elements from its items
@@ -275,88 +264,35 @@ export function For<T extends readonly any[], U extends JSX.Element>(props: {
  *
  * @description https://docs.solidjs.com/reference/components/index
  */
-export function Index<T extends readonly any[]>(props: {
+export const Index = s.Index as <T extends readonly any[]>(props: {
   each: T | undefined | null | false;
   fallback?: JSX.Element;
   children: (item: s.Accessor<T[number]>, index: number) => JSX.Element;
-}): JSX.Element {
-  const fallback = 'fallback' in props && { fallback: () => props.fallback };
-  return s.createMemo(
-    s.indexArray(() => props.each, props.children, fallback || undefined),
-    undefined,
-    lng.isDev ? { name: 'value' } : undefined,
-  ) as any as JSX.Element;
-}
+}) => JSX.Element;
 
 type RequiredParameter<T> = T extends () => unknown ? never : T;
+
 /**
  * Conditionally render its children or an optional fallback component
  * @description https://docs.solidjs.com/reference/components/show
  */
-export function Show<
-  T,
-  TRenderFunction extends (item: s.Accessor<NonNullable<T>>) => JSX.Element,
->(props: {
-  when: T | undefined | null | false;
-  keyed?: false;
-  fallback?: JSX.Element;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Show<
-  T,
-  TRenderFunction extends (item: NonNullable<T>) => JSX.Element,
->(props: {
-  when: T | undefined | null | false;
-  keyed: true;
-  fallback?: JSX.Element;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Show<T>(props: {
-  when: T | undefined | null | false;
-  keyed?: boolean;
-  fallback?: JSX.Element;
-  children:
-    | JSX.Element
-    | ((item: NonNullable<T> | s.Accessor<NonNullable<T>>) => JSX.Element);
-}): JSX.Element {
-  const keyed = props.keyed;
-  const condition = s.createMemo<T | undefined | null | boolean>(
-    () => props.when,
-    undefined,
-    lng.isDev
-      ? {
-          equals: (a, b) => (keyed ? a === b : !a === !b),
-          name: 'condition',
-        }
-      : { equals: (a, b) => (keyed ? a === b : !a === !b) },
-  );
-  return s.createMemo(
-    () => {
-      const c = condition();
-      if (c) {
-        const child = props.children;
-        const fn = typeof child === 'function' && child.length > 0;
-        return fn
-          ? s.untrack(() =>
-              (child as any)(
-                keyed
-                  ? (c as T)
-                  : () => {
-                      if (!s.untrack(condition)) throw narrowedError('Show');
-                      return props.when;
-                    },
-              ),
-            )
-          : child;
-      }
-      return props.fallback;
-    },
-    undefined,
-    lng.isDev ? { name: 'value' } : undefined,
-  ) as unknown as JSX.Element;
-}
-
-type EvalConditions = readonly [number, unknown?, MatchProps<unknown>?];
+export const Show = s.Show as {
+  <
+    T,
+    TRenderFunction extends (item: s.Accessor<NonNullable<T>>) => JSX.Element,
+  >(props: {
+    when: T | undefined | null | false;
+    keyed?: false;
+    fallback?: JSX.Element;
+    children: JSX.Element | RequiredParameter<TRenderFunction>;
+  }): JSX.Element;
+  <T, TRenderFunction extends (item: NonNullable<T>) => JSX.Element>(props: {
+    when: T | undefined | null | false;
+    keyed: true;
+    fallback?: JSX.Element;
+    children: JSX.Element | RequiredParameter<TRenderFunction>;
+  }): JSX.Element;
+};
 
 /**
  * Switches between content based on mutually exclusive conditions
@@ -372,56 +308,10 @@ type EvalConditions = readonly [number, unknown?, MatchProps<unknown>?];
  * ```
  * @description https://docs.solidjs.com/reference/components/switch-and-match
  */
-export function Switch(props: {
+export const Switch = s.Switch as (props: {
   fallback?: JSX.Element;
   children: JSX.Element;
-}): JSX.Element {
-  let keyed = false;
-  const equals: s.MemoOptions<EvalConditions>['equals'] = (a, b) =>
-    (keyed ? a[1] === b[1] : !a[1] === !b[1]) && a[2] === b[2];
-  const conditions = children(
-      () => props.children,
-    ) as unknown as () => MatchProps<unknown>[],
-    evalConditions = s.createMemo(
-      (): EvalConditions => {
-        let conds = conditions();
-        if (!Array.isArray(conds)) conds = [conds];
-        for (let i = 0; i < conds.length; i++) {
-          const c = conds[i]!.when;
-          if (c) {
-            keyed = !!conds[i]!.keyed;
-            return [i, c, conds[i]];
-          }
-        }
-        return [-1];
-      },
-      undefined,
-      lng.isDev ? { equals, name: 'eval conditions' } : { equals },
-    );
-  return s.createMemo(
-    () => {
-      const [index, when, cond] = evalConditions();
-      if (index < 0) return props.fallback;
-      const c = cond!.children;
-      const fn = typeof c === 'function' && c.length > 0;
-      return fn
-        ? s.untrack(() =>
-            (c as any)(
-              keyed
-                ? when
-                : () => {
-                    if (s.untrack(evalConditions)[0] !== index)
-                      throw narrowedError('Match');
-                    return cond!.when;
-                  },
-            ),
-          )
-        : c;
-    },
-    undefined,
-    lng.isDev ? { name: 'value' } : undefined,
-  ) as unknown as JSX.Element;
-}
+}) => JSX.Element;
 
 export type MatchProps<T> = {
   when: T | undefined | null | false;
@@ -439,30 +329,22 @@ export type MatchProps<T> = {
  * ```
  * @description https://docs.solidjs.com/reference/components/switch-and-match
  */
-export function Match<
-  T,
-  TRenderFunction extends (item: s.Accessor<NonNullable<T>>) => JSX.Element,
->(props: {
-  when: T | undefined | null | false;
-  keyed?: false;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Match<
-  T,
-  TRenderFunction extends (item: NonNullable<T>) => JSX.Element,
->(props: {
-  when: T | undefined | null | false;
-  keyed: true;
-  children: JSX.Element | RequiredParameter<TRenderFunction>;
-}): JSX.Element;
-export function Match<T>(props: MatchProps<T>) {
-  return props as unknown as JSX.Element;
-}
+export const Match = s.Match as {
+  <
+    T,
+    TRenderFunction extends (item: s.Accessor<NonNullable<T>>) => JSX.Element,
+  >(props: {
+    when: T | undefined | null | false;
+    keyed?: false;
+    children: JSX.Element | RequiredParameter<TRenderFunction>;
+  }): JSX.Element;
+  <T, TRenderFunction extends (item: NonNullable<T>) => JSX.Element>(props: {
+    when: T | undefined | null | false;
+    keyed: true;
+    children: JSX.Element | RequiredParameter<TRenderFunction>;
+  }): JSX.Element;
+};
 
-let Errors: Set<s.Setter<any>>;
-export function resetErrorBoundaries() {
-  Errors && [...Errors].forEach((fn) => fn());
-}
 /**
  * Catches uncaught errors inside components and renders a fallback content
  *
@@ -478,32 +360,7 @@ export function resetErrorBoundaries() {
  *
  * @description https://docs.solidjs.com/reference/components/error-boundary
  */
-export function ErrorBoundary(props: {
+export const ErrorBoundary = s.ErrorBoundary as (props: {
   fallback: JSX.Element | ((err: any, reset: () => void) => JSX.Element);
   children: JSX.Element;
-}): JSX.Element {
-  let err;
-  const [errored, setErrored] = s.createSignal<any>(
-    err,
-    lng.isDev ? { name: 'errored' } : undefined,
-  );
-  Errors || (Errors = new Set());
-  Errors.add(setErrored);
-  s.onCleanup(() => Errors.delete(setErrored));
-  return s.createMemo(
-    () => {
-      let e: any;
-      if ((e = errored())) {
-        const f = props.fallback;
-        if (lng.isDev && (typeof f !== 'function' || f.length == 0))
-          console.error(e);
-        return typeof f === 'function' && f.length
-          ? s.untrack(() => f(e, () => setErrored()))
-          : f;
-      }
-      return s.catchError(() => props.children, setErrored);
-    },
-    undefined,
-    lng.isDev ? { name: 'value' } : undefined,
-  ) as unknown as JSX.Element;
-}
+}) => JSX.Element;

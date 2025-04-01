@@ -40,6 +40,7 @@ export {
   mapArray,
   indexArray,
   splitProps,
+  resetErrorBoundaries,
   type Accessor,
   type AccessorArray,
   type EffectFunction,
