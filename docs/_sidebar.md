@@ -39,3 +39,5 @@
   - [Router](/primitives/router.md)
   - [Row and Column](/primitives/row_column.md)
   - [Visible](/primitives/visible.md)
+- Tooling
+  - [Solid Devtools](/tooling/solid_devtools.md)

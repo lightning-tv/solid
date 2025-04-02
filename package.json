@@ -17,6 +17,13 @@
         "types": "./dist/src/primitives/index.d.ts",
         "default": "./dist/src/primitives/index.js"
       }
+    },
+    "./devtools": {
+      "import": {
+        "@lightningtv/source": "./src/devtools/index.ts",
+        "types": "./dist/src/devtools/index.d.ts",
+        "default": "./dist/src/devtools/index.js"
+      }
     }
   },
   "sideEffects": false,
@@ -65,7 +72,8 @@
     "release-it": "^17.10.0",
     "solid-js": "^1.9.3",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
+    "typescript-eslint": "^8.17.0",
+    "@solid-devtools/debugger": "^0.27.0"
   },
   "lint-staged": {
     "*.ts": [
@@ -78,6 +86,9 @@
     "@lightningjs/renderer": "^3.0.0-beta3",
     "@solidjs/router": "^0.15.1",
     "solid-js": "*"
+  },
+  "optionalDependencies": {
+    "@solid-devtools/debugger": "^0.27.0"
   },
   "repository": {
     "type": "git",
