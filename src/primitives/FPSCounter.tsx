@@ -1,4 +1,4 @@
-import { View, Text, type Stage, type NodeProps, RendererMain } from '@lightningtv/solid';
+import { type Stage, type NodeProps, RendererMain } from '@lightningtv/solid';
 import { createSignal } from 'solid-js';
 
 const fpsStyle = {
@@ -90,90 +90,90 @@ export function setupFPS(root: any) {
 
 export const FPSCounter = (props: NodeProps) => {
   return (
-    <View {...props} style={fpsStyle}>
-      <View y={6}>
-        <Text style={fpsLabel}>FPS:</Text>
-        <Text style={fpsValue} x={90}>
+    <view {...props} style={fpsStyle}>
+      <view y={6}>
+        <text style={fpsLabel}>FPS:</text>
+        <text style={fpsValue} x={90}>
           {fps().toString()}
-        </Text>
-      </View>
+        </text>
+      </view>
 
-      <View y={6} x={160}>
-        <Text style={fpsLabel}>AVG:</Text>
-        <Text style={fpsValue} x={100}>
+      <view y={6} x={160}>
+        <text style={fpsLabel}>AVG:</text>
+        <text style={fpsValue} x={100}>
           {avgFps().toString()}
-        </Text>
-      </View>
+        </text>
+      </view>
 
-      <View x={0} y={26}>
-        <Text style={fpsLabel}>MIN:</Text>
-        <Text style={fpsValue} x={90}>
+      <view x={0} y={26}>
+        <text style={fpsLabel}>MIN:</text>
+        <text style={fpsValue} x={90}>
           {minFps().toString()}
-        </Text>
-      </View>
+        </text>
+      </view>
 
-      <View x={160} y={26}>
-        <Text style={fpsLabel}>MAX:</Text>
-        <Text style={fpsValue} x={100}>
+      <view x={160} y={26}>
+        <text style={fpsLabel}>MAX:</text>
+        <text style={fpsValue} x={100}>
           {maxFps().toString()}
-        </Text>
-      </View>
+        </text>
+      </view>
 
-      <View display="flex" flexDirection="column" y={58} gap={4}>
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+      <view display="flex" flexDirection="column" y={58} gap={4}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             criticalThreshold:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {criticalThresholdSignal()}
-          </Text>
-        </View>
+          </text>
+        </view>
 
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             targetThreshold:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {targetThresholdSignal()}
-          </Text>
-        </View>
+          </text>
+        </view>
 
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             renderableMemUsed:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {renderableMemUsedSignal()}
-          </Text>
-        </View>
+          </text>
+        </view>
 
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             memUsed:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {memUsedSignal()}
-          </Text>
-        </View>
+          </text>
+        </view>
 
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             renderableTexturesLoaded:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {renderableTexturesLoadedSignal().toString()}
-          </Text>
-        </View>
+          </text>
+        </view>
 
-        <View height={infoFontSize}>
-          <Text fontSize={infoFontSize} style={fpsLabel}>
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
             loadedTextures:
-          </Text>
-          <Text fontSize={infoFontSize} style={fpsLabel} x={230}>
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {loadedTexturesSignal().toString()}
-          </Text>
-        </View>
-      </View>
-    </View>
+          </text>
+        </view>
+      </view>
+    </view>
   );
 };
