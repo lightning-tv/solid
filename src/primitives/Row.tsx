@@ -31,7 +31,7 @@ function scrollToIndex(this: ElementNode, index: number) {
 
 export const Row: Component<RowProps> = (props) => {
   return (
-    <View
+    <view
       {...props}
       selected={props.selected || 0}
       onLeft={/* @once */ chainFunctions(props.onLeft, onLeft)}

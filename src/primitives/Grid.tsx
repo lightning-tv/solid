@@ -1,5 +1,5 @@
 import { ValidComponent, For, createSignal, createMemo } from "solid-js";
-import { View, Dynamic, type NodeProps, type ElementNode, isFunction } from "@lightningtv/solid";
+import { Dynamic, type NodeProps, type ElementNode, isFunction } from "@lightningtv/solid";
 
 export const Grid = <T,>(props: {
   item: ValidComponent;
@@ -72,7 +72,7 @@ export const Grid = <T,>(props: {
   );
 
   return (
-    <View
+    <view
       transition={{ y: true }}
       {...props}
       onUp={(_e, elm) => moveFocus(-columns(), elm)}
@@ -95,7 +95,7 @@ export const Grid = <T,>(props: {
           />
         )}
       </For>
-    </View>
+    </view>
   );
 };
 

@@ -24,7 +24,8 @@
         "types": "./dist/src/devtools/index.d.ts",
         "default": "./dist/src/devtools/index.js"
       }
-    }
+    },
+    "./jsx-runtime": "./jsx-runtime.d.ts"
   },
   "sideEffects": false,
   "scripts": {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import type { NewOmit, NodeProps, TextProps } from '@lightningtv/core';
 
 declare module 'solid-js' {
@@ -13,3 +12,5 @@ declare module 'solid-js' {
       extends NewOmit<NodeProps, 'children' | 'style'> {}
   }
 }
+
+export type { JSX } from 'solid-js';
