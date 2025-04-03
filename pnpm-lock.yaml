@@ -12,8 +12,8 @@ importers:
         specifier: ^3.0.0-beta3
         version: 3.0.0-beta3
       '@lightningtv/core':
-        specifier: ^3.0.0-0
-        version: 3.0.0-0(@lightningjs/renderer@3.0.0-beta3)
+        specifier: ^3.0.0-2
+        version: 3.0.0-2(@lightningjs/renderer@3.0.0-beta3)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -26,6 +26,10 @@ importers:
       '@solidjs/router':
         specifier: ^0.15.1
         version: 0.15.1(solid-js@1.9.3)
+    optionalDependencies:
+      '@solid-devtools/debugger':
+        specifier: ^0.27.0
+        version: 0.27.0(solid-js@1.9.3)
     devDependencies:
       '@eslint/js':
         specifier: ^9.16.0
@@ -69,10 +73,6 @@ importers:
       typescript-eslint:
         specifier: ^8.17.0
         version: 8.17.0(eslint@9.16.0)(typescript@5.7.2)
-    optionalDependencies:
-      '@solid-devtools/debugger':
-        specifier: ^0.27.0
-        version: 0.27.0(solid-js@1.9.3)
 
 packages:
 
@@ -149,10 +149,10 @@ packages:
     resolution: {integrity: sha512-zesySXNd4TVVegR2qd3Ps8KPjN93NUo035AXji0p4pPmPLJHr/ZDD/S1cmxbRMW33FI9FpDzGIzoWo8pcwpuPA==}
     engines: {node: '>= 18.0.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@3.0.0-0':
-    resolution: {integrity: sha512-X3hpsE39AJeemAu/VGL8BneeYtY6a33PnyhBBgeSHUBZ4UvImxwZ5d33sp6BZY8xyD7XmB8zpx7Jm4MfJ/88Rg==}
+  '@lightningtv/core@3.0.0-2':
+    resolution: {integrity: sha512-aDIQlCp1+oK6rQL9ZSn4y/yTK7cIaiW1fOoKPinXKUJKiuU+fIOIyu2kAeNW/AMTl/YjTdMqXuwtW1Tcy5F65g==}
     peerDependencies:
-      '@lightningjs/renderer': ^3.0.0-beta3
+      '@lightningjs/renderer': ^3.0.0-beta4
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1745,7 +1745,7 @@ snapshots:
 
   '@lightningjs/renderer@3.0.0-beta3': {}
 
-  '@lightningtv/core@3.0.0-0(@lightningjs/renderer@3.0.0-beta3)':
+  '@lightningtv/core@3.0.0-2(@lightningjs/renderer@3.0.0-beta3)':
     dependencies:
       '@lightningjs/renderer': 3.0.0-beta3
 
