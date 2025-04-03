@@ -9,6 +9,35 @@ import {
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
+declare module '@lightningtv/core' {
+  interface ElementNode {
+    _queueInsert?: true;
+    _queueRemove?: true;
+  }
+}
+
+let elementQueue: ElementNode[] = [];
+
+function flushQueue(): void {
+  for (let el of elementQueue) {
+    if (el._queueRemove && !el._queueInsert) {
+      el.destroy();
+    }
+    el._queueInsert = el._queueRemove = undefined;
+  }
+  elementQueue.length = 0;
+}
+
+function addToQueue(node: ElementNode): void {
+  if (node._queueInsert && node._queueRemove) {
+    return; // Already in the queue
+  }
+
+  if (elementQueue.push(node) === 1) {
+    queueMicrotask(flushQueue);
+  }
+}
+
 export default {
   createElement(name: string): ElementNode {
     return new ElementNode(name);
@@ -31,10 +60,11 @@ export default {
     log('INSERT: ', parent, node, anchor);
 
     parent.insertChild(node, anchor);
-    node._queueDelete = false;
 
     if (node instanceof ElementNode) {
-      parent.rendered && node.render(true);
+      node._queueInsert = true;
+      node.parent!.rendered && node.render(true);
+      addToQueue(node);
     } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
@@ -45,13 +75,12 @@ export default {
   },
   removeNode(parent: ElementNode, node: SolidNode): void {
     log('REMOVE: ', parent, node);
+
     parent.removeChild(node);
-    node._queueDelete = true;
+
     if (node instanceof ElementNode) {
-      // Solid replacesNodes to move them (via insert and remove),
-      // so we need to wait for the next microtask to destroy the node
-      // in the event it gets a new parent.
-      queueMicrotask(() => node.destroy());
+      node._queueRemove = true;
+      addToQueue(node);
     }
   },
   getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
