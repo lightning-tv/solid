@@ -11,30 +11,31 @@ import type { SolidNode, SolidRendererOptions } from './types.js';
 
 declare module '@lightningtv/core' {
   interface ElementNode {
-    _queueInsert?: true;
-    _queueRemove?: true;
+    /** @internal for managing series of insertions and deletions */
+    _queueDelete?: number;
   }
 }
 
-let elementQueue: ElementNode[] = [];
+let elementDeleteQueue: ElementNode[] = [];
 
-function flushQueue(): void {
-  for (let el of elementQueue) {
-    if (el._queueRemove && !el._queueInsert) {
+function flushDeleteQueue(): void {
+  for (let el of elementDeleteQueue) {
+    if (Number(el._queueDelete) < 0) {
       el.destroy();
     }
-    el._queueInsert = el._queueRemove = undefined;
+    el._queueDelete = undefined;
   }
-  elementQueue.length = 0;
+  elementDeleteQueue.length = 0;
 }
 
-function addToQueue(node: ElementNode): void {
-  if (node._queueInsert && node._queueRemove) {
-    return; // Already in the queue
-  }
-
-  if (elementQueue.push(node) === 1) {
-    queueMicrotask(flushQueue);
+function pushDeleteQueue(node: ElementNode, n: number): void {
+  if (node._queueDelete === undefined) {
+    node._queueDelete = n;
+    if (elementDeleteQueue.push(node) === 1) {
+      queueMicrotask(flushDeleteQueue);
+    }
+  } else {
+    node._queueDelete += n;
   }
 }
 
@@ -59,12 +60,14 @@ export default {
   insertNode(parent: ElementNode, node: SolidNode, anchor: SolidNode): void {
     log('INSERT: ', parent, node, anchor);
 
+    let prevParent = node.parent;
     parent.insertChild(node, anchor);
 
     if (node instanceof ElementNode) {
-      node._queueInsert = true;
       node.parent!.rendered && node.render(true);
-      addToQueue(node);
+      if (prevParent !== undefined) {
+        pushDeleteQueue(node, 1);
+      }
     } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
@@ -79,8 +82,7 @@ export default {
     parent.removeChild(node);
 
     if (node instanceof ElementNode) {
-      node._queueRemove = true;
-      addToQueue(node);
+      pushDeleteQueue(node, -1);
     }
   },
   getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
