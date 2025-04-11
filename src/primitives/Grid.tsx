@@ -1,23 +1,38 @@
-import { ValidComponent, For, createSignal, createMemo } from "solid-js";
-import { Dynamic, type NodeProps, type ElementNode, isFunction } from "@lightningtv/solid";
+import { For, createSignal, createMemo, JSX } from "solid-js";
+import { type NodeProps, type ElementNode, isFunction, NewOmit } from "@lightningtv/solid";
 
-export const Grid = <T,>(props: {
-  item: ValidComponent;
+export interface GridItemProps<T> {
+  item:   T
+  index:  number
+  width:  number
+  height: number
+  x:      number
+  y:      number
+}
+
+export interface GridProps<T> extends NewOmit<NodeProps, 'children'> {
+  items: T[];
+  children: (props: GridItemProps<T>) => JSX.Element,
   itemHeight?: number;
   itemWidth?: number;
   itemOffset?: number;
-  items: T[];
   columns?: number;
   looping?: boolean;
   scroll?: "auto" | "none";
   onSelectedChanged?: (index: number, grid: ElementNode, elm?: ElementNode) => void;
-} & NodeProps) => {
+}
+
+export function Grid<T>(props: GridProps<T>): JSX.Element {
+
   const [focusedIndex, setFocusedIndex] = createSignal(0);
   const baseColumns = 4;
 
+  const itemWidth = () => props.itemWidth ?? 300
+  const itemHeight = () => props.itemHeight ?? 300
+
   const columns = createMemo(() => props.columns || baseColumns);
-  const totalWidth = createMemo(() => (props.itemWidth ?? 300) + (props.itemOffset ?? 0));
-  const totalHeight = createMemo(() => (props.itemHeight ?? 300) + (props.itemOffset ?? 0));
+  const totalWidth = createMemo(() => itemWidth() + (props.itemOffset ?? 0));
+  const totalHeight = createMemo(() => itemHeight() + (props.itemOffset ?? 0));
 
   const moveFocus = (delta: number, elm: ElementNode) => {
     if (!props.items || props.items.length === 0) return false;
@@ -85,11 +100,11 @@ export const Grid = <T,>(props: {
     >
       <For each={props.items}>
         {(item, index) => (
-          <Dynamic
-            {...item}
-            component={props.item}
-            width={props.itemWidth}
-            height={props.itemHeight}
+          <props.children
+            item={item}
+            index={index()}
+            width={itemWidth()}
+            height={itemHeight()}
             x={(index() % columns()) * totalWidth()}
             y={Math.floor(index() / columns()) * totalHeight()}
           />
@@ -98,4 +113,3 @@ export const Grid = <T,>(props: {
     </view>
   );
 };
-
