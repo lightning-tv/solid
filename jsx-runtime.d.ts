@@ -7,9 +7,6 @@ declare module 'solid-js' {
       view: NodeProps;
       text: TextProps;
     }
-
-    interface IntrinsicAttributes
-      extends NewOmit<NodeProps, 'children' | 'style'> {}
   }
 }
 
