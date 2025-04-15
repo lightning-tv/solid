@@ -73,8 +73,8 @@ export function handleNavigation(
         return false;
       }
     }
-    const active = this.children[this.selected || 0];
-    assertTruthy(active instanceof ElementNode);
+    const active = this.children[this.selected || 0] || this.children[0];
+    if (!(active instanceof ElementNode)) return false;
     const navigableThis = this as NavigableElement;
 
     navigableThis.onSelectedChanged &&
