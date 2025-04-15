@@ -90,5 +90,6 @@
     "LICENSE",
     "NOTICE",
     "README.md"
-  ]
+  ],
+  "packageManager": "pnpm@10.8.0"
 }
