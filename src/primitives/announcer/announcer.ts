@@ -73,7 +73,7 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   prevFocusPath = focusPath.slice(0);
 
   const toAnnounceText: SpeechType[] = [];
-  const toAnnounce = focusDiff.reduce(
+  const toAnnounce = focusDiff.reverse().reduce(
     (acc: [string, string, SpeechType][], elm) => {
       if (elm.announce) {
         acc.push([getElmName(elm), 'Announce', elm.announce]);
