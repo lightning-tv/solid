@@ -26,10 +26,6 @@ importers:
       '@solidjs/router':
         specifier: ^0.15.1
         version: 0.15.1(solid-js@1.9.3)
-    optionalDependencies:
-      '@solid-devtools/debugger':
-        specifier: ^0.27.0
-        version: 0.27.0(solid-js@1.9.3)
     devDependencies:
       '@eslint/js':
         specifier: ^9.16.0
@@ -73,6 +69,10 @@ importers:
       typescript-eslint:
         specifier: ^8.17.0
         version: 8.17.0(eslint@9.16.0)(typescript@5.7.2)
+    optionalDependencies:
+      '@solid-devtools/debugger':
+        specifier: ^0.27.0
+        version: 0.27.0(solid-js@1.9.3)
 
 packages:
 
