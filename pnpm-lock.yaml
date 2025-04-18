@@ -12,8 +12,8 @@ importers:
         specifier: ^3.0.0-beta3
         version: 3.0.0-beta3
       '@lightningtv/core':
-        specifier: ^3.0.0-2
-        version: 3.0.0-2(@lightningjs/renderer@3.0.0-beta3)
+        specifier: ^3.0.0-3
+        version: 3.0.0-3(@lightningjs/renderer@3.0.0-beta3)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -149,10 +149,10 @@ packages:
     resolution: {integrity: sha512-zesySXNd4TVVegR2qd3Ps8KPjN93NUo035AXji0p4pPmPLJHr/ZDD/S1cmxbRMW33FI9FpDzGIzoWo8pcwpuPA==}
     engines: {node: '>= 18.0.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@3.0.0-2':
-    resolution: {integrity: sha512-aDIQlCp1+oK6rQL9ZSn4y/yTK7cIaiW1fOoKPinXKUJKiuU+fIOIyu2kAeNW/AMTl/YjTdMqXuwtW1Tcy5F65g==}
+  '@lightningtv/core@3.0.0-3':
+    resolution: {integrity: sha512-sJsek0PexD97plIRio61bdpMG7lVXU4Uwu7aVEhq8+aqOiIN9XSokN9ku/YVV3pdr5PrndxUFkrpBOHHt1awtA==}
     peerDependencies:
-      '@lightningjs/renderer': ^3.0.0-beta4
+      '@lightningjs/renderer': ^3.0.0-beta6
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1745,7 +1745,7 @@ snapshots:
 
   '@lightningjs/renderer@3.0.0-beta3': {}
 
-  '@lightningtv/core@3.0.0-2(@lightningjs/renderer@3.0.0-beta3)':
+  '@lightningtv/core@3.0.0-3(@lightningjs/renderer@3.0.0-beta3)':
     dependencies:
       '@lightningjs/renderer': 3.0.0-beta3
 
