@@ -48,11 +48,21 @@ function speak(
   phrase: string,
   utterances: SpeechSynthesisUtterance[],
   lang = 'en-US',
+  voiceName: string,
 ) {
   const synth = window.speechSynthesis;
+
   return new Promise<void>((resolve, reject) => {
+    const availableVoices = synth.getVoices();
+    const selectedVoice = availableVoices.find((v) => v.name === voiceName);
+
+    if (!selectedVoice) {
+      return reject(new Error(`Voice "${voiceName}" not found.`));
+    }
+
     const utterance = new SpeechSynthesisUtterance(phrase);
     utterance.lang = lang;
+    utterance.voice = selectedVoice;
     utterance.onend = () => {
       resolve();
     };
@@ -67,6 +77,7 @@ function speak(
 function speakSeries(
   series: SpeechType,
   lang: string,
+  voice: string,
   root = true,
 ): SeriesResult {
   const synth = window.speechSynthesis;
@@ -103,7 +114,7 @@ function speakSeries(
           let retriesLeft = totalRetries;
           while (active && retriesLeft > 0) {
             try {
-              await speak(phrase, utterances, lang);
+              await speak(phrase, utterances, lang, voice);
               retriesLeft = 0;
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
@@ -128,12 +139,12 @@ function speakSeries(
             }
           }
         } else if (typeof phrase === 'function') {
-          const seriesResult = speakSeries(phrase(), lang, false);
+          const seriesResult = speakSeries(phrase(), lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         } else if (Array.isArray(phrase)) {
           // Speak it (recursively)
-          const seriesResult = speakSeries(phrase, lang, false);
+          const seriesResult = speakSeries(phrase, lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         }
@@ -166,8 +177,12 @@ function speakSeries(
 }
 
 let currentSeries: SeriesResult | undefined;
-export default function (toSpeak: SpeechType, lang: string = 'en-US') {
+export default function (
+  toSpeak: SpeechType,
+  lang: string = 'en-US',
+  voice: string = 'Google US English',
+) {
   currentSeries && currentSeries.cancel();
-  currentSeries = speakSeries(toSpeak, lang);
+  currentSeries = speakSeries(toSpeak, lang, voice);
   return currentSeries;
 }
