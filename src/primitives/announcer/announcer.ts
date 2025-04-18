@@ -73,8 +73,9 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   prevFocusPath = focusPath.slice(0);
 
   const toAnnounceText: SpeechType[] = [];
-  const toAnnounce = focusDiff.reverse().reduce(
-    (acc: [string, string, SpeechType][], elm) => {
+  const toAnnounce = focusDiff
+    .reverse()
+    .reduce((acc: [string, string, SpeechType][], elm) => {
       if (elm.announce) {
         acc.push([getElmName(elm), 'Announce', elm.announce]);
         toAnnounceText.push(elm.announce);
@@ -85,9 +86,7 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
         acc.push([getElmName(elm), 'No Announce', '']);
       }
       return acc;
-    },
-    [],
-  );
+    }, []);
 
   focusDiff.reverse().reduce((acc, elm) => {
     if (elm.announceContext) {
@@ -110,18 +109,19 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   }
 }
 
-function textToSpeech(toSpeak: SpeechType, lang: string) {
+function textToSpeech(toSpeak: SpeechType, lang: string, voice: string) {
   if (voiceOutDisabled) {
     return;
   }
 
-  return (currentlySpeaking = SpeechEngine(toSpeak, lang));
+  return (currentlySpeaking = SpeechEngine(toSpeak, lang, voice));
 }
 
 export interface Announcer {
   debug: boolean;
   enabled: boolean;
   lang: string;
+  voice: string;
   cancel: VoidFunction;
   clearPrevFocus: (depth?: number) => void;
   speak: (
@@ -140,6 +140,7 @@ export const Announcer: Announcer = {
   debug: false,
   enabled: true,
   lang: 'en-US',
+  voice: 'Samantha',
   cancel: function () {
     currentlySpeaking && currentlySpeaking.cancel();
   },
@@ -147,14 +148,15 @@ export const Announcer: Announcer = {
     prevFocusPath = prevFocusPath.slice(0, depth);
     resetFocusPathTimer();
   },
-  speak: function (text, { append = false, notification = false} = {}) {
+  speak: function (text, { append = false, notification = false } = {}) {
+    console.log(Announcer.voice, 'asdasdadadad');
     if (Announcer.onFocusChange && Announcer.enabled) {
       Announcer.onFocusChange.flush();
       if (append && currentlySpeaking && currentlySpeaking.active) {
         currentlySpeaking.append(text);
       } else {
         Announcer.cancel();
-        textToSpeech(text, Announcer.lang);
+        textToSpeech(text, Announcer.lang, Announcer.voice);
       }
 
       if (notification) {
