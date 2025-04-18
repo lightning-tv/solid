@@ -1,4 +1,4 @@
-import './jsx-runtime.js';
+export * from '@lightningtv/solid/jsx-runtime';
 export * from '@lightningtv/core';
 export type * from '@lightningtv/core';
 export type { KeyHandler, KeyMap } from '@lightningtv/core/focusManager';
