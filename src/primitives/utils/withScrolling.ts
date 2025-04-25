@@ -4,6 +4,7 @@ import type {
   INode,
   Styles,
 } from '@lightningtv/core';
+import { OnScrolled } from '../types.js';
 
 // Adds properties expected by withScrolling
 export interface ScrollableElement extends ElementNode {
@@ -13,6 +14,7 @@ export interface ScrollableElement extends ElementNode {
   endOffset?: number;
   _targetPosition?: number;
   _screenOffset?: number;
+  _initialPosition?: number;
 }
 
 // From the renderer, not exported
@@ -35,6 +37,7 @@ export function withScrolling(isRow: boolean) {
     component?: ElementNode,
     selectedElement?: ElementNode | ElementText,
     lastSelected?: number,
+    onScrolled?: OnScrolled,
   ) => {
     let componentRef = component as ScrollableElement;
     if (typeof selected !== 'number') {
@@ -47,6 +50,10 @@ export function withScrolling(isRow: boolean) {
       !componentRef.children.length
     )
       return;
+
+    if (componentRef._initialPosition === undefined) {
+      componentRef._initialPosition = componentRef[axis];
+    }
 
     const lng = componentRef.lng as INode;
     const screenSize = isRow ? lng.stage.root.width : lng.stage.root.height;
@@ -156,9 +163,35 @@ export function withScrolling(isRow: boolean) {
 
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
+      if (onScrolled) {
+        handleOnScrolled(onScrolled, componentRef, nextPosition, axis);
+      }
+
       componentRef[axis] = nextPosition;
       // Store the new position to keep track during animations
       componentRef._targetPosition = nextPosition;
     }
   };
+}
+
+function handleOnScrolled(
+  onScrolled: OnScrolled,
+  componentRef: ScrollableElement,
+  nextPosition: number,
+  axis: 'x' | 'y',
+) {
+  if (componentRef._initialPosition !== nextPosition) {
+    if (
+      onScrolled.options?.onlyOnFirstScroll &&
+      componentRef[axis] !== componentRef._initialPosition
+    ) {
+      return;
+    }
+    onScrolled.perform();
+  } else if (
+    onScrolled.onUnscrolled &&
+    nextPosition === componentRef._initialPosition
+  ) {
+    onScrolled.onUnscrolled();
+  }
 }

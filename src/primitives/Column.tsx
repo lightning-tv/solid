@@ -50,6 +50,7 @@ export const Column: Component<ColumnProps> = (props) => {
         )
       }
       style={/* @once */ combineStyles(props.style, ColumnStyles)}
+      onScrolled={/* @once */ props.onScrolled}
     />
   );
 };

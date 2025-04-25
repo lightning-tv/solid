@@ -84,6 +84,7 @@ export function handleNavigation(
         navigableThis,
         active,
         lastSelected,
+        navigableThis.onScrolled,
       );
 
     if (this.plinko) {
