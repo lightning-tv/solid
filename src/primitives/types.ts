@@ -1,18 +1,22 @@
 import type { ElementNode, NodeProps, NodeStyles } from '@lightningtv/solid';
 import type { KeyHandler } from '@lightningtv/core/focusManager';
-export type OnScrolled = {
+export type OnScrolledCallback<TOptions extends string> = {
   perform: () => void;
-  onUnscrolled?: () => void;
-  options?: Record<'onlyOnFirstScroll', boolean>;
+  options?: Record<TOptions, boolean>;
 };
+
+export type OnScrolledOptions = 'onlyOnFirstScroll';
+
 export type OnSelectedChanged = (
   this: NavigableElement,
   selectedIndex: number,
   elm: NavigableElement,
   active: ElementNode,
   lastSelectedIndex?: number,
-  onScrolled?: OnScrolled,
+  onScrolled?: OnScrolledCallback<OnScrolledOptions>,
+  onUnscrolled?: () => void,
 ) => void;
+
 export interface NavigableProps extends NodeProps {
   /** function to be called when the selected of the component changes */
   onSelectedChanged?: OnSelectedChanged;
@@ -48,7 +52,8 @@ export interface NavigableProps extends NodeProps {
   wrap?: boolean;
 
   /** function to be called when the column is scrolled */
-  onScrolled?: OnScrolled;
+  onScrolled?: OnScrolledCallback<OnScrolledOptions>;
+  onUnscrolled?: () => void;
 }
 
 // @ts-expect-error animationSettings is not identical - weird

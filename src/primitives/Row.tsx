@@ -49,6 +49,8 @@ export const Row: Component<RowProps> = (props) => {
         )
       }
       style={/* @once */ combineStyles(props.style, RowStyles)}
+      onScrolled={props.onScrolled}
+      onUnscrolled={props.onUnscrolled}
     />
   );
 };
