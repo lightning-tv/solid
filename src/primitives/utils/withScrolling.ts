@@ -165,7 +165,7 @@ export function withScrolling(isRow: boolean) {
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
       if (onScrolled && componentRef._initialPosition !== nextPosition) {
-        handleOnScrolled(onScrolled, componentRef, nextPosition, axis);
+        handleOnScrolled(onScrolled, componentRef, axis);
       }
       if (onUnscrolled && componentRef._initialPosition === nextPosition) {
         onUnscrolled();
