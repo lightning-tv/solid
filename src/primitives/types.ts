@@ -1,11 +1,5 @@
 import type { ElementNode, NodeProps, NodeStyles } from '@lightningtv/solid';
 import type { KeyHandler } from '@lightningtv/core/focusManager';
-export type OnScrolledCallback<TOptions extends string> = {
-  perform: () => void;
-  options?: Record<TOptions, boolean>;
-};
-
-export type OnScrolledOptions = 'onlyOnFirstScroll';
 
 export type OnSelectedChanged = (
   this: NavigableElement,
@@ -13,7 +7,7 @@ export type OnSelectedChanged = (
   elm: NavigableElement,
   active: ElementNode,
   lastSelectedIndex?: number,
-  onScrolled?: OnScrolledCallback<OnScrolledOptions>,
+  onScrolled?: () => void,
   onUnscrolled?: () => void,
 ) => void;
 
@@ -51,8 +45,10 @@ export interface NavigableProps extends NodeProps {
    */
   wrap?: boolean;
 
-  /** function to be called when the column is scrolled */
-  onScrolled?: OnScrolledCallback<OnScrolledOptions>;
+  /** function to be called when scrolled */
+  onScrolled?: () => void;
+
+  /** function to be called when unscrolled, back to its initial position */
   onUnscrolled?: () => void;
 }
 

@@ -4,7 +4,6 @@ import type {
   INode,
   Styles,
 } from '@lightningtv/core';
-import { OnScrolledOptions, OnScrolledCallback } from '../types.js';
 
 // Adds properties expected by withScrolling
 export interface ScrollableElement extends ElementNode {
@@ -37,7 +36,7 @@ export function withScrolling(isRow: boolean) {
     component?: ElementNode,
     selectedElement?: ElementNode | ElementText,
     lastSelected?: number,
-    onScrolled?: OnScrolledCallback<OnScrolledOptions>,
+    onScrolled?: () => void,
     onUnscrolled?: () => void,
   ) => {
     let componentRef = component as ScrollableElement;
@@ -164,9 +163,14 @@ export function withScrolling(isRow: boolean) {
 
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
-      if (onScrolled && componentRef._initialPosition !== nextPosition) {
-        handleOnScrolled(onScrolled, componentRef, axis);
+      if (
+        onScrolled &&
+        componentRef[axis] === componentRef._initialPosition &&
+        componentRef._initialPosition !== nextPosition
+      ) {
+        onScrolled();
       }
+
       if (onUnscrolled && componentRef._initialPosition === nextPosition) {
         onUnscrolled();
       }
@@ -176,18 +180,4 @@ export function withScrolling(isRow: boolean) {
       componentRef._targetPosition = nextPosition;
     }
   };
-}
-
-function handleOnScrolled(
-  onScrolled: OnScrolledCallback<OnScrolledOptions>,
-  componentRef: ScrollableElement,
-  axis: 'x' | 'y',
-) {
-  if (
-    onScrolled.options?.onlyOnFirstScroll &&
-    componentRef[axis] !== componentRef._initialPosition
-  ) {
-    return;
-  }
-  onScrolled.perform();
 }
