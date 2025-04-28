@@ -164,14 +164,11 @@ export function withScrolling(isRow: boolean) {
 
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
-      if (onScrolled) {
-        handleOnScrolled(
-          onScrolled,
-          componentRef,
-          nextPosition,
-          axis,
-          onUnscrolled,
-        );
+      if (onScrolled && componentRef._initialPosition !== nextPosition) {
+        handleOnScrolled(onScrolled, componentRef, nextPosition, axis);
+      }
+      if (onUnscrolled && componentRef._initialPosition === nextPosition) {
+        onUnscrolled();
       }
 
       componentRef[axis] = nextPosition;
@@ -184,19 +181,13 @@ export function withScrolling(isRow: boolean) {
 function handleOnScrolled(
   onScrolled: OnScrolledCallback<OnScrolledOptions>,
   componentRef: ScrollableElement,
-  nextPosition: number,
   axis: 'x' | 'y',
-  onUnscrolled?: () => void,
 ) {
-  if (componentRef._initialPosition !== nextPosition) {
-    if (
-      onScrolled.options?.onlyOnFirstScroll &&
-      componentRef[axis] !== componentRef._initialPosition
-    ) {
-      return;
-    }
-    onScrolled.perform();
-  } else if (onUnscrolled && nextPosition === componentRef._initialPosition) {
-    onUnscrolled();
+  if (
+    onScrolled.options?.onlyOnFirstScroll &&
+    componentRef[axis] !== componentRef._initialPosition
+  ) {
+    return;
   }
+  onScrolled.perform();
 }
