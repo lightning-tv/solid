@@ -16,6 +16,37 @@ The Lightning renderer will scale the image to fit the width and height dimensio
 
 For the best performance, it's important to keep your source images as small as possible. If you're displaying an image at `200px x 200px`, make sure the image is exactly that size or _smaller_. The latter option may lead to some quality loss, but can positively impact the overall performance of your App.
 
+## textureOptions for images
+
+- **`preload`** (`boolean`, default: `false`):
+  Load the texture immediately, even if it's not yet rendered. Reduces delay when the image first appears.
+
+- **`preventCleanup`** (`boolean`, default: `false`):
+  Prevent the texture from being unloaded when unused. Useful for persistent or frequently reused images.
+
+- **`flipX`** (`boolean`, default: `false`):
+  Flips the image horizontally.
+
+- **`flipY`** (`boolean`, default: `false`):
+  Flips the image vertically.
+
+- **`resizeMode`** (`object`):
+  Determines how the image fits within a given space. Options:
+  - `type: 'cover'`: Scales and crops the image to fill the space. Optional `clipX` and `clipY` values (0–1) control the crop origin.
+  - `type: 'contain'`: Scales the image to fit within the space without cropping.
+
+```jsx
+<View
+  src={props.imgSrc}
+  width={100}
+  textureOptions={{
+    resizeMode: {
+      type: 'contain',
+    },
+  }}
+/>
+```
+
 ## SVG Images
 
 The renderer does support SVG images, just set the src.
