@@ -4,8 +4,8 @@ import {
   type NodeProps,
   type TextProps,
   startLightningRenderer,
-  type RendererMain,
   type RendererMainSettings,
+  type IRendererMain,
 } from '@lightningtv/core';
 import nodeOpts from './solidOpts.js';
 import {
@@ -15,13 +15,14 @@ import {
   untrack,
   type JSXElement,
   type ValidComponent,
+  createRoot,
 } from 'solid-js';
 import type { SolidNode } from './types.js';
 import { activeElement, setActiveElement } from './activeElement.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
-let renderer: RendererMain;
+let renderer: IRendererMain;
 export const rootNode = nodeOpts.createElement('App');
 
 const render = function (code: () => JSXElement) {
@@ -71,11 +72,13 @@ type Task = () => void;
 const taskQueue: Task[] = [];
 let tasksEnabled = false;
 
-createRenderEffect(() => {
-  // should change whenever a keypress occurs, so we disable the task queue
-  // until the renderer is idle again.
-  activeElement();
-  tasksEnabled = false;
+createRoot(() => {
+  createRenderEffect(() => {
+    // should change whenever a keypress occurs, so we disable the task queue
+    // until the renderer is idle again.
+    activeElement();
+    tasksEnabled = false;
+  });
 });
 
 export function setTasksEnabled(enabled: boolean): void {

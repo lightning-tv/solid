@@ -9,6 +9,36 @@ import {
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
+declare module '@lightningtv/core' {
+  interface ElementNode {
+    /** @internal for managing series of insertions and deletions */
+    _queueDelete?: number;
+  }
+}
+
+let elementDeleteQueue: ElementNode[] = [];
+
+function flushDeleteQueue(): void {
+  for (let el of elementDeleteQueue) {
+    if (Number(el._queueDelete) < 0) {
+      el.destroy();
+    }
+    el._queueDelete = undefined;
+  }
+  elementDeleteQueue.length = 0;
+}
+
+function pushDeleteQueue(node: ElementNode, n: number): void {
+  if (node._queueDelete === undefined) {
+    node._queueDelete = n;
+    if (elementDeleteQueue.push(node) === 1) {
+      queueMicrotask(flushDeleteQueue);
+    }
+  } else {
+    node._queueDelete += n;
+  }
+}
+
 export default {
   createElement(name: string): ElementNode {
     return new ElementNode(name);
@@ -30,11 +60,14 @@ export default {
   insertNode(parent: ElementNode, node: SolidNode, anchor: SolidNode): void {
     log('INSERT: ', parent, node, anchor);
 
+    let prevParent = node.parent;
     parent.insertChild(node, anchor);
-    node._queueDelete = false;
 
     if (node instanceof ElementNode) {
-      parent.rendered && node.render(true);
+      node.parent!.rendered && node.render(true);
+      if (prevParent !== undefined) {
+        pushDeleteQueue(node, 1);
+      }
     } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
@@ -45,13 +78,11 @@ export default {
   },
   removeNode(parent: ElementNode, node: SolidNode): void {
     log('REMOVE: ', parent, node);
+
     parent.removeChild(node);
-    node._queueDelete = true;
+
     if (node instanceof ElementNode) {
-      // Solid replacesNodes to move them (via insert and remove),
-      // so we need to wait for the next microtask to destroy the node
-      // in the event it gets a new parent.
-      queueMicrotask(() => node.destroy());
+      pushDeleteQueue(node, -1);
     }
   },
   getParentNode(node: SolidNode): ElementNode | ElementText | undefined {

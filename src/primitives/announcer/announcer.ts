@@ -109,7 +109,7 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   }
 }
 
-function textToSpeech(toSpeak: SpeechType, lang: string, voice: string) {
+function textToSpeech(toSpeak: SpeechType, lang: string, voice?: string) {
   if (voiceOutDisabled) {
     return;
   }
@@ -121,7 +121,7 @@ export interface Announcer {
   debug: boolean;
   enabled: boolean;
   lang: string;
-  voice: string;
+  voice?: string;
   cancel: VoidFunction;
   clearPrevFocus: (depth?: number) => void;
   speak: (
@@ -140,7 +140,6 @@ export const Announcer: Announcer = {
   debug: false,
   enabled: true,
   lang: 'en-US',
-  voice: 'Aaron',
   cancel: function () {
     currentlySpeaking && currentlySpeaking.cancel();
   },
