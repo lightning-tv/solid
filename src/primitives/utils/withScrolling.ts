@@ -171,7 +171,11 @@ export function withScrolling(isRow: boolean) {
         onScrolled();
       }
 
-      if (onUnscrolled && componentRef._initialPosition === nextPosition) {
+      if (
+        onUnscrolled &&
+        componentRef._targetPosition !== componentRef._initialPosition &&
+        componentRef._initialPosition === nextPosition
+      ) {
         onUnscrolled();
       }
 
