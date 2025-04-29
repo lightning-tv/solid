@@ -48,21 +48,23 @@ function speak(
   phrase: string,
   utterances: SpeechSynthesisUtterance[],
   lang = 'en-US',
-  voiceName: string,
+  voiceName?: string,
 ) {
   const synth = window.speechSynthesis;
 
   return new Promise<void>((resolve, reject) => {
-    const availableVoices = synth.getVoices();
-    const selectedVoice = availableVoices.find((v) => v.name === voiceName);
-
-    if (!selectedVoice) {
-      return reject(new Error(`Voice "${voiceName}" not found.`));
+    let selectedVoice;
+    if (voiceName) {
+      const availableVoices = synth.getVoices();
+      selectedVoice =
+        availableVoices.find((v) => v.name === voiceName) || availableVoices[0];
     }
 
     const utterance = new SpeechSynthesisUtterance(phrase);
     utterance.lang = lang;
-    utterance.voice = selectedVoice;
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
     utterance.onend = () => {
       resolve();
     };
@@ -77,7 +79,7 @@ function speak(
 function speakSeries(
   series: SpeechType,
   lang: string,
-  voice: string,
+  voice?: string,
   root = true,
 ): SeriesResult {
   const synth = window.speechSynthesis;
@@ -180,7 +182,7 @@ let currentSeries: SeriesResult | undefined;
 export default function (
   toSpeak: SpeechType,
   lang: string = 'en-US',
-  voice: string = 'Google US English',
+  voice?: string,
 ) {
   currentSeries && currentSeries.cancel();
   currentSeries = speakSeries(toSpeak, lang, voice);
