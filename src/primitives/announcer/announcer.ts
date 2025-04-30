@@ -113,7 +113,7 @@ function textToSpeech(toSpeak: SpeechType, lang: string, voice?: string) {
   if (voiceOutDisabled) {
     return;
   }
-  // console.log(currentlySpeaking, 'currentlySpeaking', toSpeak, 'toSpeak');
+
   if (window.speechSynthesis && window.speechSynthesis.speaking)
     window.speechSynthesis.cancel();
 
