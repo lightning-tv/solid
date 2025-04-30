@@ -1,4 +1,8 @@
-type CoreSpeechType = string | (() => SpeechType) | SpeechType[];
+type CoreSpeechType =
+  | string
+  | (() => SpeechType)
+  | SpeechType[]
+  | SpeechSynthesisUtterance;
 export type SpeechType = CoreSpeechType | Promise<CoreSpeechType>;
 
 export interface SeriesResult {
@@ -110,13 +114,20 @@ function speakSeries(
             pause = 0;
           }
           await delay(pause);
-        } else if (typeof phrase === 'string' && phrase.length) {
-          // Speak it
+        } else if (
+          (typeof phrase === 'string' && phrase.length) ||
+          phrase instanceof SpeechSynthesisUtterance
+        ) {
           const totalRetries = 3;
           let retriesLeft = totalRetries;
+
           while (active && retriesLeft > 0) {
             try {
-              await speak(phrase, utterances, lang, voice);
+              if (typeof phrase === 'string') {
+                await speak(phrase, utterances, lang, voice);
+              } else if (phrase instanceof SpeechSynthesisUtterance) {
+                synth.speak(phrase);
+              }
               retriesLeft = 0;
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
@@ -130,7 +141,6 @@ function speakSeries(
                   e.error === 'canceled' ||
                   e.error === 'interrupted'
                 ) {
-                  // Cancel or interrupt error (ignore)
                   retriesLeft = 0;
                 } else {
                   throw new Error(`SpeechSynthesisErrorEvent: ${e.error}`);
