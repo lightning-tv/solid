@@ -113,6 +113,9 @@ function textToSpeech(toSpeak: SpeechType, lang: string, voice?: string) {
   if (voiceOutDisabled) {
     return;
   }
+  // console.log(currentlySpeaking, 'currentlySpeaking', toSpeak, 'toSpeak');
+  if (window.speechSynthesis && window.speechSynthesis.speaking)
+    window.speechSynthesis.cancel();
 
   return (currentlySpeaking = SpeechEngine(toSpeak, lang, voice));
 }
@@ -149,7 +152,6 @@ export const Announcer: Announcer = {
   },
   speak: function (text, { append = false, notification = false } = {}) {
     if (Announcer.onFocusChange && Announcer.enabled) {
-      Announcer.onFocusChange.flush();
       if (append && currentlySpeaking && currentlySpeaking.active) {
         currentlySpeaking.append(text);
       } else {
