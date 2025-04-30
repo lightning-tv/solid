@@ -114,9 +114,6 @@ function textToSpeech(toSpeak: SpeechType, lang: string, voice?: string) {
     return;
   }
 
-  if (window.speechSynthesis && window.speechSynthesis.speaking)
-    window.speechSynthesis.cancel();
-
   return (currentlySpeaking = SpeechEngine(toSpeak, lang, voice));
 }
 
