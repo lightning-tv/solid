@@ -149,7 +149,6 @@ export const Announcer: Announcer = {
   },
   speak: function (text, { append = false, notification = false } = {}) {
     if (Announcer.onFocusChange && Announcer.enabled) {
-      Announcer.onFocusChange.flush();
       if (append && currentlySpeaking && currentlySpeaking.active) {
         currentlySpeaking.append(text);
       } else {

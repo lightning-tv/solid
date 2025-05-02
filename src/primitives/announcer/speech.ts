@@ -1,4 +1,8 @@
-type CoreSpeechType = string | (() => SpeechType) | SpeechType[];
+type CoreSpeechType =
+  | string
+  | (() => SpeechType)
+  | SpeechType[]
+  | SpeechSynthesisUtterance;
 export type SpeechType = CoreSpeechType | Promise<CoreSpeechType>;
 
 export interface SeriesResult {
@@ -87,11 +91,6 @@ function speakSeries(
     Array.isArray(series) ? series : [series],
   );
   const nestedSeriesResults: SeriesResult[] = [];
-  /*
-    We hold this array of SpeechSynthesisUtterances in order to prevent them from being
-    garbage collected prematurely on STB hardware which can cause the 'onend' events of
-    utterances to not fire consistently.
-  */
   const utterances: SpeechSynthesisUtterance[] = [];
   let active: boolean = true;
 
@@ -100,24 +99,63 @@ function speakSeries(
       while (active && remainingPhrases.length) {
         const phrase = await Promise.resolve(remainingPhrases.shift());
         if (!active) {
-          // Exit
-          // Need to check this after the await in case it was cancelled in between
-          break;
-        } else if (typeof phrase === 'string' && phrase.includes('PAUSE-')) {
-          // Pause it
-          let pause = Number(phrase.split('PAUSE-')[1]) * 1000;
-          if (isNaN(pause)) {
-            pause = 0;
+          break; // Exit if canceled
+        }
+
+        if (typeof phrase === 'string' && phrase.includes('PAUSE-')) {
+          // Handle pauses
+          const pause = Number(phrase.split('PAUSE-')[1]) * 1000;
+          if (!isNaN(pause)) {
+            await delay(pause);
           }
-          await delay(pause);
-        } else if (typeof phrase === 'string' && phrase.length) {
-          // Speak it
+        } else if (typeof phrase === 'string') {
+          // Handle regular strings with retry logic
           const totalRetries = 3;
           let retriesLeft = totalRetries;
+
           while (active && retriesLeft > 0) {
             try {
               await speak(phrase, utterances, lang, voice);
-              retriesLeft = 0;
+              retriesLeft = 0; // Exit retry loop on success
+            } catch (e) {
+              if (e instanceof SpeechSynthesisErrorEvent) {
+                if (e.error === 'network') {
+                  retriesLeft--;
+                  console.warn(
+                    `Speech synthesis network error. Retries left: ${retriesLeft}`,
+                  );
+                  await delay(500 * (totalRetries - retriesLeft));
+                } else if (
+                  e.error === 'canceled' ||
+                  e.error === 'interrupted'
+                ) {
+                  // Cancel or interrupt error (ignore)
+                  retriesLeft = 0;
+                } else {
+                  throw new Error(`SpeechSynthesisErrorEvent: ${e.error}`);
+                }
+              } else {
+                throw e;
+              }
+            }
+          }
+        } else if (phrase instanceof SpeechSynthesisUtterance) {
+          // Handle SpeechSynthesisUtterance objects with retry logic
+          const totalRetries = 3;
+          let retriesLeft = totalRetries;
+
+          while (active && retriesLeft > 0) {
+            try {
+              utterances.push(phrase);
+              synth.speak(phrase);
+
+              // Wait for the utterance to finish
+              await new Promise<void>((resolve, reject) => {
+                phrase.onend = () => resolve();
+                phrase.onerror = (e) => reject(e);
+              });
+
+              retriesLeft = 0; // Exit retry loop on success
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
                 if (e.error === 'network') {
@@ -141,11 +179,12 @@ function speakSeries(
             }
           }
         } else if (typeof phrase === 'function') {
+          // Handle functions
           const seriesResult = speakSeries(phrase(), lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         } else if (Array.isArray(phrase)) {
-          // Speak it (recursively)
+          // Handle nested arrays
           const seriesResult = speakSeries(phrase, lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
@@ -155,6 +194,7 @@ function speakSeries(
       active = false;
     }
   })();
+
   return {
     series: seriesChain,
     get active() {
@@ -168,16 +208,15 @@ function speakSeries(
         return;
       }
       if (root) {
-        synth.cancel();
+        synth.cancel(); // Cancel all ongoing speech
       }
-      nestedSeriesResults.forEach((nestedSeriesResults) => {
-        nestedSeriesResults.cancel();
+      nestedSeriesResults.forEach((nestedSeriesResult) => {
+        nestedSeriesResult.cancel();
       });
       active = false;
     },
   };
 }
-
 let currentSeries: SeriesResult | undefined;
 export default function (
   toSpeak: SpeechType,
