@@ -57,7 +57,6 @@ function speak(
   const synth = window.speechSynthesis;
 
   return new Promise<void>((resolve, reject) => {
-    console.log('speak', phrase);
     let selectedVoice;
     if (voiceName) {
       const availableVoices = synth.getVoices();
@@ -102,6 +101,7 @@ function speakSeries(
         if (!active) {
           break; // Exit if canceled
         }
+
         if (typeof phrase === 'string' && phrase.includes('PAUSE-')) {
           // Handle pauses
           const pause = Number(phrase.split('PAUSE-')[1]) * 1000;
@@ -109,18 +109,75 @@ function speakSeries(
             await delay(pause);
           }
         } else if (typeof phrase === 'string') {
-          // Handle regular strings
-          await speak(phrase, utterances, lang, voice);
-        } else if (phrase instanceof SpeechSynthesisUtterance) {
-          // Handle SpeechSynthesisUtterance objects
-          utterances.push(phrase);
-          synth.speak(phrase);
+          // Handle regular strings with retry logic
+          const totalRetries = 3;
+          let retriesLeft = totalRetries;
 
-          // Wait for the utterance to finish
-          await new Promise<void>((resolve, reject) => {
-            phrase.onend = () => resolve();
-            phrase.onerror = (e) => reject(e);
-          });
+          while (active && retriesLeft > 0) {
+            try {
+              await speak(phrase, utterances, lang, voice);
+              retriesLeft = 0; // Exit retry loop on success
+            } catch (e) {
+              if (e instanceof SpeechSynthesisErrorEvent) {
+                if (e.error === 'network') {
+                  retriesLeft--;
+                  console.warn(
+                    `Speech synthesis network error. Retries left: ${retriesLeft}`,
+                  );
+                  await delay(500 * (totalRetries - retriesLeft));
+                } else if (
+                  e.error === 'canceled' ||
+                  e.error === 'interrupted'
+                ) {
+                  // Cancel or interrupt error (ignore)
+                  retriesLeft = 0;
+                } else {
+                  throw new Error(`SpeechSynthesisErrorEvent: ${e.error}`);
+                }
+              } else {
+                throw e;
+              }
+            }
+          }
+        } else if (phrase instanceof SpeechSynthesisUtterance) {
+          // Handle SpeechSynthesisUtterance objects with retry logic
+          const totalRetries = 3;
+          let retriesLeft = totalRetries;
+
+          while (active && retriesLeft > 0) {
+            try {
+              utterances.push(phrase);
+              synth.speak(phrase);
+
+              // Wait for the utterance to finish
+              await new Promise<void>((resolve, reject) => {
+                phrase.onend = () => resolve();
+                phrase.onerror = (e) => reject(e);
+              });
+
+              retriesLeft = 0; // Exit retry loop on success
+            } catch (e) {
+              if (e instanceof SpeechSynthesisErrorEvent) {
+                if (e.error === 'network') {
+                  retriesLeft--;
+                  console.warn(
+                    `Speech synthesis network error. Retries left: ${retriesLeft}`,
+                  );
+                  await delay(500 * (totalRetries - retriesLeft));
+                } else if (
+                  e.error === 'canceled' ||
+                  e.error === 'interrupted'
+                ) {
+                  // Cancel or interrupt error (ignore)
+                  retriesLeft = 0;
+                } else {
+                  throw new Error(`SpeechSynthesisErrorEvent: ${e.error}`);
+                }
+              } else {
+                throw e;
+              }
+            }
+          }
         } else if (typeof phrase === 'function') {
           // Handle functions
           const seriesResult = speakSeries(phrase(), lang, voice, false);
@@ -160,14 +217,12 @@ function speakSeries(
     },
   };
 }
-
 let currentSeries: SeriesResult | undefined;
 export default function (
   toSpeak: SpeechType,
   lang: string = 'en-US',
   voice?: string,
 ) {
-  console.log('current series', currentSeries);
   currentSeries && currentSeries.cancel();
   currentSeries = speakSeries(toSpeak, lang, voice);
   return currentSeries;
