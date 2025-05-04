@@ -7,8 +7,6 @@ export type OnSelectedChanged = (
   elm: NavigableElement,
   active: ElementNode,
   lastSelectedIndex?: number,
-  onScrolled?: () => void,
-  onUnscrolled?: () => void,
 ) => void;
 
 export interface NavigableProps extends NodeProps {
