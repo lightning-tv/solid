@@ -146,13 +146,13 @@ function speakSeries(
 
           while (active && retriesLeft > 0) {
             try {
-              utterances.push(phrase);
-              synth.speak(phrase);
-
               // Wait for the utterance to finish
               await new Promise<void>((resolve, reject) => {
                 phrase.onend = () => resolve();
                 phrase.onerror = (e) => reject(e);
+
+                utterances.push(phrase);
+                synth.speak(phrase);
               });
 
               retriesLeft = 0; // Exit retry loop on success
