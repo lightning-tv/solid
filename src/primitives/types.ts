@@ -44,10 +44,11 @@ export interface NavigableProps extends NodeProps {
   wrap?: boolean;
 
   /** function to be called when scrolled */
-  onScrolled?: () => void;
-
-  /** function to be called when unscrolled, back to its initial position */
-  onUnscrolled?: () => void;
+  onScrolled?: (
+    elm: NavigableElement,
+    offset: number,
+    isInitial: boolean,
+  ) => void;
 }
 
 // @ts-expect-error animationSettings is not identical - weird
