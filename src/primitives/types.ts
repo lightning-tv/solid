@@ -1,5 +1,6 @@
 import type { ElementNode, NodeProps, NodeStyles } from '@lightningtv/solid';
 import type { KeyHandler } from '@lightningtv/core/focusManager';
+
 export type OnSelectedChanged = (
   this: NavigableElement,
   selectedIndex: number,
@@ -7,6 +8,7 @@ export type OnSelectedChanged = (
   active: ElementNode,
   lastSelectedIndex?: number,
 ) => void;
+
 export interface NavigableProps extends NodeProps {
   /** function to be called when the selected of the component changes */
   onSelectedChanged?: OnSelectedChanged;
@@ -40,6 +42,12 @@ export interface NavigableProps extends NodeProps {
    * Wrap the row so active goes back to the beginning of the row
    */
   wrap?: boolean;
+
+  /** function to be called when scrolled */
+  onScrolled?: () => void;
+
+  /** function to be called when unscrolled, back to its initial position */
+  onUnscrolled?: () => void;
 }
 
 // @ts-expect-error animationSettings is not identical - weird

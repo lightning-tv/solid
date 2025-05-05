@@ -11,8 +11,11 @@ export interface ScrollableElement extends ElementNode {
   selected: number;
   offset?: number;
   endOffset?: number;
+  onScrolled?: () => void;
+  onUnscrolled?: () => void;
   _targetPosition?: number;
   _screenOffset?: number;
+  _initialPosition?: number;
 }
 
 // From the renderer, not exported
@@ -47,6 +50,10 @@ export function withScrolling(isRow: boolean) {
       !componentRef.children.length
     )
       return;
+
+    if (componentRef._initialPosition === undefined) {
+      componentRef._initialPosition = componentRef[axis];
+    }
 
     const lng = componentRef.lng as INode;
     const screenSize = isRow ? lng.stage.root.width : lng.stage.root.height;
@@ -156,6 +163,21 @@ export function withScrolling(isRow: boolean) {
 
     // Update position if it has changed
     if (componentRef[axis] !== nextPosition) {
+      if (
+        componentRef.onScrolled &&
+        componentRef[axis] === componentRef._initialPosition
+      ) {
+        componentRef.onScrolled();
+      }
+
+      if (
+        componentRef.onUnscrolled &&
+        componentRef._targetPosition !== componentRef._initialPosition &&
+        componentRef._initialPosition === nextPosition
+      ) {
+        componentRef.onUnscrolled();
+      }
+
       componentRef[axis] = nextPosition;
       // Store the new position to keep track during animations
       componentRef._targetPosition = nextPosition;
