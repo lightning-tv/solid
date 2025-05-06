@@ -23,6 +23,7 @@ The components accept the following props:
 | `onFocus`           | `(event: Event) => void`                                                     | Callback triggered when the row gains focus.                |
 | `onLayout`          | `(layout: Layout) => void`                                                   | Callback triggered during layout updates.                   |
 | `onSelectedChanged` | `(index: number, self: this, active: boolean, lastSelected: number) => void` | Callback triggered when the selected index changes.         |
+| `onScrolled`        | `(elm: this, offset: number, isInitialPos: boolean) => void`                 | Callback triggered before scrolling occurs                  |
 | `style`             | `NodeStyles`                                                                 | Custom styles to apply to the row.                          |
 | `scroll`            | `'auto' \| 'always' \| 'edge' \| 'center' \| 'none'`                         | Defines the scrolling behavior. Default is `'auto'`.        |
 
