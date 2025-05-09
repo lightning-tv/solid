@@ -1,3 +1,4 @@
+import * as s from 'solid-js';
 import {
   assertTruthy,
   isElementText,
@@ -9,39 +10,16 @@ import {
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
 
-declare module '@lightningtv/core' {
-  interface ElementNode {
-    /** @internal for managing series of insertions and deletions */
-    _queueDelete?: number;
-  }
-}
-
-let elementDeleteQueue: ElementNode[] = [];
-
-function flushDeleteQueue(): void {
-  for (let el of elementDeleteQueue) {
-    if (Number(el._queueDelete) < 0) {
-      el.destroy();
-    }
-    el._queueDelete = undefined;
-  }
-  elementDeleteQueue.length = 0;
-}
-
-function pushDeleteQueue(node: ElementNode, n: number): void {
-  if (node._queueDelete === undefined) {
-    node._queueDelete = n;
-    if (elementDeleteQueue.push(node) === 1) {
-      queueMicrotask(flushDeleteQueue);
-    }
-  } else {
-    node._queueDelete += n;
-  }
-}
-
 export default {
   createElement(name: string): ElementNode {
-    return new ElementNode(name);
+    let el = new ElementNode(name);
+
+    let o = s.getOwner();
+    if (o != null) {
+      s.onCleanup(el.destroy.bind(el));
+    }
+
+    return el;
   },
   createTextNode(text: string): TextNode {
     // A text node is just a string - not the <text> node
@@ -60,14 +38,11 @@ export default {
   insertNode(parent: ElementNode, node: SolidNode, anchor: SolidNode): void {
     log('INSERT: ', parent, node, anchor);
 
-    let prevParent = node.parent;
     parent.insertChild(node, anchor);
+    node.parent = parent;
 
     if (node instanceof ElementNode) {
       node.parent!.rendered && node.render(true);
-      if (prevParent !== undefined) {
-        pushDeleteQueue(node, 1);
-      }
     } else if (isElementText(parent)) {
       // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
       parent.text = parent.getText();
@@ -80,10 +55,7 @@ export default {
     log('REMOVE: ', parent, node);
 
     parent.removeChild(node);
-
-    if (node instanceof ElementNode) {
-      pushDeleteQueue(node, -1);
-    }
+    node.parent = undefined;
   },
   getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
     return node.parent;
