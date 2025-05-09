@@ -83,6 +83,9 @@ export default {
 
     if (node instanceof ElementNode) {
       pushDeleteQueue(node, -1);
+    } else if (isElementText(parent)) {
+      // TextNodes can be placed outside of <text> nodes when <Show> is used as placeholder
+      parent.text = parent.getText();
     }
   },
   getParentNode(node: SolidNode): ElementNode | ElementText | undefined {
