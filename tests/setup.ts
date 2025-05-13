@@ -19,4 +19,14 @@ globalThis.MutationObserver = class MockMutationObserver {
 export const root = document.createElement('div');
 document.body.appendChild(root);
 
+// @ts-expect-error
+document.fonts = {
+  add: () => {},
+  delete: () => {},
+  check: () => true,
+  load: () => Promise.resolve(),
+  forEach: () => {},
+  ready: Promise.resolve(),
+};
+
 export const renderer = lng.createRenderer(undefined, root);
