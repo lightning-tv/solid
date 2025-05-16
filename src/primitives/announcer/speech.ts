@@ -109,6 +109,9 @@ function speakSeries(
             await delay(pause);
           }
         } else if (typeof phrase === 'string') {
+          if (!phrase) {
+            continue; // Skip empty strings
+          }
           // Handle regular strings with retry logic
           const totalRetries = 3;
           let retriesLeft = totalRetries;
@@ -143,18 +146,13 @@ function speakSeries(
           // Handle SpeechSynthesisUtterance objects with retry logic
           const totalRetries = 3;
           let retriesLeft = totalRetries;
+          const text = phrase.text;
+          const objectLang = phrase?.lang;
+          const objectVoice = phrase?.voice;
 
           while (active && retriesLeft > 0) {
             try {
-              // Wait for the utterance to finish
-              await new Promise<void>((resolve, reject) => {
-                phrase.onend = () => resolve();
-                phrase.onerror = (e) => reject(e);
-
-                utterances.push(phrase);
-                synth.speak(phrase);
-              });
-
+              await speak(text, utterances, objectLang, objectVoice?.name);
               retriesLeft = 0; // Exit retry loop on success
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
