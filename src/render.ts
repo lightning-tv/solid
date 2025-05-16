@@ -14,8 +14,8 @@ import {
   createRenderEffect,
   untrack,
   type JSXElement,
-  type ValidComponent,
   createRoot,
+  type Component,
 } from 'solid-js';
 import type { SolidNode } from './types.js';
 import { activeElement, setActiveElement } from './activeElement.js';
@@ -120,10 +120,8 @@ function processTasks(): void {
  * ```
  * @description https://www.solidjs.com/docs/latest/api#dynamic
  */
-export function Dynamic<T>(
-  props: T & {
-    component?: ValidComponent;
-  },
+export function Dynamic<T extends Record<string, any>>(
+  props: T & { component?: Component<T> },
 ): JSXElement {
   const [p, others] = splitProps(props, ['component']);
 
