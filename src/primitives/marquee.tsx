@@ -13,7 +13,7 @@ export interface MarqueeAnimationProps {
    * distance between the end of the text and the start of the next animation
    * @default `0.5 * clipWidth`
    */
-  gap?: number
+  scrollGap?: number
   /** easing function, @default 'linear' */
   easing?: string
 }
@@ -48,7 +48,7 @@ const SAFETY_MARGIN = 10
  *     marquee={inFocus()}
  *     speed={200}
  *     delay={1000}
- *     gap={24}
+ *     scrollGap={24}
  *     easing='ease-in-out'
  *   >
  *     This is a long text that will scroll when it overflows the container.
@@ -58,8 +58,8 @@ const SAFETY_MARGIN = 10
 export function MarqueeText(props: MarqueeTextProps) {
 
   const speed = s.createMemo(() => props.speed || 200)
-  const delay = s.createMemo(() => props.delay || 1000)
-  const scrollGap = s.createMemo(() => props.clipWidth * 0.5)
+  const delay = s.createMemo(() => props.delay ?? 1000)
+  const scrollGap = s.createMemo(() => props.scrollGap ?? (props.clipWidth * 0.5))
 
   const [textWidth, setTextWidth] = s.createSignal(0)
 
@@ -138,7 +138,7 @@ export function Marquee(props: MarqueeProps) {
         clipWidth={clipWidth()}
         speed={props.speed}
         delay={props.delay}
-        gap={props.gap}
+        scrollGap={props.scrollGap}
         easing={props.easing}
       >
         {props.children}
