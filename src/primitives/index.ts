@@ -12,6 +12,7 @@ export * from './Row.jsx';
 export * from './Grid.jsx';
 export * from './FPSCounter.jsx';
 export * from './createFocusStack.jsx';
+export * from './marquee.jsx';
 export { withScrolling } from './utils/withScrolling.js';
 export { chainFunctions } from './utils/chainFunctions.js';
 export { handleNavigation, onGridFocus } from './utils/handleNavigation.js';
