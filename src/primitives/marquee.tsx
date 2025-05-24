@@ -1,8 +1,6 @@
 import * as s from 'solid-js'
 import * as lng from '@lightningtv/solid'
-
 import { chainFunctions } from './utils/chainFunctions.js'
-
 
 export interface MarqueeAnimationProps {
   /** delay in ms between animations, @default 1000 */
@@ -39,7 +37,7 @@ const SAFETY_MARGIN = 10
 
 /**
  * MarqueeText is a component that scrolls text when it overflows the container.
- * 
+ *
  * @example
  * ```tsx
  * <view width={400} height={28} clipping>
@@ -109,7 +107,7 @@ export function MarqueeText(props: MarqueeTextProps) {
 /**
  * Marquee is a component that scrolls text when it overflows the container.
  * It uses the {@link MarqueeText} component to do the actual scrolling.
- * 
+ *
  * @example
  * ```tsx
  * <Marquee
@@ -125,12 +123,15 @@ export function MarqueeText(props: MarqueeTextProps) {
  * ```
  */
 export function Marquee(props: MarqueeProps) {
-  const [clipWidth, setClipWidth] = s.createSignal(props.width || 0)
+  const [clipWidth, setClipWidth] = s.createSignal(props.width || 0);
+  const clipHeight = s.createMemo(() => props.height || props.textProps?.lineHeight || ((props.textProps?.fontSize || 16) * 1.5));
 
   return (
-    <view {...props}
-      onLayout={/* @once */chainFunctions(props.onLayout, (e: lng.ElementNode) => setClipWidth(e.width))}
-      clipping
+    <view
+      {...props}
+      height={clipHeight()}
+      onLayout={/* @once */ chainFunctions(props.onLayout, (e: lng.ElementNode) => setClipWidth(e.width))}
+      clipping={props.marquee}
     >
       <MarqueeText
         {...props.textProps}
