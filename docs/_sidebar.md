@@ -40,4 +40,5 @@
   - [Portal](/primitives/portal.md)
   - [Router](/primitives/router.md)
   - [Row and Column](/primitives/row_column.md)
+  - [useHold](/primitives/useHold.md)
   - [Visible](/primitives/visible.md)
