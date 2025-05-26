@@ -56,5 +56,5 @@ export function chainFunctions(
  * ```
  */
 export const chainRefs = chainFunctions as <T>(
-  ...refs: s.Ref<T>[]
+  ...refs: (s.Ref<T> | undefined)[]
 ) => (el: T) => void;
