@@ -121,7 +121,7 @@ function processTasks(): void {
  * @description https://www.solidjs.com/docs/latest/api#dynamic
  */
 export function Dynamic<T extends Record<string, any>>(
-  props: T & { component?: Component<T> },
+  props: T & { component?: Component<T> | undefined | null },
 ): JSXElement {
   const [p, others] = splitProps(props, ['component']);
 
