@@ -14,7 +14,11 @@ export * from './FadeInOut.jsx';
 export * from './createFocusStack.jsx';
 export * from './marquee.jsx';
 export { withScrolling } from './utils/withScrolling.js';
-export { chainFunctions } from './utils/chainFunctions.js';
+export {
+  type AnyFunction,
+  chainFunctions,
+  chainRefs,
+} from './utils/chainFunctions.js';
 export { handleNavigation, onGridFocus } from './utils/handleNavigation.js';
 export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
 

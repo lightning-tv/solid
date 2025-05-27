@@ -130,7 +130,7 @@ export function Marquee(props: MarqueeProps) {
     <view
       {...props}
       height={clipHeight()}
-      onLayout={/* @once */ chainFunctions(props.onLayout, (e: lng.ElementNode) => setClipWidth(e.width))}
+      onLayout={/* @once */ chainFunctions(props.onLayout, e => setClipWidth(e.width))}
       clipping={props.marquee}
     >
       <MarqueeText
