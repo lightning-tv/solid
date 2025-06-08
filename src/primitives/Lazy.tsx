@@ -8,8 +8,8 @@ import {
   type ValidComponent,
   untrack,
   type Accessor,
-} from 'solid-js';
-import { Dynamic, type NewOmit, scheduleTask, type NodeProps } from '@lightningtv/solid';
+} from 'solid-js'; // Dynamic removed
+import { type NewOmit, scheduleTask, type NodeProps, Dynamic } from '@lightningtv/solid'; // Dynamic removed from imports
 import { Row, Column } from '@lightningtv/solid/primitives';
 
 type LazyProps<T extends readonly any[]> = NewOmit<NodeProps, 'children'> & {
@@ -28,14 +28,12 @@ function createLazy<T>(
   keyHandler: (updateOffset: () => void) => Record<string, () => void>
 ) {
   // Need at least one item so it can be focused
-  const [offset, setOffset] = createSignal(1);
+  const [offset, setOffset] = createSignal<number>(props.sync ? props.upCount : 1);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  createEffect(() => setOffset((props.selected || 0) + 1));
+  createEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + 1)));
 
-  if (props.sync) {
-    setOffset(props.upCount);
-  } else {
+  if (!props.sync) {
     createEffect(() => {
       if (props.each) {
         const loadItems = () => {
@@ -56,7 +54,9 @@ function createLazy<T>(
     });
   }
 
-  const items = createMemo(() => (Array.isArray(props.each) ? props.each.slice(0, offset()) : []));
+  const items = createMemo(() => (
+    Array.isArray(props.each) ? props.each.slice(0, offset()) : [])
+  );
 
   const updateOffset = () => {
     const maxOffset = props.each ? props.each.length : 0;
