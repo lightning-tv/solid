@@ -12,7 +12,7 @@ export interface GridItemProps<T> {
 }
 
 export interface GridProps<T> extends NewOmit<NodeProps, 'children'> {
-  items: T[];
+  items: readonly T[];
   children: (props: GridItemProps<T>) => JSX.Element,
   itemHeight?: number;
   itemWidth?: number;
