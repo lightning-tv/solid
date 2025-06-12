@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@lightningjs/renderer':
-        specifier: ^3.0.0-beta3
-        version: 3.0.0-beta3
+        specifier: ^2.13.4
+        version: 2.13.4
       '@lightningtv/core':
-        specifier: ^3.0.0-3
-        version: 3.0.0-3(@lightningjs/renderer@3.0.0-beta3)
+        specifier: ^2.8.0-1
+        version: 2.8.0-1(@lightningjs/renderer@2.13.4)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -426,14 +426,14 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@lightningjs/renderer@3.0.0-beta3':
-    resolution: {integrity: sha512-zesySXNd4TVVegR2qd3Ps8KPjN93NUo035AXji0p4pPmPLJHr/ZDD/S1cmxbRMW33FI9FpDzGIzoWo8pcwpuPA==}
-    engines: {node: '>= 18.0.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
+  '@lightningjs/renderer@2.13.4':
+    resolution: {integrity: sha512-dKDP3bNm8uaQJFgwx9174/sQwIH/wzc97JHPccofHBvqrdHHKYjM/sEyT7HVvMdF9Zh/Mhx1P7tKn1IM6x2uaA==}
+    engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@3.0.0-3':
-    resolution: {integrity: sha512-sJsek0PexD97plIRio61bdpMG7lVXU4Uwu7aVEhq8+aqOiIN9XSokN9ku/YVV3pdr5PrndxUFkrpBOHHt1awtA==}
+  '@lightningtv/core@2.8.0-1':
+    resolution: {integrity: sha512-+SwQXjTicuU/DoR+NfKHb2S4H4AQN1FCVSbUCuUiErUzyZySgCHgkLKP3+4pLJtKdBX5AxFqjDMlzriTt1xmdA==}
     peerDependencies:
-      '@lightningjs/renderer': ^3.0.0-beta6
+      '@lightningjs/renderer': ^2.13.0
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2819,11 +2819,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@lightningjs/renderer@3.0.0-beta3': {}
+  '@lightningjs/renderer@2.13.4': {}
 
-  '@lightningtv/core@3.0.0-3(@lightningjs/renderer@3.0.0-beta3)':
+  '@lightningtv/core@2.8.0-1(@lightningjs/renderer@2.13.4)':
     dependencies:
-      '@lightningjs/renderer': 3.0.0-beta3
+      '@lightningjs/renderer': 2.13.4
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:

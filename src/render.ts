@@ -5,7 +5,7 @@ import {
   type TextProps,
   startLightningRenderer,
   type RendererMainSettings,
-  type IRendererMain,
+  type RendererMain as IRendererMain,
 } from '@lightningtv/core';
 import nodeOpts from './solidOpts.js';
 import {
