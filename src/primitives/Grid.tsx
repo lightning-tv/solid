@@ -1,5 +1,6 @@
-import { For, createSignal, createMemo, JSX } from "solid-js";
-import { type NodeProps, type ElementNode, isFunction, NewOmit } from "@lightningtv/solid";
+import { For, createSignal, createMemo, createEffect, JSX } from "solid-js";
+import { type NodeProps, ElementNode, NewOmit } from "@lightningtv/solid";
+import { chainRefs } from "./utils/chainFunctions.js";
 
 export interface GridItemProps<T> {
   item:   T
@@ -11,7 +12,7 @@ export interface GridItemProps<T> {
 }
 
 export interface GridProps<T> extends NewOmit<NodeProps, 'children'> {
-  items: T[];
+  items: readonly T[];
   children: (props: GridItemProps<T>) => JSX.Element,
   itemHeight?: number;
   itemWidth?: number;
@@ -34,7 +35,17 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
   const totalWidth = createMemo(() => itemWidth() + (props.itemOffset ?? 0));
   const totalHeight = createMemo(() => itemHeight() + (props.itemOffset ?? 0));
 
-  const moveFocus = (delta: number, elm: ElementNode) => {
+  function focus() {
+    const focusedElm = gridRef.children[focusedIndex()];
+    if (focusedElm instanceof ElementNode && !focusedElm.states.has('$focus')) {
+      focusedElm.setFocus();
+      props.onSelectedChanged?.call(gridRef, focusedIndex(), gridRef, focusedElm);
+      return true;
+    }
+    return false;
+  }
+
+  function moveFocus(delta: number) {
     if (!props.items || props.items.length === 0) return false;
     const newIndex = focusedIndex() + delta;
 
@@ -52,13 +63,10 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
     } else {
       return false;
     }
-    const focusedElm = elm.children[focusedIndex()] as ElementNode;
-    focusedElm.setFocus();
-    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm, focusedIndex(), elm, focusedElm);
-    return true;
+    return focus();
   };
 
-  const handleHorizontalFocus = (delta: number, elm: ElementNode) => {
+  function handleHorizontalFocus(delta: number) {
     if (!props.items || props.items.length === 0) return false;
     const newIndex = focusedIndex() + delta;
     const isWithinRow = Math.floor(newIndex / columns()) === Math.floor(focusedIndex() / columns());
@@ -72,29 +80,31 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
     } else {
       return false;
     }
-    const focusedElm = elm.children[focusedIndex()] as ElementNode;
-    focusedElm.setFocus();
-    isFunction(props.onSelectedChanged) && props.onSelectedChanged.call(elm, focusedIndex(), elm, focusedElm);
-    return true;
+    return focus();
   };
 
-  function onFocus(this: ElementNode) {
-    handleHorizontalFocus(0, this);
-  }
+  // Handle focus when items change - important for autofocus
+  createEffect(() => {
+    if (props.items && props.items.length > 0 && gridRef && gridRef.states.has('$focus')) {
+      queueMicrotask(focus)
+    }
+  })
 
   const scrollY = createMemo(() =>
     props.scroll === "none" ? props.y ?? 0 : -Math.floor(focusedIndex() / columns()) * totalHeight() + (props.y || 0)
   );
 
+  let gridRef!: ElementNode;
   return (
     <view
-      transition={{ y: true }}
       {...props}
-      onUp={(_e, elm) => moveFocus(-columns(), elm)}
-      onDown={(_e, elm) => moveFocus(columns(), elm)}
-      onLeft={(_e, elm) => handleHorizontalFocus(-1, elm)}
-      onRight={(_e, elm) => handleHorizontalFocus(1, elm)}
-      onFocus={onFocus}
+      ref={chainRefs(el => gridRef = el, props.ref)}
+      transition={{ y: true }}
+      onUp={() => moveFocus(-columns())}
+      onDown={() => moveFocus(columns())}
+      onLeft={() => handleHorizontalFocus(-1)}
+      onRight={() => handleHorizontalFocus(1)}
+      onFocus={() => handleHorizontalFocus(0)}
       strictBounds={false}
       y={scrollY()}
     >
