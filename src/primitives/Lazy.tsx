@@ -33,7 +33,7 @@ function createLazy<T>(
 
   createEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + 1)));
 
-  if (!props.sync) {
+  if (!props.sync || props.eaglerLoad) {
     createEffect(() => {
       if (props.each) {
         const loadItems = () => {

@@ -1,4 +1,5 @@
-import type { NewOmit, NodeProps, TextProps } from '@lightningtv/core';
+/* eslint-disable @typescript-eslint/no-namespace */
+import type { NodeProps, TextProps } from '@lightningtv/core';
 
 declare module 'solid-js' {
   namespace JSX {

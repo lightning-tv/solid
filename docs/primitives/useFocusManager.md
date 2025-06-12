@@ -54,8 +54,9 @@ return <View onFocusChanged={setHasFocus}>{/* use hasFocus() */}</View>;
 When a key is pressed:
 
 1. The `keyMap` looks for the key name and its corresponding value.
-2. It calls the `on${key}` handler first.
-3. If the key is not handled, it calls the generic `onKeyPress` on the active element and then propagates up through the focus path until the key press is handled.
+2. It then looks for `capture${key}` and `captureKey` from top down.
+3. It then calls the `on${key}` handler, searching from focused element back up the tree.
+4. If the key is not handled, it calls the generic `onKeyPress` on the active element and then propagates up through the focus path until the key press is handled.
 
 The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, finalFocusedElm: ElementNode) => boolean`
 
@@ -72,7 +73,11 @@ Note: There is no generic `onKeyRelease`.
 
 ### Hold Key Handling
 
-You can specify which keys you'd like tracked for Hold events as the second param to `useFocusManager`.
+Recommended approach to Hold Key Handling is with the [useHold](./useHold.md) primitive as this will not delay any keypress events for elements which do not need Hold.
+
+#### DEPRECATED - keyHold will be replaced with useHold
+
+You can specify which keys you'd like tracked for Hold events globally as the second param to `useFocusManager`.
 
 1. The `keyHoldMap` looks for the key name and its corresponding value.
 2. It calls the `on${keyHold}` handler after `holdThreshold` || 500 ms.
