@@ -12,7 +12,7 @@ export * from './Grid.jsx';
 export * from './FPSCounter.jsx';
 export * from './FadeInOut.jsx';
 export * from './createFocusStack.jsx';
-export * from './marquee.jsx';
+export * from './Marquee.jsx';
 export * from './useHold.js';
 export { withScrolling } from './utils/withScrolling.js';
 export {
