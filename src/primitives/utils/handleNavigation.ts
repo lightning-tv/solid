@@ -6,6 +6,15 @@ export function onGridFocus(onSelectedChanged: OnSelectedChanged | undefined) {
   return function (this: ElementNode) {
     if (!this || this.children.length === 0) return false;
 
+    // if a child already has focus, assume that should be selected
+    this.children.find((child, index) => {
+      if (child.states.has(Config.focusStateKey)) {
+        this.selected = index;
+        return true;
+      }
+      return false;
+    });
+
     this.selected = this.selected || 0;
     let child = this.selected
       ? this.children[this.selected]
