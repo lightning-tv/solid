@@ -8,6 +8,7 @@ import type {
 // Adds properties expected by withScrolling
 export interface ScrollableElement extends ElementNode {
   scrollIndex?: number;
+  scroll?: 'always' | 'none' | 'edge' | 'auto' | 'center';
   selected: number;
   offset?: number;
   endOffset?: number;
@@ -78,7 +79,14 @@ export function withScrolling(isRow: boolean) {
 
     const screenOffset = componentRef._screenOffset;
     const gap = componentRef.gap || 0;
-    const scroll = componentRef.scroll || 'auto';
+    // when creating we set scroll to always so we setup the right location for selected and scrollIndex
+    const scroll =
+      componentRef.scroll ||
+      (lastSelected === undefined
+        ? componentRef.scrollIndex
+          ? 'center'
+          : 'always'
+        : 'auto');
 
     // Allows manual position control
     const targetPosition = componentRef._targetPosition ?? componentRef[axis];
