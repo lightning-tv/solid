@@ -8,11 +8,14 @@ import {
   type TextNode,
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
+import * as s from 'solid-js';
 
 declare module '@lightningtv/core' {
   interface ElementNode {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
+    _hasCleanup?: boolean;
+    preserve?: s.Owner | null;
   }
 }
 
@@ -21,7 +24,24 @@ let elementDeleteQueue: ElementNode[] = [];
 function flushDeleteQueue(): void {
   for (let el of elementDeleteQueue) {
     if (Number(el._queueDelete) < 0) {
-      el.destroy();
+      if (el.preserve) {
+        el.alpha = 0;
+        if (!el._hasCleanup) {
+          el._hasCleanup = true;
+          const removeIt = el.destroy.bind(el);
+          s.runWithOwner(el.preserve, () => {
+            s.onCleanup(() => {
+              removeIt();
+              console.log('removed');
+            });
+          });
+        }
+      } else {
+        el.destroy();
+      }
+    } else {
+      // inserted back, make it visible again
+      el.alpha = 1;
     }
     el._queueDelete = undefined;
   }
