@@ -8,14 +8,14 @@ import {
   type TextNode,
 } from '@lightningtv/core';
 import type { SolidNode, SolidRendererOptions } from './types.js';
-import * as s from 'solid-js';
 
 declare module '@lightningtv/core' {
   interface ElementNode {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
-    _hasCleanup?: boolean;
     preserve?: boolean;
+    onInsert?: (node: ElementNode) => void;
+    onRemove?: (node: ElementNode) => void;
   }
 }
 
@@ -25,13 +25,12 @@ function flushDeleteQueue(): void {
   for (let el of elementDeleteQueue) {
     if (Number(el._queueDelete) < 0) {
       if (el.preserve) {
-        el.alpha = 0;
+        el.onRemove?.(el);
       } else {
         el.destroy();
       }
     } else {
-      // inserted back, make it visible again
-      el.alpha = 1;
+      el.onInsert?.(el);
     }
     el._queueDelete = undefined;
   }
@@ -48,19 +47,6 @@ function pushDeleteQueue(node: ElementNode, n: number): void {
     node._queueDelete += n;
   }
 }
-
-Object.defineProperty(ElementNode.prototype, 'preserve', {
-  get(): boolean | undefined {
-    return this._preserve;
-  },
-  set(v: boolean) {
-    this._preserve = v;
-    if (v && !this._hasCleanup) {
-      this._hasCleanup = true;
-      s.onCleanup(this.destroy.bind(this));
-    }
-  },
-});
 
 export default {
   createElement(name: string): ElementNode {
