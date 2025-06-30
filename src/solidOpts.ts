@@ -15,7 +15,7 @@ declare module '@lightningtv/core' {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
     _hasCleanup?: boolean;
-    preserve?: s.Owner | null;
+    preserve?: boolean;
   }
 }
 
@@ -26,16 +26,6 @@ function flushDeleteQueue(): void {
     if (Number(el._queueDelete) < 0) {
       if (el.preserve) {
         el.alpha = 0;
-        if (!el._hasCleanup) {
-          el._hasCleanup = true;
-          const removeIt = el.destroy.bind(el);
-          s.runWithOwner(el.preserve, () => {
-            s.onCleanup(() => {
-              removeIt();
-              console.log('removed');
-            });
-          });
-        }
       } else {
         el.destroy();
       }
@@ -58,6 +48,19 @@ function pushDeleteQueue(node: ElementNode, n: number): void {
     node._queueDelete += n;
   }
 }
+
+Object.defineProperty(ElementNode.prototype, 'preserve', {
+  get(): boolean | undefined {
+    return this._preserve;
+  },
+  set(v: boolean) {
+    this._preserve = v;
+    if (v && !this._hasCleanup) {
+      this._hasCleanup = true;
+      s.onCleanup(this.destroy.bind(this));
+    }
+  },
+});
 
 export default {
   createElement(name: string): ElementNode {
