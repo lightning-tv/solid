@@ -13,8 +13,18 @@ declare module '@lightningtv/core' {
   interface ElementNode {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
+    preserve?: boolean;
   }
 }
+
+Object.defineProperty(ElementNode.prototype, 'preserve', {
+  get(): boolean | undefined {
+    return this._queueDelete === 0;
+  },
+  set(v: boolean) {
+    this._queueDelete = v ? 0 : undefined;
+  },
+});
 
 let elementDeleteQueue: ElementNode[] = [];
 
