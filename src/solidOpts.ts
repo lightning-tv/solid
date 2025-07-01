@@ -14,23 +14,24 @@ declare module '@lightningtv/core' {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
     preserve?: boolean;
-    onInsert?: (node: ElementNode) => void;
-    onRemove?: (node: ElementNode) => void;
   }
 }
+
+Object.defineProperty(ElementNode.prototype, 'preserve', {
+  get(): boolean | undefined {
+    return this._queueDelete === 0;
+  },
+  set(v: boolean) {
+    this._queueDelete = v ? 0 : undefined;
+  },
+});
 
 let elementDeleteQueue: ElementNode[] = [];
 
 function flushDeleteQueue(): void {
   for (let el of elementDeleteQueue) {
     if (Number(el._queueDelete) < 0) {
-      if (el.preserve) {
-        el.onRemove?.(el);
-      } else {
-        el.destroy();
-      }
-    } else {
-      el.onInsert?.(el);
+      el.destroy();
     }
     el._queueDelete = undefined;
   }
