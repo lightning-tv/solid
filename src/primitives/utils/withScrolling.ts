@@ -59,7 +59,7 @@ export function withScrolling(isRow: boolean) {
       componentRef._initialPosition = componentRef[axis];
     }
 
-    const lng = componentRef.lng as INode;
+    const lng = componentRef.lng as unknown as INode;
     const screenSize = isRow ? lng.stage.root.width : lng.stage.root.height;
     // Determine if movement is incremental or decremental
     const isIncrementing =
