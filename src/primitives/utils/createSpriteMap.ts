@@ -1,4 +1,4 @@
-import { type IRendererTexture, renderer } from '@lightningtv/core';
+import { type TextureMap, renderer } from '@lightningtv/core';
 
 export interface SpriteDef {
   name: string | number;
@@ -11,12 +11,14 @@ export interface SpriteDef {
 export function createSpriteMap(
   src: string,
   subTextures: SpriteDef[],
-): Record<string, IRendererTexture> {
+): Record<string, InstanceType<TextureMap['SubTexture']>> {
   const spriteMapTexture = renderer.createTexture('ImageTexture', {
     src,
   });
 
-  return subTextures.reduce<Record<string, IRendererTexture>>((acc, t) => {
+  return subTextures.reduce<
+    Record<string, InstanceType<TextureMap['SubTexture']>>
+  >((acc, t) => {
     const { x, y, width, height } = t;
     acc[t.name] = renderer.createTexture('SubTexture', {
       texture: spriteMapTexture,
@@ -24,7 +26,7 @@ export function createSpriteMap(
       y,
       width,
       height,
-    });
+    }) as InstanceType<TextureMap['SubTexture']>;
     return acc;
   }, {});
 }

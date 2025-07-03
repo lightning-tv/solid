@@ -74,7 +74,7 @@
     "prettier": "^3.4.2",
     "release-it": "^17.10.0",
     "solid-js": "^1.9.3",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.17.0",
     "vite-plugin-solid": "^2.11.6",
     "vitest": "^3.1.2"
@@ -87,12 +87,11 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningjs/renderer": "^3.0.0-beta7",
     "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },
   "optionalDependencies": {
-    "@solid-devtools/debugger": "^0.27.0"
+    "@solid-devtools/debugger": "^0.28.0"
   },
   "repository": {
     "type": "git",

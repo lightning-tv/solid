@@ -1,5 +1,5 @@
 import { type Component } from 'solid-js';
-import { ElementNode, combineStyles, type NodeStyles } from '@lightningtv/solid';
+import { ElementNode, combineStyles, type NodeStyles, Config } from '@lightningtv/solid';
 import {
   handleNavigation,
   onGridFocus,
@@ -31,6 +31,13 @@ function scrollToIndex(this: ElementNode, index: number) {
 }
 
 export const Column: Component<ColumnProps> = (props) => {
+  const gridFocus = onGridFocus(props.onSelectedChanged);
+  const refocus = (elm: ElementNode) => {
+    if (elm.states.has(Config.focusStateKey)) {
+      gridFocus.call(elm);
+    }
+  };
+
   return (
     <view
       {...props}
@@ -38,10 +45,10 @@ export const Column: Component<ColumnProps> = (props) => {
       onDown={/* @once */ chainFunctions(props.onDown, onDown)}
       selected={props.selected || 0}
       scrollToIndex={scrollToIndex}
-      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
+      forwardFocus={gridFocus}
       onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
+        props.selected ? chainFunctions(props.onLayout, refocus, scroll) : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(

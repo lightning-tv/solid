@@ -5,7 +5,6 @@ import {
   type TextProps,
   startLightningRenderer,
   type RendererMainSettings,
-  type IRendererMain,
 } from '@lightningtv/core';
 import nodeOpts from './solidOpts.js';
 import {
@@ -22,7 +21,7 @@ import { activeElement, setActiveElement } from './activeElement.js';
 
 const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
 
-let renderer: IRendererMain;
+let renderer;
 export const rootNode = nodeOpts.createElement('App');
 
 const render = function (code: () => JSXElement) {
