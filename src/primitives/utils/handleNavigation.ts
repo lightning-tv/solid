@@ -1,5 +1,18 @@
+import * as s from 'solid-js';
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
+
+/** @deprecated Use {@link navigableOnNavigation} instead */
+export function handleNavigation(
+  direction: 'up' | 'right' | 'down' | 'left',
+): lng.KeyHandler {
+  return function () {
+    return moveSelection(
+      this as lngp.NavigableElement,
+      direction === 'up' || direction === 'left' ? -1 : 1,
+    );
+  };
+}
 
 export const navigableOnNavigation: lng.KeyHandler = function (e) {
   return moveSelection(
@@ -7,6 +20,16 @@ export const navigableOnNavigation: lng.KeyHandler = function (e) {
     e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1,
   );
 };
+
+/** @deprecated Use {@link navigableForwardFocus} instead */
+export function onGridFocus(
+  onSelectedChanged: lngp.OnSelectedChanged | undefined,
+): lng.ForwardFocusHandler {
+  return function () {
+    this.onSelectedChanged = onSelectedChanged;
+    navigableForwardFocus.call(this, this);
+  };
+}
 
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   if (!this || this.children.length === 0) return false;
@@ -105,24 +128,175 @@ export function moveSelection(
   return true;
 }
 
-/** @deprecated Use {@link navigableForwardFocus} instead */
-export function onGridFocus(
-  onSelectedChanged: lngp.OnSelectedChanged | undefined,
-): lng.ForwardFocusHandler {
-  return function () {
-    this.onSelectedChanged = onSelectedChanged;
-    navigableForwardFocus.call(this, this);
-  };
+function getDistanceBetweenRects(a: lng.Rect, b: lng.Rect): number {
+  const dx = Math.max(
+    Math.abs(a.x + a.width / 2 - (b.x + b.width / 2)),
+    a.x - (b.x + b.width),
+    b.x - (a.x + a.width),
+  );
+  const dy = Math.max(
+    Math.abs(a.y + a.height / 2 - (b.y + b.height / 2)),
+    a.y - (b.y + b.height),
+    b.y - (a.y + a.height),
+  );
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
-/** @deprecated Use {@link navigableOnNavigation} instead */
-export function handleNavigation(
-  direction: 'up' | 'right' | 'down' | 'left',
-): lng.KeyHandler {
-  return function () {
-    return moveSelection(
-      this as lngp.NavigableElement,
-      direction === 'up' || direction === 'left' ? -1 : 1,
-    );
-  };
+function isSelectableChild(
+  el: lng.ElementNode | lng.ElementText,
+): el is lng.ElementNode {
+  return lng.isElementNode(el) && !lng.isElementText(el) && !el.skipFocus;
 }
+
+function findClosestSelectableChild(
+  el: lng.ElementNode,
+  prevEl: lng.ElementNode,
+): [lng.ElementNode | undefined, number] {
+  // select child closest to the previous active element
+  const prevRect = lng.getElementScreenRect(prevEl);
+  const elRect = lng.getElementScreenRect(el);
+  let closestIdx = -1;
+  let closestDist = Infinity;
+  for (const [idx, child] of el.children.entries()) {
+    if (isSelectableChild(child)) {
+      const childRect = {
+        x: child.x + elRect.x,
+        y: child.y + elRect.y,
+        width: child.width,
+        height: child.height,
+      };
+      const distance = getDistanceBetweenRects(prevRect, childRect);
+      if (distance < closestDist) {
+        closestDist = distance;
+        closestIdx = idx;
+      }
+    }
+  }
+  return [el.children[closestIdx] as any, closestIdx];
+}
+
+function findFirstSelectableChild(
+  el: lng.ElementNode,
+): [lng.ElementNode | undefined, number] {
+  for (const [idx, child] of el.children.entries()) {
+    if (isSelectableChild(child)) {
+      return [child, idx];
+    }
+  }
+  return [undefined, -1];
+}
+
+export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
+  const prevEl = s.untrack(lng.activeElement);
+  if (prevEl) {
+    const [closestChild, closestChildIdx] = findClosestSelectableChild(
+      this,
+      prevEl,
+    );
+    if (closestChild) {
+      closestChild.setFocus();
+      this.selected = closestChildIdx;
+      return;
+    }
+  }
+  const [firstChild, firstChildIdx] = findFirstSelectableChild(this);
+  if (firstChild) {
+    firstChild.setFocus();
+    this.selected = firstChildIdx;
+  }
+};
+
+export const spatialOnNavigation: lng.KeyHandler = function (e) {
+  let selected = this.selected;
+  this.selected = -1; // fallback
+
+  if (
+    typeof selected !== 'number' ||
+    selected < 0 ||
+    selected >= this.children.length ||
+    !isSelectableChild(this.children[selected]!)
+  ) {
+    const [firstChild, firstChildIdx] = findFirstSelectableChild(this);
+    if (firstChild) {
+      firstChild.setFocus();
+      this.selected = firstChildIdx;
+      return true;
+    }
+    return false;
+  }
+
+  const prevChild = this.children[selected];
+
+  const move = { x: 0, y: 0 };
+  switch (e.key) {
+    case 'ArrowLeft':
+      move.x = -1;
+      break;
+    case 'ArrowRight':
+      move.x = 1;
+      break;
+    case 'ArrowUp':
+      move.y = -1;
+      break;
+    case 'ArrowDown':
+      move.y = 1;
+      break;
+    default:
+      return false;
+  }
+
+  const flexDir = this.flexDirection === 'column' ? 'y' : 'x';
+  const crossDir = flexDir === 'x' ? 'y' : 'x';
+  const moveFlex = move[flexDir];
+  const moveCross = move[crossDir];
+
+  if (moveFlex !== 0) {
+    // Select next/prev child in the current column/row
+    for (
+      let i = selected + moveFlex;
+      i >= 0 && i < this.children.length;
+      i += moveFlex
+    ) {
+      const child = this.children[i]!;
+      if (!isSelectableChild(child)) continue;
+
+      // Different column/row
+      if (child[crossDir] !== prevChild[crossDir]) break;
+
+      child.setFocus();
+      this.selected = i;
+      return true;
+    }
+  } else {
+    // Find child in next/prev column/row
+    let closestIdx = -1;
+    let closestDist = Infinity;
+
+    for (
+      let i = selected + moveCross;
+      i >= 0 && i < this.children.length;
+      i += moveCross
+    ) {
+      const child = this.children[i]!;
+      if (!isSelectableChild(child)) continue;
+
+      // Same column/row, skip
+      if (child[crossDir] === prevChild[crossDir]) continue;
+
+      // Different column/row, check distance
+      const distance = Math.abs(child[flexDir] - prevChild[flexDir]);
+      if (distance >= closestDist) break; // getting further away
+
+      closestDist = distance;
+      closestIdx = i;
+    }
+
+    if (closestIdx >= 0) {
+      this.children[closestIdx]!.setFocus();
+      this.selected = closestIdx;
+      return true;
+    }
+  }
+
+  return false;
+};
