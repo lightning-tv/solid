@@ -23,11 +23,10 @@ export const navigableOnNavigation: lng.KeyHandler = function (e) {
 
 /** @deprecated Use {@link navigableForwardFocus} instead */
 export function onGridFocus(
-  onSelectedChanged: lngp.OnSelectedChanged | undefined,
+  _: lngp.OnSelectedChanged | undefined,
 ): lng.ForwardFocusHandler {
   return function () {
-    this.onSelectedChanged = onSelectedChanged;
-    navigableForwardFocus.call(this, this);
+    return navigableForwardFocus.call(this, this);
   };
 }
 
