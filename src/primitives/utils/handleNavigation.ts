@@ -45,6 +45,7 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
     });
   }
 
+  const lastSelected = this.selected;
   this.selected = this.selected || 0;
   let child = this.selected ? this.children[this.selected] : this.selectedNode;
 
@@ -56,7 +57,7 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   child.setFocus();
 
   const grid = this as lngp.NavigableElement;
-  grid.onSelectedChanged?.(grid.selected, grid, child);
+  grid.onSelectedChanged?.(grid.selected, grid, child, lastSelected);
 
   return true;
 };
