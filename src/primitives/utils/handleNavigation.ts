@@ -142,21 +142,17 @@ function getDistanceBetweenRects(a: lng.Rect, b: lng.Rect): number {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function isSelectableChild(
-  el: lng.ElementNode | lng.ElementText,
-): el is lng.ElementNode {
-  return lng.isElementNode(el) && !lng.isElementText(el) && !el.skipFocus;
-}
-
 function findClosestSelectableChild(
   el: lng.ElementNode,
   prevEl: lng.ElementNode,
-): [lng.ElementNode | undefined, number] {
+): number {
   // select child closest to the previous active element
   const prevRect = lng.getElementScreenRect(prevEl);
   const elRect = lng.getElementScreenRect(el);
+
   let closestIdx = -1;
   let closestDist = Infinity;
+
   for (const [idx, child] of el.children.entries()) {
     if (isSelectableChild(child)) {
       const childRect = {
@@ -172,38 +168,51 @@ function findClosestSelectableChild(
       }
     }
   }
-  return [el.children[closestIdx] as any, closestIdx];
+
+  return closestIdx;
+}
+
+function isSelectableChild(el: lng.ElementNode | lng.ElementText): boolean {
+  return !el.skipFocus && !lng.isFocused(el);
 }
 
 function findFirstSelectableChild(
-  el: lng.ElementNode,
-): [lng.ElementNode | undefined, number] {
-  for (const [idx, child] of el.children.entries()) {
-    if (isSelectableChild(child)) {
-      return [child, idx];
+  el: lngp.NavigableElement,
+  from = 0,
+  delta = 1,
+): number {
+  for (let i = from; ; i += delta) {
+    if (i < 0 || i >= el.children.length) {
+      if (el.wrap) {
+        i = (i + el.children.length) % el.children.length;
+      } else break;
+    }
+    if (isSelectableChild(el.children[i]!)) {
+      return i;
     }
   }
-  return [undefined, -1];
+  return -1;
+}
+
+function selectChild(el: lngp.NavigableElement, index: number): boolean {
+  if (index < 0 || index >= el.children.length) return false;
+  const child = el.children[index]!;
+  if (!isSelectableChild(child)) return false;
+  child.setFocus();
+  el.selected = index;
+  el.onSelectedChanged?.(index, el, child as lng.ElementNode);
+  return true;
 }
 
 export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
   const prevEl = s.untrack(lng.activeElement);
   if (prevEl) {
-    const [closestChild, closestChildIdx] = findClosestSelectableChild(
-      this,
-      prevEl,
-    );
-    if (closestChild) {
-      closestChild.setFocus();
-      this.selected = closestChildIdx;
-      return;
-    }
+    const idx = findClosestSelectableChild(this, prevEl);
+    const selected = selectChild(this as lngp.NavigableElement, idx);
+    if (selected) return true;
   }
-  const [firstChild, firstChildIdx] = findFirstSelectableChild(this);
-  if (firstChild) {
-    firstChild.setFocus();
-    this.selected = firstChildIdx;
-  }
+  const idx = findFirstSelectableChild(this as lngp.NavigableElement);
+  return selectChild(this as lngp.NavigableElement, idx);
 };
 
 export const spatialOnNavigation: lng.KeyHandler = function (e) {
@@ -213,19 +222,13 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
   if (
     typeof selected !== 'number' ||
     selected < 0 ||
-    selected >= this.children.length ||
-    !isSelectableChild(this.children[selected]!)
+    selected >= this.children.length
   ) {
-    const [firstChild, firstChildIdx] = findFirstSelectableChild(this);
-    if (firstChild) {
-      firstChild.setFocus();
-      this.selected = firstChildIdx;
-      return true;
-    }
-    return false;
+    selected = findFirstSelectableChild(this as lngp.NavigableElement);
+    return selectChild(this as lngp.NavigableElement, selected);
   }
 
-  const prevChild = this.children[selected];
+  const prevChild = this.children[selected]!;
 
   const move = { x: 0, y: 0 };
   switch (e.key) {
@@ -250,8 +253,8 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
   const moveFlex = move[flexDir];
   const moveCross = move[crossDir];
 
+  // Select next/prev child in the current column/row
   if (moveFlex !== 0) {
-    // Select next/prev child in the current column/row
     for (
       let i = selected + moveFlex;
       i >= 0 && i < this.children.length;
@@ -263,12 +266,11 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
       // Different column/row
       if (child[crossDir] !== prevChild[crossDir]) break;
 
-      child.setFocus();
-      this.selected = i;
-      return true;
+      return selectChild(this as lngp.NavigableElement, i);
     }
-  } else {
-    // Find child in next/prev column/row
+  }
+  // Find child in next/prev column/row
+  else {
     let closestIdx = -1;
     let closestDist = Infinity;
 
@@ -291,11 +293,7 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
       closestIdx = i;
     }
 
-    if (closestIdx >= 0) {
-      this.children[closestIdx]!.setFocus();
-      this.selected = closestIdx;
-      return true;
-    }
+    return selectChild(this as lngp.NavigableElement, closestIdx);
   }
 
   return false;
