@@ -9,13 +9,17 @@ declare module '@lightningtv/core' {
   }
 }
 
+function idxInArray(idx: number, arr: readonly any[]): boolean {
+  return idx >= 0 && idx < arr.length;
+}
+
 function findFirstFocusableChildIdx(
   el: lngp.NavigableElement,
   from = 0,
   delta = 1,
 ): number {
   for (let i = from; ; i += delta) {
-    if (i < 0 || i >= el.children.length) {
+    if (!idxInArray(i, el.children)) {
       if (el.wrap) {
         i = (i + el.children.length) % el.children.length;
       } else break;
@@ -78,6 +82,8 @@ export function onGridFocus(
 }
 
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
+  const navigable = this as lngp.NavigableElement;
+
   if (!lng.isFocused(this)) {
     // if a child already has focus, assume that should be selected
     for (let [i, child] of this.children.entries()) {
@@ -88,17 +94,10 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
     }
   }
 
-  let from =
-    typeof this.selected === 'number' &&
-    this.selected >= 0 &&
-    this.selected < this.children.length
-      ? this.selected
-      : 0;
-  let selected = findFirstFocusableChildIdx(
-    this as lngp.NavigableElement,
-    from,
-  );
-  return selectChild(this as lngp.NavigableElement, selected);
+  let selected = navigable.selected;
+  selected = idxInArray(selected, this.children) ? selected : 0;
+  selected = findFirstFocusableChildIdx(navigable, selected);
+  return selectChild(navigable, selected);
 };
 
 export function moveSelection(
@@ -109,9 +108,8 @@ export function moveSelection(
 
   if (selected === -1) {
     if (
-      el.selected < 0 ||
-      el.selected >= el.children.length ||
-      el.children[el.selected]!.skipFocus ||
+      (idxInArray(el.selected, el.children) &&
+        el.children[el.selected]!.skipFocus) ||
       lng.isFocused(el.children[el.selected]!)
     ) {
       return false;
@@ -195,13 +193,8 @@ export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
 
 export const spatialOnNavigation: lng.KeyHandler = function (e) {
   let selected = this.selected;
-  this.selected = -1; // fallback
 
-  if (
-    typeof selected !== 'number' ||
-    selected < 0 ||
-    selected >= this.children.length
-  ) {
+  if (typeof selected !== 'number' || !idxInArray(selected, this.children)) {
     selected = findFirstFocusableChildIdx(this as lngp.NavigableElement);
     return selectChild(this as lngp.NavigableElement, selected);
   }
@@ -228,15 +221,15 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
 
   const flexDir = this.flexDirection === 'column' ? 'y' : 'x';
   const crossDir = flexDir === 'x' ? 'y' : 'x';
-  const moveFlex = move[flexDir];
-  const moveCross = move[crossDir];
+  const flexDelta = move[flexDir];
+  const crossDelta = move[crossDir];
 
   // Select next/prev child in the current column/row
-  if (moveFlex !== 0) {
+  if (flexDelta !== 0) {
     for (
-      let i = selected + moveFlex;
-      i >= 0 && i < this.children.length;
-      i += moveFlex
+      let i = selected + flexDelta;
+      idxInArray(i, this.children);
+      i += flexDelta
     ) {
       const child = this.children[i]!;
       if (child.skipFocus) continue;
@@ -253,9 +246,9 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
     let closestDist = Infinity;
 
     for (
-      let i = selected + moveCross;
-      i >= 0 && i < this.children.length;
-      i += moveCross
+      let i = selected + crossDelta;
+      idxInArray(i, this.children);
+      i += crossDelta
     ) {
       const child = this.children[i]!;
       if (child.skipFocus) continue;
