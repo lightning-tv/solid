@@ -133,21 +133,9 @@ export function moveSelection(
   return selectChild(el, selected);
 }
 
-function getWeightedDistanceBetweenRects(a: lng.Rect, b: lng.Rect): number {
-  const dx = Math.max(
-    // dist from centers / 2
-    Math.abs(a.x + a.width / 2 - (b.x + b.width / 2)) / 2,
-    // dist from edges
-    a.x - (b.x + b.width),
-    b.x - (a.x + a.width),
-  );
-  const dy = Math.max(
-    // dist from centers / 2
-    Math.abs(a.y + a.height / 2 - (b.y + b.height / 2)) / 2,
-    // dist from edges
-    a.y - (b.y + b.height),
-    b.y - (a.y + a.height),
-  );
+function distanceBetweenRectCenters(a: lng.Rect, b: lng.Rect): number {
+  const dx = Math.abs(a.x + a.width / 2 - (b.x + b.width / 2)) / 2;
+  const dy = Math.abs(a.y + a.height / 2 - (b.y + b.height / 2)) / 2;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -169,7 +157,7 @@ function findClosestFocusableChildIdx(
       childRect.y = child.y + elRect.y;
       childRect.width = child.width;
       childRect.height = child.height;
-      const distance = getWeightedDistanceBetweenRects(prevRect, childRect);
+      const distance = distanceBetweenRectCenters(prevRect, childRect);
       if (distance < closestDist) {
         closestDist = distance;
         closestIdx = idx;
