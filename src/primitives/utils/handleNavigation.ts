@@ -65,6 +65,15 @@ export function onGridFocus(
 /**
  * Forwards focus to the first focusable child of a {@link lngp.NavigableElement} and
  * selects it.
+ *
+ * @example
+ * ```tsx
+ * <view
+ *   selected={0}
+ *   forwardFocus={navigableForwardFocus}
+ *   onSelectedChanged={(idx, el, child, lastIdx) => {...}}
+ * >
+ * ```
  */
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   const navigable = this as lngp.NavigableElement;
@@ -85,7 +94,7 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   return selectChild(navigable, selected);
 };
 
-/** @deprecated Use {@link navigableOnNavigation} instead */
+/** @deprecated Use {@link navigableHandleNavigation} instead */
 export function handleNavigation(
   direction: 'up' | 'right' | 'down' | 'left',
 ): lng.KeyHandler {
@@ -107,13 +116,13 @@ export function handleNavigation(
  * ```tsx
  * <view
  *   selected={0}
- *   onUp={navigableOnNavigation}
- *   onDown={navigableOnNavigation}
+ *   onUp={navigableHandleNavigation}
+ *   onDown={navigableHandleNavigation}
  *   onSelectedChanged={(idx, el, child, lastIdx) => {...}}
  * >
  * ```
  */
-export const navigableOnNavigation: lng.KeyHandler = function (e) {
+export const navigableHandleNavigation: lng.KeyHandler = function (e) {
   return moveSelection(
     this as lngp.NavigableElement,
     e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1,
@@ -197,6 +206,15 @@ function findClosestFocusableChildIdx(
  *
  * To determine the closest child, it uses the distance between the center of the previous focused element
  * and the center of each child element.
+ *
+ * @example
+ * ```tsx
+ * <view
+ *   selected={0}
+ *   forwardFocus={spatialForwardFocus}
+ *   onSelectedChanged={(idx, el, child, lastIdx) => {...}}
+ * >
+ * ```
  */
 export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
   const prevEl = s.untrack(lng.activeElement);
@@ -217,8 +235,20 @@ export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
  * where pressing the arrow keys will either:
  * - move focus to the next/prev child in the same row/column
  * - or find the closest child in the next/prev row/column.
+ *
+ * @example
+ * ```tsx
+ * <view
+ *   selected={0}
+ *   display="flex"
+ *   flexWrap="wrap"
+ *   onUp={spatialHandleNavigation}
+ *   onDown={spatialHandleNavigation}
+ *   onSelectedChanged={(idx, el, child, lastIdx) => {...}}
+ * >
+ * ```
  */
-export const spatialOnNavigation: lng.KeyHandler = function (e) {
+export const spatialHandleNavigation: lng.KeyHandler = function (e) {
   let selected = this.selected;
 
   if (typeof selected !== 'number' || !idxInArray(selected, this.children)) {
