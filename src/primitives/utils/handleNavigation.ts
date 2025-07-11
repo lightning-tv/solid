@@ -53,25 +53,6 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
   return true;
 }
 
-/** @deprecated Use {@link navigableOnNavigation} instead */
-export function handleNavigation(
-  direction: 'up' | 'right' | 'down' | 'left',
-): lng.KeyHandler {
-  return function () {
-    return moveSelection(
-      this as lngp.NavigableElement,
-      direction === 'up' || direction === 'left' ? -1 : 1,
-    );
-  };
-}
-
-export const navigableOnNavigation: lng.KeyHandler = function (e) {
-  return moveSelection(
-    this as lngp.NavigableElement,
-    e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1,
-  );
-};
-
 /** @deprecated Use {@link navigableForwardFocus} instead */
 export function onGridFocus(
   _?: lngp.OnSelectedChanged,
@@ -81,6 +62,10 @@ export function onGridFocus(
   };
 }
 
+/**
+ * Forwards focus to the first focusable child of a {@link lngp.NavigableElement} and
+ * selects it.
+ */
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   const navigable = this as lngp.NavigableElement;
 
@@ -100,6 +85,44 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   return selectChild(navigable, selected);
 };
 
+/** @deprecated Use {@link navigableOnNavigation} instead */
+export function handleNavigation(
+  direction: 'up' | 'right' | 'down' | 'left',
+): lng.KeyHandler {
+  return function () {
+    return moveSelection(
+      this as lngp.NavigableElement,
+      direction === 'up' || direction === 'left' ? -1 : 1,
+    );
+  };
+}
+
+/**
+ * Handles navigation key events for navigable elements, \
+ * such as {@link lngp.Row} and {@link lngp.Column}.
+ *
+ * Uses {@link moveSelection} to select the next or previous child based on the key pressed.
+ *
+ * @example
+ * ```tsx
+ * <view
+ *   selected={0}
+ *   onUp={navigableOnNavigation}
+ *   onDown={navigableOnNavigation}
+ *   onSelectedChanged={(idx, el, child, lastIdx) => {...}}
+ * >
+ * ```
+ */
+export const navigableOnNavigation: lng.KeyHandler = function (e) {
+  return moveSelection(
+    this as lngp.NavigableElement,
+    e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1,
+  );
+};
+
+/**
+ * Moves the selection within a {@link lngp.NavigableElement}.
+ */
 export function moveSelection(
   el: lngp.NavigableElement,
   delta: number,
@@ -168,6 +191,13 @@ function findClosestFocusableChildIdx(
   return closestIdx;
 }
 
+/**
+ * Forwards focus to the closest or first focusable child of a {@link lngp.NavigableElement} and
+ * selects it.
+ *
+ * To determine the closest child, it uses the distance between the center of the previous focused element
+ * and the center of each child element.
+ */
 export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
   const prevEl = s.untrack(lng.activeElement);
   if (prevEl) {
@@ -179,6 +209,15 @@ export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
   return selectChild(this as lngp.NavigableElement, idx);
 };
 
+/**
+ * Handles spatial navigation within a {@link lngp.NavigableElement} by moving focus
+ * based on the arrow keys pressed.
+ *
+ * This function allows for navigation in a grid-like manner for flex-wrap containers, \
+ * where pressing the arrow keys will either:
+ * - move focus to the next/prev child in the same row/column
+ * - or find the closest child in the next/prev row/column.
+ */
 export const spatialOnNavigation: lng.KeyHandler = function (e) {
   let selected = this.selected;
 
