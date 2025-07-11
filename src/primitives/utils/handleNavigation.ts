@@ -77,16 +77,14 @@ export function onGridFocus(
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   if (!this || this.children.length === 0) return false;
 
-  // only check onFocus, and not when grid.setFocus() to retrigger focus
-  if (!this.states.has(lng.Config.focusStateKey)) {
+  if (!lng.isFocused(this)) {
     // if a child already has focus, assume that should be selected
-    this.children.find((child, index) => {
-      if (child.states.has(lng.Config.focusStateKey)) {
-        this.selected = index;
-        return true;
+    for (let [i, child] of this.children.entries()) {
+      if (lng.isFocused(child)) {
+        this.selected = i;
+        break;
       }
-      return false;
-    });
+    }
   }
 
   const lastSelected = this.selected;
