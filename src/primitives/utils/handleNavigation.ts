@@ -78,8 +78,6 @@ export function onGridFocus(
 }
 
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
-  if (!this || this.children.length === 0) return false;
-
   if (!lng.isFocused(this)) {
     // if a child already has focus, assume that should be selected
     for (let [i, child] of this.children.entries()) {
@@ -90,21 +88,17 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
     }
   }
 
-  const lastSelected = this.selected;
-  this.selected = this.selected || 0;
-  let child = this.selected ? this.children[this.selected] : this.selectedNode;
-
-  while (child?.skipFocus) {
-    this.selected++;
-    child = this.children[this.selected];
-  }
-  if (!(child instanceof lng.ElementNode)) return false;
-  child.setFocus();
-
-  const grid = this as lngp.NavigableElement;
-  grid.onSelectedChanged?.(grid.selected, grid, child, lastSelected);
-
-  return true;
+  let from =
+    typeof this.selected === 'number' &&
+    this.selected >= 0 &&
+    this.selected < this.children.length
+      ? this.selected
+      : 0;
+  let selected = findFirstFocusableChildIdx(
+    this as lngp.NavigableElement,
+    from,
+  );
+  return selectChild(this as lngp.NavigableElement, selected);
 };
 
 export function moveSelection(
