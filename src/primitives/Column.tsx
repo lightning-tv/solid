@@ -1,8 +1,7 @@
 import { type Component } from 'solid-js';
 import { ElementNode, combineStyles, type NodeStyles } from '@lightningtv/solid';
 import {
-  handleNavigation,
-  onGridFocus,
+  navigableForwardFocus, navigableOnNavigation
 } from './utils/handleNavigation.js';
 import { withScrolling } from './utils/withScrolling.js';
 import { chainFunctions } from './utils/chainFunctions.js';
@@ -20,8 +19,6 @@ const ColumnStyles: NodeStyles = {
   },
 };
 
-const onUp = handleNavigation('up');
-const onDown = handleNavigation('down');
 const scroll = withScrolling(false);
 
 function scrollToIndex(this: ElementNode, index: number) {
@@ -34,11 +31,11 @@ export const Column: Component<ColumnProps> = (props) => {
   return (
     <view
       {...props}
-      onUp={/* @once */ chainFunctions(props.onUp, onUp)}
-      onDown={/* @once */ chainFunctions(props.onDown, onDown)}
+      onUp={/* @once */ chainFunctions(props.onUp, navigableOnNavigation)}
+      onDown={/* @once */ chainFunctions(props.onDown, navigableOnNavigation)}
       selected={props.selected || 0}
       scrollToIndex={scrollToIndex}
-      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
+      forwardFocus={navigableForwardFocus}
       onLayout={
         /* @once */
         props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
