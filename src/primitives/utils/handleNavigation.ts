@@ -2,11 +2,14 @@ import * as s from 'solid-js';
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
 
-function isSelectableChild(el: lng.ElementNode | lng.ElementText): boolean {
-  return !el.skipFocus && !lng.isFocused(el);
+declare module '@lightningtv/core' {
+  interface ElementNode {
+    /** For children of {@link lngp.NavigableElement}, set to `true` to prevent being selected */
+    skipFocus?: boolean;
+  }
 }
 
-function findFirstSelectableChildIdx(
+function findFirstFocusableChildIdx(
   el: lngp.NavigableElement,
   from = 0,
   delta = 1,
@@ -17,7 +20,7 @@ function findFirstSelectableChildIdx(
         i = (i + el.children.length) % el.children.length;
       } else break;
     }
-    if (isSelectableChild(el.children[i]!)) {
+    if (!el.children[i]!.skipFocus) {
       return i;
     }
   }
@@ -27,7 +30,7 @@ function findFirstSelectableChildIdx(
 function selectChild(el: lngp.NavigableElement, index: number): boolean {
   const child = el.children[index];
 
-  if (child == null || el.skipFocus) {
+  if (child == null || child.skipFocus) {
     el.selected = -1;
     return false;
   }
@@ -108,11 +111,17 @@ export function moveSelection(
   el: lngp.NavigableElement,
   delta: number,
 ): boolean {
-  let selected = findFirstSelectableChildIdx(el, el.selected + delta, delta);
+  let selected = findFirstFocusableChildIdx(el, el.selected + delta, delta);
 
   if (selected === -1) {
-    if (el.selected < 0 || el.selected >= el.children.length) return false;
-    if (!isSelectableChild(el.children[el.selected]!)) return false;
+    if (
+      el.selected < 0 ||
+      el.selected >= el.children.length ||
+      el.children[el.selected]!.skipFocus ||
+      lng.isFocused(el.children[el.selected]!)
+    ) {
+      return false;
+    }
     selected = el.selected;
   }
 
@@ -150,7 +159,7 @@ function getWeightedDistanceBetweenRects(a: lng.Rect, b: lng.Rect): number {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function findClosestSelectableChildIdx(
+function findClosestFocusableChildIdx(
   el: lng.ElementNode,
   prevEl: lng.ElementNode,
 ): number {
@@ -163,7 +172,7 @@ function findClosestSelectableChildIdx(
   let closestDist = Infinity;
 
   for (const [idx, child] of el.children.entries()) {
-    if (isSelectableChild(child)) {
+    if (!child.skipFocus) {
       childRect.x = child.x + elRect.x;
       childRect.y = child.y + elRect.y;
       childRect.width = child.width;
@@ -182,11 +191,11 @@ function findClosestSelectableChildIdx(
 export const spatialForwardFocus: lng.ForwardFocusHandler = function () {
   const prevEl = s.untrack(lng.activeElement);
   if (prevEl) {
-    const idx = findClosestSelectableChildIdx(this, prevEl);
+    const idx = findClosestFocusableChildIdx(this, prevEl);
     const selected = selectChild(this as lngp.NavigableElement, idx);
     if (selected) return true;
   }
-  const idx = findFirstSelectableChildIdx(this as lngp.NavigableElement);
+  const idx = findFirstFocusableChildIdx(this as lngp.NavigableElement);
   return selectChild(this as lngp.NavigableElement, idx);
 };
 
@@ -199,7 +208,7 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
     selected < 0 ||
     selected >= this.children.length
   ) {
-    selected = findFirstSelectableChildIdx(this as lngp.NavigableElement);
+    selected = findFirstFocusableChildIdx(this as lngp.NavigableElement);
     return selectChild(this as lngp.NavigableElement, selected);
   }
 
@@ -236,7 +245,7 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
       i += moveFlex
     ) {
       const child = this.children[i]!;
-      if (!isSelectableChild(child)) continue;
+      if (child.skipFocus) continue;
 
       // Different column/row
       if (child[crossDir] !== prevChild[crossDir]) break;
@@ -255,7 +264,7 @@ export const spatialOnNavigation: lng.KeyHandler = function (e) {
       i += moveCross
     ) {
       const child = this.children[i]!;
-      if (!isSelectableChild(child)) continue;
+      if (child.skipFocus) continue;
 
       // Same column/row, skip
       if (child[crossDir] === prevChild[crossDir]) continue;
