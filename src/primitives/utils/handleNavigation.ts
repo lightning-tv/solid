@@ -108,8 +108,8 @@ export function moveSelection(
 
   if (selected === -1) {
     if (
-      (idxInArray(el.selected, el.children) &&
-        el.children[el.selected]!.skipFocus) ||
+      !idxInArray(el.selected, el.children) ||
+      el.children[el.selected]!.skipFocus ||
       lng.isFocused(el.children[el.selected]!)
     ) {
       return false;
