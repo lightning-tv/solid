@@ -25,12 +25,24 @@ function findFirstSelectableChildIdx(
 }
 
 function selectChild(el: lngp.NavigableElement, index: number): boolean {
-  if (index < 0 || index >= el.children.length) return false;
-  const child = el.children[index]!;
-  if (!isSelectableChild(child)) return false;
-  child.setFocus();
+  const child = el.children[index];
+
+  if (child == null || el.skipFocus) {
+    el.selected = -1;
+    return false;
+  }
+
+  const lastSelected = el.selected;
   el.selected = index;
-  el.onSelectedChanged?.(index, el, child as lng.ElementNode);
+
+  if (!lng.isFocused(child)) {
+    child.setFocus();
+  }
+
+  if (lastSelected !== index) {
+    el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
+  }
+
   return true;
 }
 
