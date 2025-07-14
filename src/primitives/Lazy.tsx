@@ -1,6 +1,7 @@
 import {
   Index,
   createEffect,
+  createRenderEffect,
   createMemo,
   createSignal,
   Show,
@@ -29,10 +30,19 @@ function createLazy<T>(
   keyHandler: (updateOffset: (event: KeyboardEvent, container: ElementNode) => void) => Record<string, (event: KeyboardEvent, container: ElementNode) => void>
 ) {
   // Need at least one item so it can be focused
-  const [offset, setOffset] = createSignal<number>(props.sync ? props.upCount : 1);
+  const [offset, setOffset] = createSignal<number>(props.sync ? props.upCount : 0);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  createEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + 1)));
+  createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + 1)));
+  const buffer = createMemo(() => {
+    if (typeof props.buffer === 'number') {
+      return props.buffer;
+    }
+    const scroll = props.scroll || props.style?.scroll;
+    if (scroll === 'always') return props.upCount;
+    if (scroll === 'center') return Math.ceil(props.upCount / 2);
+    return 2;
+  });
 
   if (!props.sync || props.eaglerLoad) {
     createEffect(() => {
@@ -45,7 +55,7 @@ function createLazy<T>(
             count++;
           } else if (props.eagerLoad) {
             const maxOffset = props.each ? props.each.length : 0;
-            if (offset() >= maxOffset) return;
+            if (count >= maxOffset) return;
             setOffset((prev) => Math.min(prev + 1, maxOffset));
             scheduleTask(loadItems);
           }
@@ -63,7 +73,7 @@ function createLazy<T>(
     const maxOffset = props.each ? props.each.length : 0;
     const selected = container.selected || 0;
     const numChildren = container.children.length;
-    if (offset() >= maxOffset || selected < numChildren - (props.buffer ?? 2)) return;
+    if (offset() >= maxOffset || selected < numChildren - buffer()) return;
 
     if (!props.delay) {
       setOffset((prev) => Math.min(prev + 1, maxOffset));
