@@ -17,7 +17,7 @@ import * as s from 'solid-js';
  *
  * @see https://docs.solidjs.com/reference/components/suspense
  */
-function Suspense(props: {
+export function Suspense(props: {
   fallback?: s.JSX.Element;
   children: s.JSX.Element;
 }): s.JSX.Element {
@@ -37,5 +37,3 @@ function Suspense(props: {
     </view>
   </>
 }
-
-export default Suspense;
