@@ -22,7 +22,7 @@ export {
   chainFunctions,
   chainRefs,
 } from './utils/chainFunctions.js';
-export { handleNavigation, onGridFocus } from './utils/handleNavigation.js';
+export * from './utils/handleNavigation.js';
 export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
 
 export type * from './types.js';
