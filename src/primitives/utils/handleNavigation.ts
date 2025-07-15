@@ -185,10 +185,9 @@ function findClosestFocusableChildIdx(
 
   for (const [idx, child] of el.children.entries()) {
     if (!child.skipFocus) {
-      childRect.x = child.x + elRect.x;
-      childRect.y = child.y + elRect.y;
-      childRect.width = child.width;
-      childRect.height = child.height;
+      lng.getElementScreenRect(child, el, childRect);
+      childRect.x += elRect.x;
+      childRect.y += elRect.y;
       const distance = distanceBetweenRectCenters(prevRect, childRect);
       if (distance < closestDist) {
         closestDist = distance;
