@@ -32,7 +32,7 @@ export function Suspense(props: {
 
   return <>
     {suspense() ?? props.fallback}
-    <view hidden>
+    <view hidden forwardFocus={0}>
       {suspense() ? null : children}
     </view>
   </>
