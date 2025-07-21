@@ -4,6 +4,7 @@ import {
   createRenderEffect,
   createMemo,
   createSignal,
+  createReaction,
   Show,
   type JSX,
   type ValidComponent,
@@ -33,7 +34,6 @@ function createLazy<T>(
   const [offset, setOffset] = createSignal<number>(props.sync ? props.upCount : 0);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + 1)));
   const buffer = createMemo(() => {
     if (typeof props.buffer === 'number') {
       return props.buffer;
@@ -43,6 +43,8 @@ function createLazy<T>(
     if (scroll === 'center') return Math.ceil(props.upCount / 2);
     return 2;
   });
+
+  createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + buffer())));
 
   if (!props.sync || props.eaglerLoad) {
     createEffect(() => {
