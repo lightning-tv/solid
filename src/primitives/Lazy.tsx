@@ -39,7 +39,7 @@ function createLazy<T>(
       return props.buffer;
     }
     const scroll = props.scroll || props.style?.scroll;
-    if (scroll === 'always') return props.upCount;
+    if (!scroll || scroll === 'auto' || scroll === 'always') return props.upCount;
     if (scroll === 'center') return Math.ceil(props.upCount / 2);
     return 2;
   });
