@@ -1,5 +1,5 @@
 import { type Component } from 'solid-js';
-import { combineStyles, type NodeStyles, View, type ElementNode } from '@lightningtv/solid';
+import { combineStyles, type NodeStyles, type ElementNode } from '@lightningtv/solid';
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,
@@ -38,9 +38,9 @@ export const Row: Component<RowProps> = (props) => {
       onRight={/* @once */ chainFunctions(props.onRight, onRight)}
       forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
       scrollToIndex={scrollToIndex}
-      onLayout={
+      onCreate={
         /* @once */
-        props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
+        props.selected ? chainFunctions(props.onCreate, scroll) : props.onCreate
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
