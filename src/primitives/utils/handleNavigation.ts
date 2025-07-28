@@ -43,7 +43,7 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
   el.selected = index;
   child.setFocus();
 
-  if (lastSelected !== index) {
+  if (lastSelected !== index || !lng.hasFocus(el)) {
     el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
   }
 
@@ -75,15 +75,17 @@ export function onGridFocus(
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   const navigable = this as lngp.NavigableElement;
 
-  if (!lng.isFocused(this)) {
-    // if a child already has focus, assume that should be selected
-    for (let [i, child] of this.children.entries()) {
-      if (lng.isFocused(child)) {
-        this.selected = i;
-        break;
-      }
-    }
-  }
+  // Undo for now - We should only do this when setFocus is called rather than on forwardFocus
+  // needs some more research
+  // if (!lng.isFocused(this)) {
+  //   // if a child already has focus, assume that should be selected
+  //   for (let [i, child] of this.children.entries()) {
+  //     if (lng.isFocused(child)) {
+  //       this.selected = i;
+  //       break;
+  //     }
+  //   }
+  // }
 
   let selected = navigable.selected;
   selected = idxInArray(selected, this.children) ? selected : 0;
