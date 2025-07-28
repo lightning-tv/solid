@@ -41,10 +41,7 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
 
   const lastSelected = el.selected;
   el.selected = index;
-
-  if (!lng.isFocused(child)) {
-    child.setFocus();
-  }
+  child.setFocus();
 
   if (lastSelected !== index) {
     el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
