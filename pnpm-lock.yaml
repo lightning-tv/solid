@@ -14,6 +14,12 @@ importers:
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
+      '@solid-primitives/keyed':
+        specifier: ^1.5.2
+        version: 1.5.2(solid-js@1.9.3)
+      '@solid-primitives/list':
+        specifier: ^0.1.2
+        version: 0.1.2(solid-js@1.9.3)
       '@solid-primitives/mouse':
         specifier: ^2.0.20
         version: 2.0.20(solid-js@1.9.3)
@@ -646,6 +652,16 @@ packages:
 
   '@solid-primitives/keyboard@1.3.3':
     resolution: {integrity: sha512-9dQHTTgLBqyAI7aavtO+HnpTVJgWQA1ghBSrmLtMu1SMxLPDuLfuNr+Tk5udb4AL4Ojg7h9JrKOGEEDqsJXWJA==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/keyed@1.5.2':
+    resolution: {integrity: sha512-BgoEdqPw48URnI+L5sZIHdF4ua4Las1eWEBBPaoSFs42kkhnHue+rwCBPL2Z9ebOyQ75sUhUfOETdJfmv0D6Kg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/list@0.1.2':
+    resolution: {integrity: sha512-gAnGUgXN9as0TBr2QAwLqWAbEo0ALqx2VI+lr7B2r8o3QFaFxiz7dw/qOx50Ko7TGcrYxgsYiwc9OYaS+eY89w==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -3026,6 +3042,14 @@ snapshots:
       '@solid-primitives/utils': 6.3.2(solid-js@1.9.3)
       solid-js: 1.9.3
     optional: true
+
+  '@solid-primitives/keyed@1.5.2(solid-js@1.9.3)':
+    dependencies:
+      solid-js: 1.9.3
+
+  '@solid-primitives/list@0.1.2(solid-js@1.9.3)':
+    dependencies:
+      solid-js: 1.9.3
 
   '@solid-primitives/media@2.3.3(solid-js@1.9.3)':
     dependencies:

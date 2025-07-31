@@ -56,6 +56,8 @@
   "dependencies": {
     "@lightningtv/core": "^2.9.3",
     "@solid-primitives/event-listener": "^2.3.3",
+    "@solid-primitives/keyed": "^1.5.2",
+    "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
     "@solid-primitives/scheduled": "^1.4.4"
   },
