@@ -19,15 +19,14 @@
 import { VirtualGrid } from './components/VirtualGrid';
 
 <VirtualGrid
-  id="BrowseGrid"
   x={160}
   y={24}
   width={1620}
   scroll="always"
   autofocus
-  itemsPerRow={7}
-  numberOfRows={2}
-  rowsBuffer={2}
+  rows={7}
+  columns={2}
+  buffer={2}
   each={provider().pages()}
   onEnter={onEnter}
   onEndReached={onEndReached}
@@ -47,7 +46,6 @@ import { VirtualGrid } from './components/VirtualGrid';
 - **onEndReached** (`() => void`): Callback triggered when selection moves near the end of the list.
 - **children** (`(item: Accessor<T>, index: Accessor<number>) => JSX.Element`): Function that renders each item.
 - **selected** (`number`): Initial selected index.
-- **scrollToIndex** (`(index: number) => void`): Imperatively scrolls and focuses the item at the given index.
 - **autofocus** (`boolean`): If `true`, the component will auto-focus the first item on mount.
 - **onSelectedChanged** (`OnSelectedChanged`): Optional callback triggered when selection changes.
 - **onLeft / onRight / onUp / onDown** (`KeyHandler`): Optional directional key handlers.

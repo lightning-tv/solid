@@ -9,12 +9,8 @@ const columnScroll = lngp.withScrolling(false);
 const rowStyles: lng.NodeStyles = {
   display: 'flex',
   flexWrap: 'wrap',
-  gap: 30,
   transition: {
-    y: {
-      duration: 250,
-      easing: 'ease-out',
-    },
+    y: true,
   },
 };
 
@@ -26,19 +22,19 @@ function scrollToIndex(this: lng.ElementNode, index: number) {
 
 export type VirtualGridProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   each: readonly T[] | undefined | null | false;
-  itemsPerRow: number; // items per row
-  numberOfRows?: number; // number of visible rows (default: 1)
-  rowsBuffer?: number;
+  columns: number; // items per row
+  rows?: number; // number of visible rows (default: 1)
+  buffer?: number;
   onEndReached?: () => void;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
 export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
-  const bufferSize = () => props.rowsBuffer ?? 2;
+  const bufferSize = () => props.buffer ?? 2;
   const [ cursor, setCursor ] = s.createSignal(props.selected ?? 0);
   const items = s.createMemo(() => props.each || []);
-  const itemsPerRow = () => props.itemsPerRow;
-  const numberOfRows = () => props.numberOfRows ?? 1;
+  const itemsPerRow = () => props.columns;
+  const numberOfRows = () => props.rows ?? 1;
   const totalVisibleItems = () => itemsPerRow() * numberOfRows();
 
   const start = s.createMemo(() => {
@@ -69,7 +65,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   const onLeft = lngp.handleNavigation('left');
   const onRight = lngp.handleNavigation('right');
 
-  const onUp: lngp.KeyHandler = function () {
+  const onUpDown: lngp.KeyHandler = function () {
     const perRow = itemsPerRow();
     const selected = this.selected || 0;
     if (selected < perRow) return false;
@@ -81,22 +77,6 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
     if (active instanceof lng.ElementNode) {
       active.setFocus();
       chainedOnSelectedChanged.call(this as lngp.NavigableElement, this.selected, this as lngp.NavigableElement, active, lastIdx);
-    }
-  };
-
-  const onDown: lngp.KeyHandler = function () {
-    const perRow = itemsPerRow();
-    const selected = this.selected || 0;
-
-    const newIndex = utils.clamp(selected + perRow, 0, items().length - 1);
-    if (newIndex !== selected) {
-      const lastIdx = selected;
-      this.selected = newIndex;
-      const active = this.children[this.selected];
-      if (active instanceof lng.ElementNode) {
-        active.setFocus();
-        chainedOnSelectedChanged.call(this as lngp.NavigableElement, this.selected, this as lngp.NavigableElement, active, lastIdx);
-      }
     }
   };
 
@@ -178,8 +158,8 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
       cursor={cursor()}
       onLeft={/* @once */ lngp.chainFunctions(props.onLeft, onLeft)}
       onRight={/* @once */ lngp.chainFunctions(props.onRight, onRight)}
-      onUp={/* @once */ lngp.chainFunctions(props.onUp, onUp)}
-      onDown={/* @once */ lngp.chainFunctions(props.onDown, onDown)}
+      onUp={/* @once */ lngp.chainFunctions(props.onUp, onUpDown)}
+      onDown={/* @once */ lngp.chainFunctions(props.onDown, onUpDown)}
       forwardFocus={/* @once */ lngp.onGridFocus(chainedOnSelectedChanged)}
       onCreate={/* @once */ props.selected ? lngp.chainFunctions(props.onCreate, columnScroll) : props.onCreate}
       scrollToIndex={/* @once */ scrollToIndex}
