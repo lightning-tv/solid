@@ -26,23 +26,20 @@ function scrollToIndex(this: lng.ElementNode, index: number) {
 
 export type VirtualGridProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   each: readonly T[] | undefined | null | false;
-  displaySize: number; // items per row
-  rowsVisible?: number; // number of visible rows (default: 1)
-  bufferSize?: number;
-  fallback?: s.JSX.Element;
-  estimatedItemSize?: number;
+  itemsPerRow: number; // items per row
+  numberOfRows?: number; // number of visible rows (default: 1)
+  rowsBuffer?: number;
   onEndReached?: () => void;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
 export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
-  const bufferSize = () => props.bufferSize ?? 2;
+  const bufferSize = () => props.rowsBuffer ?? 2;
   const [ cursor, setCursor ] = s.createSignal(props.selected ?? 0);
   const items = s.createMemo(() => props.each || []);
-  const itemsPerRow = () => props.displaySize;
-  const numberOfRows = () => props.rowsVisible ?? 1;
+  const itemsPerRow = () => props.itemsPerRow;
+  const numberOfRows = () => props.numberOfRows ?? 1;
   const totalVisibleItems = () => itemsPerRow() * numberOfRows();
-  const gap = () => props.gap || props.style?.gap || 30;
 
   const start = s.createMemo(() => {
     const perRow = itemsPerRow();
