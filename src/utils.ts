@@ -61,3 +61,8 @@ export function combineStylesMemo<T extends Styles>(
     ...style1,
   }));
 }
+
+export const clamp = (value: number, min: number, max: number) =>
+  min < max
+    ? Math.min(Math.max(value, min), max)
+    : Math.min(Math.max(value, max), min);
