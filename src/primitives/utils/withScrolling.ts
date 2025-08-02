@@ -90,10 +90,9 @@ export function withScrolling(isRow: boolean) {
 
     // Allows manual position control
     const targetPosition = componentRef._targetPosition ?? componentRef[axis];
-    const rootPosition =
-      isIncrementing || scroll === 'auto'
-        ? Math.min(targetPosition, componentRef[axis])
-        : Math.max(targetPosition, componentRef[axis]);
+    const rootPosition = isIncrementing
+      ? Math.min(targetPosition, componentRef[axis])
+      : Math.max(targetPosition, componentRef[axis]);
     componentRef.offset = componentRef.offset ?? rootPosition;
     const offset = componentRef.offset;
     selectedElement =
