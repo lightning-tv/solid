@@ -155,7 +155,8 @@ export function withScrolling(isRow: boolean) {
           nextPosition = rootPosition + selectedSize + gap;
         }
       } else if (isIncrementing) {
-        nextPosition = -selectedPosition + offset;
+        //nextPosition = -selectedPosition + offset;
+        nextPosition = rootPosition - selectedSize - gap;
       } else {
         nextPosition = rootPosition + selectedSize + gap;
       }
