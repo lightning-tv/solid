@@ -40,23 +40,16 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   const start = s.createMemo(() => {
     const perRow = itemsPerRow();
     const newRowIndex = Math.floor(cursor() / perRow);
-
-    return utils.clamp(
-      newRowIndex * perRow - bufferSize() * perRow,
-      0,
-      Math.max(0, items().length - totalVisibleItems())
-    );
-  })
+    const rawStart = newRowIndex * perRow - bufferSize() * perRow;
+    return Math.max(0, rawStart);
+  });
 
   const end = s.createMemo(() => {
     const perRow = itemsPerRow();
     const newRowIndex = Math.floor(cursor() / perRow);
-
-    return Math.min(
-      items().length,
-      (newRowIndex + bufferSize()) * perRow + totalVisibleItems()
-    );
-  })
+    const rawEnd = (newRowIndex + bufferSize()) * perRow + totalVisibleItems();
+    return Math.min(items().length, rawEnd);
+  });
 
   const [slice, setSlice] = s.createSignal(items().slice(start(), end()));
 
@@ -87,6 +80,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
           active,
           lastIdx
         );
+        return true;
       }
     };
   }
@@ -167,6 +161,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   return (
     <view
       {...props}
+      scroll='always'
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
       selected={props.selected || 0}
       cursor={cursor()}
