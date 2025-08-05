@@ -1,6 +1,5 @@
 import * as lng from '@lightningtv/solid';
 
-lng.Config.domRendering = true;
 lng.Config.rendererOptions = {};
 
 globalThis.ResizeObserver = class MockResizeObserver {

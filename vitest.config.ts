@@ -2,6 +2,9 @@ import { defineConfig } from 'vitest/config';
 import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig({
+  define: {
+    LIGHTNING_DOM_RENDERING: true,
+  },
   plugins: [
     solidPlugin({
       hot: false,
