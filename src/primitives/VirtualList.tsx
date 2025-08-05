@@ -37,7 +37,7 @@ export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
 
   const [ cursor, setCursor ] = s.createSignal(props.selected ?? 0);
 
-  const bufferSize = () => props.bufferSize ?? 1;
+  const bufferSize = () => props.bufferSize ?? 2;
 
   const items = s.createMemo(() => props.each || []);
 
@@ -85,6 +85,8 @@ export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
     let idx = _idx;
     let lastIdx = _lastIdx;
 
+    if (idx === lastIdx) return;
+
     const prevChildX = this.x + active.x;
     const prevStart = start();
 
@@ -117,12 +119,13 @@ export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
   return <>
     <view
       {...props}
+      scroll='always' // only supporting always scroll at the moment
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
       selected={props.selected || 0}
       cursor={cursor()}
       onLeft={/* @once */ lngp.chainFunctions(props.onLeft, rowOnLeft)}
       onRight={/* @once */ lngp.chainFunctions(props.onRight, rowOnRight)}
-      forwardFocus={/* once */ lngp.onGridFocus(chainedOnSelectedChanged)}
+      forwardFocus={/* @once */ lngp.navigableForwardFocus}
       scrollToIndex={scrollToIndex}
       onCreate={/* @once */
         props.selected ? lngp.chainFunctions(props.onCreate, rowScroll) : props.onCreate

@@ -62,23 +62,37 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
 
   let viewRef!: lngp.NavigableElement;
 
-  const onLeft = lngp.handleNavigation('left');
-  const onRight = lngp.handleNavigation('right');
+  function onVerticalNav(dir: -1 | 1): lngp.KeyHandler {
+    return function () {
+      const perRow = itemsPerRow();
+      const selected = this.selected || 0;
+      const offset = dir * perRow;
+      const newIndex = utils.clamp(selected + offset, 0, items().length - 1);
 
-  const onUpDown: lngp.KeyHandler = function () {
-    const perRow = itemsPerRow();
-    const selected = this.selected || 0;
-    if (selected < perRow) return false;
+      // Early exit if no movement (either blocked at top or already at end)
+      if (newIndex === selected) {
+        return dir === -1 ? false : undefined;
+      }
 
-    const newIndex = utils.clamp(selected - perRow, 0, items().length - 1);
-    const lastIdx = selected;
-    this.selected = newIndex;
-    const active = this.children[this.selected];
-    if (active instanceof lng.ElementNode) {
-      active.setFocus();
-      chainedOnSelectedChanged.call(this as lngp.NavigableElement, this.selected, this as lngp.NavigableElement, active, lastIdx);
-    }
-  };
+      const lastIdx = selected;
+      this.selected = newIndex;
+      const active = this.children[this.selected];
+
+      if (active instanceof lng.ElementNode) {
+        active.setFocus();
+        chainedOnSelectedChanged.call(
+          this as lngp.NavigableElement,
+          this.selected,
+          this as lngp.NavigableElement,
+          active,
+          lastIdx
+        );
+      }
+    };
+  }
+
+  const onUp = onVerticalNav(-1);
+  const onDown = onVerticalNav(1);
 
   const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, active, _lastIdx,) {
     let idx = _idx;
@@ -156,11 +170,11 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
       selected={props.selected || 0}
       cursor={cursor()}
-      onLeft={/* @once */ lngp.chainFunctions(props.onLeft, onLeft)}
-      onRight={/* @once */ lngp.chainFunctions(props.onRight, onRight)}
-      onUp={/* @once */ lngp.chainFunctions(props.onUp, onUpDown)}
-      onDown={/* @once */ lngp.chainFunctions(props.onDown, onUpDown)}
-      forwardFocus={/* @once */ lngp.onGridFocus(chainedOnSelectedChanged)}
+      onLeft={/* @once */ lngp.chainFunctions(props.onLeft, lngp.navigableHandleNavigation)}
+      onRight={/* @once */ lngp.chainFunctions(props.onRight, lngp.navigableHandleNavigation)}
+      onUp={/* @once */ lngp.chainFunctions(props.onUp, onUp)}
+      onDown={/* @once */ lngp.chainFunctions(props.onDown, onDown)}
+      forwardFocus={/* @once */ lngp.navigableForwardFocus}
       onCreate={/* @once */ props.selected ? lngp.chainFunctions(props.onCreate, columnScroll) : props.onCreate}
       scrollToIndex={/* @once */ scrollToIndex}
       onSelectedChanged={/* @once */ chainedOnSelectedChanged}

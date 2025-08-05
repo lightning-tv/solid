@@ -51,6 +51,7 @@ export function withScrolling(isRow: boolean) {
     if (
       !componentRef ||
       componentRef.scroll === 'none' ||
+      selected === lastSelected ||
       !componentRef.children.length
     )
       return;

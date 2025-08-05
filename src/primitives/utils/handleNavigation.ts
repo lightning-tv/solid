@@ -46,9 +46,8 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
     child.setFocus();
   }
 
-  if (lastSelected !== index || !lng.hasFocus(el)) {
-    el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
-  }
+  // Always call onSelectedChanged on first focus for clients
+  el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
 
   return true;
 }

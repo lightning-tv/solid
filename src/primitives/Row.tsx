@@ -23,7 +23,7 @@ const scroll = withScrolling(true);
 function scrollToIndex(this: ElementNode, index: number) {
   this.selected = index;
   scroll(index, this);
-  this.setFocus();
+  this.children[index]?.setFocus();
 }
 
 export const Row: Component<RowProps> = (props) => {
@@ -35,9 +35,9 @@ export const Row: Component<RowProps> = (props) => {
       onRight={/* @once */ chainFunctions(props.onRight, navigableHandleNavigation)}
       forwardFocus={navigableForwardFocus}
       scrollToIndex={scrollToIndex}
-      onCreate={
+      onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onCreate, scroll) : props.onCreate
+        props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
