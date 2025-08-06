@@ -235,11 +235,16 @@ export const spread: su.Renderer<SolidNode>['spread'] = (
   s.createRenderEffect(() => {
     let props = typeof accessor === 'function' ? accessor() : accessor;
     for (let prop in props) {
-      if (prop === 'children' || prop === 'ref') continue;
-      let value = props[prop];
-      if (value === prevProps[prop]) continue;
-      node[prop] = value;
-      prevProps[prop] = value;
+      switch (prop) {
+        case 'children':
+        case 'ref':
+          break;
+        default:
+          let value = props[prop];
+          if (value !== prevProps[prop]) {
+            node[prop] = prevProps[prop] = value;
+          }
+      }
     }
   });
 };
