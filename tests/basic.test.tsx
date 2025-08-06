@@ -30,3 +30,34 @@ v.test('Update text', () => {
 
   dispose()
 })
+
+v.test('reconcile children', () => {
+
+  const [children, setChildren] = s.createSignal<any>('')
+
+  let view!: lng.ElementNode
+  const dispose = renderer.render(() => <>
+    <view ref={view}>
+      {children()}
+    </view>
+  </>)
+
+  v.assert.equal(view.children.length, 0)
+
+  setChildren([<text>Child 1</text>, undefined])
+  v.assert.equal(view.children.length, 1)
+  v.assert.equal(view.children[0]!.text, 'Child 1')
+
+  setChildren('')
+  v.assert.equal(view.children.length, 0)
+
+  setChildren(<text>Child 2</text>)
+  v.assert.equal(view.children.length, 1)
+  v.assert.equal(view.children[0]!.text, 'Child 2')
+
+  setChildren([<text>Child 3</text>, undefined])
+  v.assert.equal(view.children.length, 1)
+  v.assert.equal(view.children[0]!.text, 'Child 3')
+
+  dispose()
+})
