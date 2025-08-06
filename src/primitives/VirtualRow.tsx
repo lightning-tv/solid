@@ -25,7 +25,7 @@ function scrollToIndex(this: lng.ElementNode, index: number) {
   this.setFocus();
 }
 
-export type VirtualListProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
+export type VirtualRowProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   each: readonly T[] | undefined | null | false;
   displaySize: number;
   bufferSize?: number;
@@ -33,7 +33,7 @@ export type VirtualListProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
-export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
+export function VirtualRow<T>(props: VirtualRowProps<T>): s.JSX.Element {
 
   const [ cursor, setCursor ] = s.createSignal(props.selected ?? 0);
 
@@ -116,8 +116,7 @@ export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
   const chainedOnSelectedChanged = lngp.chainFunctions(props.onSelectedChanged, onSelectedChanged)!;
 
   let viewRef!: lngp.NavigableElement;
-  return <>
-    <view
+  return <view
       {...props}
       scroll='always' // only supporting always scroll at the moment
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
@@ -135,6 +134,5 @@ export function VirtualList<T>(props: VirtualListProps<T>): s.JSX.Element {
       style={/* @once */ lng.combineStyles(props.style, rowStyles)}
     >
       <List each={slice()}>{props.children}</List>
-    </view>
-  </>;
+    </view>;
 }
