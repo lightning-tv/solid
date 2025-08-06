@@ -217,7 +217,7 @@ export const spread: su.Renderer<SolidNode>['spread'] = (
       let { ref } = accessor();
       if (ref) ref(node);
     });
-  } else if (typeof accessor.ref === 'function') {
+  } else if (accessor.ref) {
     accessor.ref(node);
   }
 
@@ -238,7 +238,7 @@ export const spread: su.Renderer<SolidNode>['spread'] = (
       switch (prop) {
         case 'children':
         case 'ref':
-          break;
+          continue;
         default:
           let value = props[prop];
           if (value !== prevProps[prop]) {
