@@ -29,6 +29,8 @@ export type VirtualRowProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   each: readonly T[] | undefined | null | false;
   displaySize: number;
   bufferSize?: number;
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number;
   fallback?: s.JSX.Element;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
@@ -100,6 +102,10 @@ export function VirtualRow<T>(props: VirtualRowProps<T>): s.JSX.Element {
     if (lastIdx) lastIdx += idxCorrection;
     idx += idxCorrection;
     this.selected += idxCorrection;
+
+    if (props.onEndReachedThreshold !== undefined && cursor() >= items().length - props.onEndReachedThreshold) {
+      props.onEndReached?.();
+    }
 
     // Microtask & this.updateLayout() to make sure the child position is recalculated
     queueMicrotask(() => {

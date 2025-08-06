@@ -1,41 +1,37 @@
-# VirtualGrid Primitive
+# VirtualRow Primitive
 
-`VirtualGrid` renders a dynamic slice of items based on the currently selected index and lays out the items in Grid format by using flex wrap.
+`VirtualRow` renders a dynamic slice of items from a larger dataset, displaying them in a horizontal row. It's designed to optimize performance for long lists by only rendering the items currently visible or nearby.
 
 ### Behavior
 
-- Renders a 2D grid of items using `columns` and `rows`.
-- Uses `buffer` to pre-render additional rows above and below the visible window.
+- Renders a 1D horizontal list of items.
+- Uses `displaySize` to define the number of visible items.
+- Uses `bufferSize` to pre-render additional items to the left and right of the visible window for smoother scrolling.
 - Only a subset of the total items is rendered, improving performance.
-- Handles directional navigation (`onUp`, `onDown`, `onLeft`, `onRight`) using built-in key handlers.
-- Automatically scrolls vertically when the user navigates to a new row.
-- Triggers `onEndReached` when the user approaches the end of the list. Allowing fetching additional items
+- Handles directional navigation (`onLeft`, `onRight`) using built-in key handlers.
+- Automatically scrolls horizontally as the user navigates.
+- Triggers `onEndReached` when the user approaches the end of the list, allowing for infinite scrolling or fetching more data.
 - Focus is updated and maintained internally, with optional control via `scrollToIndex`.
-- `selected` can be set to the index in the total array of items (which can be gotten from the cursor property)
+- `selected` can be set to an index in the total array of items.
 
 ### Example Usage
 
 ```tsx
-import { VirtualGrid } from './components/VirtualGrid';
+import { VirtualRow } from './primitives/VirtualRow'; // Adjust import path
 
-<VirtualGrid
-  x={160}
-  y={24}
-  width={1620}
-  scroll="always"
+<VirtualRow
+  x={100}
+  y={100}
+  displaySize={5}
+  bufferSize={2}
+  each={myItemsArray}
+  onEndReached={loadMoreItems}
+  onEndReachedThreshold={3}
+  onSelectedChanged={updateContent}
   autofocus
-  rows={7}
-  columns={2}
-  buffer={2}
-  each={provider().pages()}
-  onEnter={onEnter}
-  onEndReached={onEndReached}
-  onEndReachedThreshold={15}
-  onSelectedChanged={updateContentBlock}
-  announce={`All Trending ${props.params.filter}`}
 >
-  {(item) => <Thumbnail item={item()} />}
-</VirtualGrid>;
+  {(item, index) => <Thumbnail item={item()} index={index()} />}
+</VirtualRow>;
 ```
 
 ### Props
@@ -53,6 +49,8 @@ import { VirtualGrid } from './components/VirtualGrid';
 - **onLeft / onRight / onUp / onDown** (`KeyHandler`): Optional directional key handlers.
 - **ref** (`RefSetter`): Ref to access the underlying view element.
 - **style** (`NodeStyles`): Custom style object; merged with internal layout styles.
+
+Use `cursor` property on the node to get the absolute index in the list of items.
 
 ### Performance Optimization
 

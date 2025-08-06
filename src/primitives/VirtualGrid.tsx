@@ -26,6 +26,7 @@ export type VirtualGridProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   rows?: number; // number of visible rows (default: 1)
   buffer?: number;
   onEndReached?: () => void;
+  onEndReachedThreshold?: number;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
@@ -110,7 +111,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
     idx += idxCorrection;
     this.selected += idxCorrection;
 
-    if (cursor() >= items().length - perRow * bufferSize()) {
+    if (props.onEndReachedThreshold !== undefined && cursor() >= items().length - props.onEndReachedThreshold) {
       props.onEndReached?.();
     }
 
