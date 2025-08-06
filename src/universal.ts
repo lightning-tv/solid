@@ -8,14 +8,12 @@ declare module '@lightningtv/core' {
     /** @internal for managing series of insertions and deletions */
     _queueDelete?: number;
     preserve?: boolean;
-    _childrenChunks?: NodeChunk[] | TextChunk[];
+    _childrenChunks?: NodeChildren[] | string[][];
   }
 }
 
 type JSXChildren = s.JSX.Element | (() => JSXChildren);
 type NodeChildren = (lng.ElementNode | lng.ElementText)[];
-type NodeChunk = NodeChildren;
-type TextChunk = string[];
 
 Object.defineProperty(lng.ElementNode.prototype, 'preserve', {
   get(): boolean | undefined {
@@ -81,12 +79,12 @@ function resolveTextJSXChildren(
 function commitChunks(el: lng.ElementNode | lng.ElementText): void {
   if (lng.isElementText(el)) {
     let text = '';
-    for (let chunk of el._childrenChunks as TextChunk[]) {
+    for (let chunk of el._childrenChunks as string[][]) {
       text += chunk.join('');
     }
     el.text = text;
   } else {
-    el.children = (el._childrenChunks as NodeChunk[]).flat();
+    el.children = (el._childrenChunks as NodeChildren[]).flat();
   }
 }
 function commitChild(
@@ -99,12 +97,12 @@ function commitChild(
   if (prevParent) pushDeleteQueue(child as lng.ElementNode, 1);
 }
 
-function insertChunk(el: lng.ElementNode, before: any): NodeChunk;
-function insertChunk(el: lng.ElementText, before: any): TextChunk;
+function insertChunk(el: lng.ElementNode, before: any): NodeChildren;
+function insertChunk(el: lng.ElementText, before: any): string[];
 function insertChunk(
   el: lng.ElementNode | lng.ElementText,
   before: any,
-): TextChunk | NodeChunk {
+): string[] | NodeChildren {
   let chunks = (el._childrenChunks ??= []);
   let chunk: any[] = [];
   if (before != null) {
@@ -125,8 +123,11 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
   accessor: any,
   before,
 ) => {
+  /* <text> */
   if (lng.isElementText(parent)) {
     let chunk = insertChunk(parent, before);
+
+    /* dynamic chunk */
     if (typeof accessor === 'function') {
       s.createRenderEffect(() => {
         chunk.length = 0;
@@ -134,21 +135,33 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
         commitChunks(parent);
       });
     } else {
+    /* constant chunk */
       resolveTextJSXChildren(accessor, chunk);
       commitChunks(parent);
     }
+
+    return chunk[0] || '';
   } else {
+  /* <view> */
     let el = parent as lng.ElementNode;
     let chunk = insertChunk(el, before);
+
+    /* dynamic chunk */
     if (typeof accessor === 'function') {
       s.createRenderEffect(() => {
         let prev = chunk.slice();
-        for (let c of prev) c.parent = undefined;
+        for (let i = 0; i < prev.length; i++) {
+          prev[i]!.parent = undefined; // commitChild will set the parent again
+        }
         chunk.length = 0;
         resolveNodeJSXChildren(accessor(), chunk);
         commitChunks(el);
-        for (let c of chunk) commitChild(el, c);
-        for (let c of prev) {
+        for (let i = 0; i < chunk.length; i++) {
+          commitChild(el, chunk[i]!);
+        }
+        /* Handle removed children */
+        for (let i = 0; i < prev.length; i++) {
+          let c = prev[i]!;
           if (c.parent !== el) {
             (c as lng.ElementNode).onRemove?.(c as lng.ElementNode);
             if (el.requiresLayout()) {
@@ -159,10 +172,15 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
         }
       });
     } else {
+    /* constant chunk */
       resolveNodeJSXChildren(accessor, chunk);
       commitChunks(el);
-      for (let c of chunk) commitChild(el, c);
+      for (let i = 0; i < chunk.length; i++) {
+        commitChild(el, chunk[i]!);
+      }
     }
+
+    return chunk[0] as any;
   }
 };
 
@@ -195,7 +213,7 @@ export const spread: su.Renderer<SolidNode>['spread'] = (
       let { ref } = accessor();
       if (ref) ref(node);
     });
-  } else if ('ref' in accessor && typeof accessor.ref === 'function') {
+  } else if (typeof accessor.ref === 'function') {
     accessor.ref(node);
   }
 
