@@ -58,15 +58,17 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   function onVerticalNav(dir: -1 | 1): lngp.KeyHandler {
     return function () {
       const perRow = itemsPerRow();
+      const currentRowIndex = Math.floor(cursor() / perRow);
+      const maxRows = Math.floor(items().length / perRow);
+
+      if (
+        currentRowIndex === 0 && dir === -1
+        || currentRowIndex === maxRows && dir === 1
+      ) return;
+
       const selected = this.selected || 0;
       const offset = dir * perRow;
       const newIndex = utils.clamp(selected + offset, 0, items().length - 1);
-
-      // Early exit if no movement (either blocked at top or already at end)
-      if (newIndex === selected) {
-        return dir === -1 ? false : undefined;
-      }
-
       const lastIdx = selected;
       this.selected = newIndex;
       const active = this.children[this.selected];
