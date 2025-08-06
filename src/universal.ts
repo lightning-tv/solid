@@ -12,6 +12,11 @@ declare module '@lightningtv/core' {
   }
 }
 
+type JSXChildren = s.JSX.Element | (() => JSXChildren);
+type NodeChildren = (lng.ElementNode | lng.ElementText)[];
+type NodeChunk = NodeChildren;
+type TextChunk = string[];
+
 Object.defineProperty(lng.ElementNode.prototype, 'preserve', {
   get(): boolean | undefined {
     return this._queueDelete === 0;
@@ -43,11 +48,6 @@ function pushDeleteQueue(node: lng.ElementNode, n: number): void {
     node._queueDelete += n;
   }
 }
-
-type JSXChildren = s.JSX.Element | (() => JSXChildren);
-type NodeChildren = (lng.ElementNode | lng.ElementText)[];
-type NodeChunk = NodeChildren;
-type TextChunk = string[];
 
 function resolveNodeJSXChildren(
   jsx: JSXChildren,
@@ -109,7 +109,7 @@ function insertChunk(
   let chunk: any[] = [];
   if (before != null) {
     for (let i = 0; i < chunks.length; i++) {
-      if (chunks[i]!.length > 0 && before === chunks[i]![0]) {
+      if (before === chunks[i]![0]) {
         chunks.splice(i, 0, chunk);
         return chunk;
       }
@@ -184,18 +184,34 @@ export const insertNode: su.Renderer<SolidNode>['insertNode'] = (
   }
 };
 
-function spreadExpression(
-  node: lng.ElementNode,
-  props: any,
-  prevProps: any = {},
-  skipChildren?: boolean,
-): any {
-  props || (props = {});
-  if (!skipChildren) {
-    insert(node, () => props.children);
+export const spread: su.Renderer<SolidNode>['spread'] = (
+  node,
+  accessor: any,
+  skipChildren,
+) => {
+  /* Ref */
+  if (typeof accessor === 'function') {
+    s.createRenderEffect(() => {
+      let { ref } = accessor();
+      if (ref) ref(node);
+    });
+  } else if ('ref' in accessor && typeof accessor.ref === 'function') {
+    accessor.ref(node);
   }
-  s.createRenderEffect(() => props.ref && props.ref(node));
+
+  /* Children */
+  if (!skipChildren) {
+    if (typeof accessor === 'function') {
+      insert(node, () => accessor().children);
+    } else if ('children' in accessor) {
+      insert(node, () => accessor.children);
+    }
+  }
+
+  /* Rest */
+  let prevProps: any = {};
   s.createRenderEffect(() => {
+    let props = typeof accessor === 'function' ? accessor() : accessor;
     for (let prop in props) {
       if (prop === 'children' || prop === 'ref') continue;
       let value = props[prop];
@@ -204,8 +220,15 @@ function spreadExpression(
       prevProps[prop] = value;
     }
   });
-  return prevProps;
-}
+};
+
+export const setProp: su.Renderer<SolidNode>['setProp'] = (
+  node,
+  name,
+  value,
+) => {
+  return (node[name] = value);
+};
 
 // Lightning TV specific renderer functions
 export const createElement: su.Renderer<SolidNode>['createElement'] = (
@@ -229,29 +252,6 @@ export const render: su.Renderer<SolidNode>['render'] = (code, element) => {
     insert(element, code());
   });
   return disposer!;
-};
-
-export const spread: su.Renderer<SolidNode>['spread'] = (
-  node,
-  accessor,
-  skipChildren,
-) => {
-  if (typeof accessor === 'function') {
-    s.createRenderEffect((current) =>
-      spreadExpression(node, accessor(), current, skipChildren),
-    );
-  } else {
-    spreadExpression(node, accessor, undefined, skipChildren);
-  }
-};
-
-export const setProp: su.Renderer<SolidNode>['setProp'] = (
-  node,
-  name,
-  value,
-  prev,
-) => {
-  return (node[name] = value);
 };
 
 export const mergeProps: su.Renderer<SolidNode>['mergeProps'] = s.mergeProps;
