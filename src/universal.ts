@@ -141,8 +141,9 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
     }
 
     return chunk[0] || '';
-  } else {
-    /* <view> */
+  }
+  // <view>
+  else {
     let el = parent as lng.ElementNode;
     let chunk = insertChunk(el, before);
 
@@ -189,13 +190,14 @@ export const insertNode: su.Renderer<SolidNode>['insertNode'] = (
   node,
   before,
 ) => {
-  /* <text> */
+  // <text>
   if (lng.isElementText(parent)) {
     let chunk = insertChunk(parent, before);
     resolveTextJSXChildren(node as any, chunk);
     commitChunks(parent);
-  } else {
-  /* <view> */
+  }
+  // <view>
+  else {
     let el = parent as lng.ElementNode;
     let chunk = insertChunk(el, before);
     chunk.push(node as lng.ElementNode);
