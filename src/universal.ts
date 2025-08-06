@@ -135,14 +135,14 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
         commitChunks(parent);
       });
     } else {
-    /* constant chunk */
+      /* constant chunk */
       resolveTextJSXChildren(accessor, chunk);
       commitChunks(parent);
     }
 
     return chunk[0] || '';
   } else {
-  /* <view> */
+    /* <view> */
     let el = parent as lng.ElementNode;
     let chunk = insertChunk(el, before);
 
@@ -172,7 +172,7 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
         }
       });
     } else {
-    /* constant chunk */
+      /* constant chunk */
       resolveNodeJSXChildren(accessor, chunk);
       commitChunks(el);
       for (let i = 0; i < chunk.length; i++) {
@@ -189,11 +189,13 @@ export const insertNode: su.Renderer<SolidNode>['insertNode'] = (
   node,
   before,
 ) => {
+  /* <text> */
   if (lng.isElementText(parent)) {
     let chunk = insertChunk(parent, before);
     resolveTextJSXChildren(node as any, chunk);
     commitChunks(parent);
   } else {
+  /* <view> */
     let el = parent as lng.ElementNode;
     let chunk = insertChunk(el, before);
     chunk.push(node as lng.ElementNode);
