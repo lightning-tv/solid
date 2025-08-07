@@ -1,44 +1,26 @@
-import { createRenderer as solidCreateRenderer } from 'solid-js/universal';
-import {
-  Config,
-  type NodeProps,
-  type TextProps,
-  startLightningRenderer,
-  type RendererMainSettings,
-} from '@lightningtv/core';
-import nodeOpts from './solidOpts.js';
-import {
-  splitProps,
-  createMemo,
-  createRenderEffect,
-  untrack,
-  type JSXElement,
-  createRoot,
-  type Component,
-} from 'solid-js';
-import type { SolidNode } from './types.js';
+import * as s from 'solid-js';
+import * as lng from '@lightningtv/core';
+import * as universal from './universal.js';
 import { activeElement, setActiveElement } from './activeElement.js';
 
-const solidRenderer = solidCreateRenderer<SolidNode>(nodeOpts);
+let renderer: lng.IRendererMain;
+export const rootNode = universal.createElement('App');
 
-let renderer;
-export const rootNode = nodeOpts.createElement('App');
-
-const render = function (code: () => JSXElement) {
-  // @ts-expect-error - code is jsx element and not SolidElement yet
-  return solidRenderer.render(code, rootNode);
+const render = (code: () => s.JSX.Element): (() => void) => {
+  return universal.render(code as any, rootNode);
 };
 
 export function createRenderer(
-  rendererOptions?: RendererMainSettings,
+  rendererOptions?: lng.RendererMainSettings,
   node?: HTMLElement | string,
 ) {
-  const options =
-    rendererOptions || (Config.rendererOptions as RendererMainSettings);
+  rendererOptions ??= lng.Config.rendererOptions as lng.RendererMainSettings;
+  lng.assertTruthy(rendererOptions, 'Renderer options must be provided');
 
-  renderer = startLightningRenderer(options, node || 'app');
+  renderer = lng.startLightningRenderer(rendererOptions, node);
+
   //Prevent this from happening automatically
-  Config.setActiveElement = setActiveElement;
+  lng.Config.setActiveElement = setActiveElement;
   rootNode.lng = renderer.root!;
   rootNode.rendered = true;
   renderer.on('idle', () => {
@@ -65,14 +47,14 @@ export const {
   setProp,
   mergeProps,
   use,
-} = solidRenderer;
+} = universal;
 
 type Task = () => void;
 const taskQueue: Task[] = [];
 let tasksEnabled = false;
 
-createRoot(() => {
-  createRenderEffect(() => {
+s.createRoot(() => {
+  s.createRenderEffect(() => {
     // should change whenever a keypress occurs, so we disable the task queue
     // until the renderer is idle again.
     activeElement();
@@ -108,7 +90,7 @@ function processTasks(): void {
         task();
         processTasks();
       }
-    }, Config.taskDelay || 50);
+    }, lng.Config.taskDelay || 50);
   }
 }
 
@@ -120,17 +102,17 @@ function processTasks(): void {
  * @description https://www.solidjs.com/docs/latest/api#dynamic
  */
 export function Dynamic<T extends Record<string, any>>(
-  props: T & { component?: Component<T> | undefined | null },
-): JSXElement {
-  const [p, others] = splitProps(props, ['component']);
+  props: T & { component?: s.Component<T> | undefined | null },
+): s.JSXElement {
+  const [p, others] = s.splitProps(props, ['component']);
 
-  const cached = createMemo(() => p.component);
+  const cached = s.createMemo(() => p.component);
 
-  return createMemo(() => {
+  return s.createMemo(() => {
     const component = cached();
     switch (typeof component) {
       case 'function':
-        return untrack(() => component(others));
+        return s.untrack(() => component(others));
 
       case 'string': {
         const el = createElement(component);
@@ -141,18 +123,18 @@ export function Dynamic<T extends Record<string, any>>(
       default:
         break;
     }
-  }) as unknown as JSXElement;
+  }) as unknown as s.JSXElement;
 }
 
 // Dont use JSX as it creates circular dependencies and causes trouble with the playground.
-export const View = (props: NodeProps) => {
+export const View = (props: lng.NodeProps) => {
   const el = createElement('node');
   spread(el, props, false);
-  return el as unknown as JSXElement;
+  return el as unknown as s.JSXElement;
 };
 
-export const Text = (props: TextProps) => {
+export const Text = (props: lng.TextProps) => {
   const el = createElement('text');
   spread(el, props, false);
-  return el as unknown as JSXElement;
+  return el as unknown as s.JSXElement;
 };
