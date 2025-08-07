@@ -164,7 +164,7 @@ export const insert: su.Renderer<SolidNode>['insert'] = (
         for (let i = 0; i < prev.length; i++) {
           let c = prev[i]!;
           if (c.parent !== el) {
-            (c as lng.ElementNode).onRemove?.(c as lng.ElementNode);
+            (c as lng.ElementNode).onRemove?.(c as lng.ElementNode); // ? Should this be called in effect?
             if (el.requiresLayout()) {
               lng.addToLayoutQueue(el);
             }
