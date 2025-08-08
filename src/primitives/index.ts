@@ -17,7 +17,7 @@ export * from './Marquee.jsx';
 export * from './createFocusStack.jsx';
 export * from './useHold.js';
 export * from './VirtualGrid.jsx';
-export * from './VirtualRow.jsx';
+export * from './Virtual.jsx';
 export { withScrolling } from './utils/withScrolling.js';
 export {
   type AnyFunction,
