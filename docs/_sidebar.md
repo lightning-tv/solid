@@ -43,6 +43,6 @@
   - [useHold](/primitives/useHold.md)
   - [Visible](/primitives/visible.md)
   - [VirtualGrid](/primitives/virtualgrid.md)
-  - [VirtualRow](/primitives/virtualrow.md)
+  - [Virtual Row and Column](/primitives/virtual.md)
 - Tooling
   - [Solid Devtools](/tooling/solid_devtools.md)

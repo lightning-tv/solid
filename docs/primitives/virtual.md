@@ -1,15 +1,13 @@
-# VirtualRow Primitive
+# Virtual Row & Column Primitives
 
-`VirtualRow` renders a dynamic slice of items from a larger dataset, displaying them in a horizontal row. It's designed to optimize performance for long lists by only rendering the items currently visible or nearby.
+`VirtualRow` & `VirtualColumn` renders a dynamic slice of items from a larger dataset, displaying them in a horizontal row / column. It's designed to optimize performance for long lists by only rendering the items currently visible or nearby.
 
 ### Behavior
 
-- Renders a 1D horizontal list of items.
+- Renders a 1D list of items.
 - Uses `displaySize` to define the number of visible items.
 - Uses `bufferSize` to pre-render additional items to the left and right of the visible window for smoother scrolling.
 - Only a subset of the total items is rendered, improving performance.
-- Handles directional navigation (`onLeft`, `onRight`) using built-in key handlers.
-- Automatically scrolls horizontally as the user navigates.
 - Triggers `onEndReached` when the user approaches the end of the list, allowing for infinite scrolling or fetching more data.
 - Focus is updated and maintained internally, with optional control via `scrollToIndex`.
 - `selected` can be set to an index in the total array of items.
@@ -17,7 +15,7 @@
 ### Example Usage
 
 ```tsx
-import { VirtualRow } from './primitives/VirtualRow'; // Adjust import path
+import { VirtualRow, VirtualColumn } from './primitives/Virtual';
 
 <VirtualRow
   x={100}
@@ -37,18 +35,14 @@ import { VirtualRow } from './primitives/VirtualRow'; // Adjust import path
 ### Props
 
 - **each** (`readonly T[] | undefined | null | false`): The full list of items to be rendered.
-- **itemsPerRow** (`number`): Number of items per row (required).
-- **numberOfRows** (`number`): Number of visible rows (default: `1`).
-- **rowsBuffer** (`number`): Number of rows to pre-render above and below the visible area (default: `2`).
+- **displaySize** (`number`): Number of items per row (required).
+- **bufferSize** (`number`): Number of items to pre-render above and below the visible area (default: `2`).
 - **onEndReached** (`() => void`): Callback triggered when selection moves near the end of the list Requires `onEndReachedThreshold` to be set.
 - **onEndReachedThreshold** (`number`): Number from end of items when `onEndReached` will be called (default: `undefined`).
 - **children** (`(item: Accessor<T>, index: Accessor<number>) => JSX.Element`): Function that renders each item.
 - **selected** (`number`): Initial selected index.
 - **autofocus** (`boolean`): If `true`, the component will auto-focus the first item on mount.
 - **onSelectedChanged** (`OnSelectedChanged`): Optional callback triggered when selection changes.
-- **onLeft / onRight / onUp / onDown** (`KeyHandler`): Optional directional key handlers.
-- **ref** (`RefSetter`): Ref to access the underlying view element.
-- **style** (`NodeStyles`): Custom style object; merged with internal layout styles.
 
 Use `cursor` property on the node to get the absolute index in the list of items.
 
