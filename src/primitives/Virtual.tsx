@@ -35,9 +35,7 @@ function createVirtual<T>(
   let viewRef!: lngp.NavigableElement;
 
   function scrollToIndex(this: lng.ElementNode, index: number) {
-    this.selected = index;
-    scrollFn(index, this);
-    this.setFocus();
+    updateSelected([index]);
   }
 
   const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, active, _lastIdx) {
@@ -79,8 +77,8 @@ function createVirtual<T>(
 
   const chainedOnSelectedChanged = lngp.chainFunctions(props.onSelectedChanged, onSelectedChanged)!;
 
-  s.createEffect(s.on([() => props.selected, items], ([selected]) => {
-    if (!viewRef || selected == null) return;
+  const updateSelected = ([selected, _items] : [number?, any?]) => {
+    if (!viewRef || !selected) return;
     const item = items()![selected];
     let active = viewRef.children.find(x => x.item === item);
     const lastSelected = viewRef.selected;
@@ -97,10 +95,13 @@ function createVirtual<T>(
         if (active instanceof lng.ElementNode) {
           viewRef.selected = viewRef.children.indexOf(active);
           chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
+          active.setFocus();
         }
       });
     }
-  }));
+  };
+
+  s.createEffect(s.on([() => props.selected, items], updateSelected));
 
   s.createEffect(s.on(items, () => {
     if (!viewRef) return;
