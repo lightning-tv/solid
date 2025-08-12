@@ -156,3 +156,8 @@ export const Text = (props: TextProps) => {
   spread(el, props, false);
   return el as unknown as JSXElement;
 };
+
+export function registerDefaultShader(name: string, shader: any) {
+  // noop for v2
+  // renderer.stage.shManager.registerShaderType('rounded', Rounded);
+}
