@@ -34,7 +34,7 @@ function createVirtual<T>(
 
   const selected = () => {
     if (props.wrap) {
-      return bufferSize();
+      return Math.max(bufferSize(), scrollIndex());
     }
     return props.selected || 0;
   };
@@ -42,7 +42,7 @@ function createVirtual<T>(
   const start = () => {
     if (itemCount() === 0) return 0;
     if (props.wrap) {
-      return utils.mod(cursor() - bufferSize(), itemCount());
+      return utils.mod(cursor() - Math.max(bufferSize(), scrollIndex()), itemCount());
     }
     if (scrollType() === 'always') {
       return Math.min(Math.max(cursor() - bufferSize(), 0), itemCount() - props.displaySize - bufferSize());
@@ -90,9 +90,10 @@ function createVirtual<T>(
     updateSelected([target]);
   }
 
-  const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, active, _lastIdx) {
+  const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, _active, _lastIdx) {
     let idx = _idx;
     let lastIdx = _lastIdx || 0;
+    let active = _active;
     const initialRun = idx === lastIdx;
 
     if (initialRun && !props.wrap) return;
@@ -109,7 +110,7 @@ function createVirtual<T>(
       const c = cursor();
       const scroll = scrollType();
       if (props.wrap) {
-        this.selected = bufferSize();
+        this.selected = Math.max(bufferSize(), scrollIndex());
       } else if (props.scrollIndex) {
         this.selected = Math.min(c, props.scrollIndex);
         if (c >= itemCount() - props.displaySize + bufferSize()) {
@@ -136,11 +137,14 @@ function createVirtual<T>(
 
     queueMicrotask(() => {
       this.updateLayout();
-      // if (this._initialPosition === undefined) {
-      //   this.offset = 0;
-      //   const axis = isRow ? 'x' : 'y';
-      //   this._initialPosition = this[axis];
-      // }
+      if (this._initialPosition === undefined && props.wrap) {
+        this.offset = 0;
+        const axis = isRow ? 'x' : 'y';
+        this._initialPosition = this[axis];
+        if (scrollIndex() > 0) {
+          active = this.children[1] as lng.ElementNode;
+        }
+      }
       if (component === lngp.Row) {
         this.lng.x = this._targetPosition = prevChildPos - active.x;
       } else {
