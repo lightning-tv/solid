@@ -16,7 +16,11 @@ export * from './Suspense.jsx';
 export * from './Marquee.jsx';
 export * from './createFocusStack.jsx';
 export * from './useHold.js';
-export { withScrolling } from './utils/withScrolling.js';
+export {
+  withScrolling,
+  scrollColumn,
+  scrollRow,
+} from './utils/withScrolling.js';
 export {
   type AnyFunction,
   chainFunctions,
