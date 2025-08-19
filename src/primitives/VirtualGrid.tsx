@@ -164,7 +164,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   return (
     <view
       {...props}
-      scroll='always'
+      scroll={props.scroll || 'always'}
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
       selected={props.selected || 0}
       cursor={cursor()}
