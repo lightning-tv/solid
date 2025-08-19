@@ -95,7 +95,6 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   return selectChild(navigable, selected);
 };
 
-/** @deprecated Use {@link navigableHandleNavigation} instead */
 export function handleNavigation(
   direction: 'up' | 'right' | 'down' | 'left',
 ): lng.KeyHandler {
