@@ -18,7 +18,7 @@ export * from './createFocusStack.jsx';
 export * from './useHold.js';
 export * from './VirtualGrid.jsx';
 export * from './Virtual.jsx';
-export { withScrolling } from './utils/withScrolling.js';
+export * from './utils/withScrolling.js';
 export {
   type AnyFunction,
   chainFunctions,

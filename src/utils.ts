@@ -66,3 +66,8 @@ export const clamp = (value: number, min: number, max: number) =>
   min < max
     ? Math.min(Math.max(value, min), max)
     : Math.min(Math.max(value, max), min);
+
+export function mod(n: number, m: number): number {
+  if (m === 0) return 0;
+  return ((n % m) + m) % m;
+}
