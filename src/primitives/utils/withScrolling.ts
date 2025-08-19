@@ -40,6 +40,7 @@ const isNotShown = (node: ElementNode | ElementText) => {
   Always scroll moves the list every time
 */
 
+/** @deprecated Use {@link scrollRow} or {@link scrollColumn} */
 export function withScrolling(isRow: boolean): Scroller {
   const dimension = isRow ? 'width' : 'height';
   const axis = isRow ? 'x' : 'y';
@@ -189,3 +190,6 @@ export function withScrolling(isRow: boolean): Scroller {
     }
   };
 }
+
+export const scrollRow = /* @__PURE__ */ withScrolling(true);
+export const scrollColumn = /* @__PURE__ */ withScrolling(false);
