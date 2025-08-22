@@ -13,7 +13,6 @@ export type VirtualProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   doScroll?: lngp.Scroller;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
-  fallback?: s.JSX.Element;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
@@ -25,9 +24,7 @@ function createVirtual<T>(
 ) {
   const [cursor, setCursor] = s.createSignal(props.selected ?? 0);
   const bufferSize = s.createMemo(() => props.bufferSize || 2);
-  const scrollIndex = s.createMemo(() => {
-    return props.scrollIndex || 0;
-  });
+  const scrollIndex = s.createMemo(() => props.scrollIndex || 0);
   const items = s.createMemo(() => props.each || []);
   const itemCount = s.createMemo(() => items().length);
   const scrollType = s.createMemo(() => props.scroll || 'auto');
@@ -227,15 +224,15 @@ function createVirtual<T>(
 }
 
 export function VirtualRow<T>(props: VirtualProps<T>) {
-  return createVirtual(lngp.Row, props, props.doScroll || lngp.withScrolling(true), {
-    onLeft: lngp.chainFunctions(props.onLeft, lngp.navigableHandleNavigation) as lng.KeyHandler,
-    onRight: lngp.chainFunctions(props.onRight, lngp.navigableHandleNavigation) as lng.KeyHandler,
+  return createVirtual(lngp.Row, props, props.doScroll || lngp.scrollRow, {
+    onLeft: lngp.chainFunctions(props.onLeft, lngp.handleNavigation('left')) as lng.KeyHandler,
+    onRight: lngp.chainFunctions(props.onRight, lngp.handleNavigation('right')) as lng.KeyHandler,
   });
 }
 
 export function VirtualColumn<T>(props: VirtualProps<T>) {
-  return createVirtual(lngp.Column, props, props.doScroll || lngp.withScrolling(false), {
-    onUp: lngp.chainFunctions(props.onUp, lngp.navigableHandleNavigation) as lng.KeyHandler,
-    onDown: lngp.chainFunctions(props.onDown, lngp.navigableHandleNavigation) as lng.KeyHandler,
+  return createVirtual(lngp.Column, props, props.doScroll || lngp.scrollColumn, {
+    onUp: lngp.chainFunctions(props.onUp, lngp.handleNavigation('up')) as lng.KeyHandler,
+    onDown: lngp.chainFunctions(props.onDown, lngp.handleNavigation('down')) as lng.KeyHandler,
   });
 }

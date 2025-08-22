@@ -24,7 +24,7 @@ function findFirstFocusableChildIdx(
         i = (i + el.children.length) % el.children.length;
       } else break;
     }
-    if (!el.children[i]!.skipFocus) {
+    if (!el.children[i]?.skipFocus) {
       return i;
     }
   }
