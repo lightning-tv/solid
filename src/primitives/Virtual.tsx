@@ -230,7 +230,7 @@ function createVirtual<T>(
 
       if (
         props.onEndReachedThreshold !== undefined &&
-        cursor() >= items().length - props.onEndReachedThreshold
+        cursor() >= itemCount() - props.onEndReachedThreshold
       ) {
         props.onEndReached?.();
       }
