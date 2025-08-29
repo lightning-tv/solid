@@ -13,6 +13,7 @@ export type VirtualProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   doScroll?: lngp.Scroller;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
+  debugInfo?: boolean;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
@@ -36,43 +37,147 @@ function createVirtual<T>(
     return props.selected || 0;
   };
 
-  const start = () => {
-    if (itemCount() === 0) return 0;
-    if (props.wrap) {
-      return utils.mod(cursor() - Math.max(bufferSize(), scrollIndex()), itemCount());
-    }
-    if (scrollType() === 'always') {
-      return Math.min(Math.max(cursor() - bufferSize(), 0), itemCount() - props.displaySize - bufferSize());
-    }
-    if (scrollType() === 'auto') {
-      return utils.clamp(cursor() - Math.max(bufferSize(), scrollIndex()), 0, Math.max(0, itemCount() - props.displaySize - bufferSize()));
-    }
-    return utils.clamp(cursor() - bufferSize(), 0, Math.max(0, itemCount() - props.displaySize));
-  };
+  type SliceState = { start: number; slice: T[]; selected: number, delta: number };
+    const [slice, setSlice] = s.createSignal<SliceState>({
+      start: 0,
+      slice: [],
+      selected: 0,
+      delta: 0
+    });
 
-  const end = () => {
-    if (itemCount() === 0) return 0;
-    if (props.wrap) {
-      return (start() + props.displaySize + bufferSize()) % itemCount();
+    function normalizeDeltaForWindow(delta: number, windowLen: number): number {
+      if (!windowLen) return 0;
+      const half = windowLen / 2;
+      if (delta > half) return delta - windowLen;
+      if (delta < -half) return delta + windowLen;
+      return delta;
     }
-    return Math.min(itemCount(), start() + props.displaySize + bufferSize());
-  };
 
-  const getSlice = s.createMemo(() => {
-    if (itemCount() === 0) return [];
-    if (!props.wrap) {
-      return items().slice(start(), end());
-    }
-    // Wrapping slice
-    const sIdx = start();
-    const eIdx = (sIdx + props.displaySize + bufferSize()) % itemCount();
-    if (sIdx < eIdx) {
-      return items().slice(sIdx, eIdx);
-    }
-    return [...items().slice(sIdx), ...items().slice(0, eIdx)];
-  });
+    function computeSlice(c: number, delta: number, prev: SliceState): SliceState {
+      const total = itemCount();
+      if (total === 0) return { start: 0, slice: [], selected: 0, delta };
 
-  const [slice, setSlice] = s.createSignal(getSlice());
+      let start = prev.start;
+      let selected = prev.selected;
+      const length = props.displaySize + bufferSize();
+
+      switch (scrollType()) {
+        case 'always':
+          if (props.wrap) {
+            start = utils.mod(c - 1, total);
+            selected = 1;
+          } else {
+            start = utils.clamp(
+              c - bufferSize(),
+              0,
+              Math.max(0, total - props.displaySize - bufferSize()),
+            );
+            selected =
+              c < bufferSize()
+                ? c
+                : c >= total - props.displaySize
+                ? c - (total - props.displaySize) + bufferSize()
+                : bufferSize();
+          }
+          break;
+
+        case 'auto':
+          if (props.wrap) {
+            start = utils.mod(c - 1, total);
+            selected = 1;
+          } else {
+            const scrollOffset = Math.max(bufferSize(), scrollIndex());
+            const maxStart = Math.max(0, total - props.displaySize - bufferSize());
+
+            if (delta < 0) { // moving left
+              start = utils.clamp(
+                c - (props.displaySize - scrollOffset),
+                0,
+                maxStart
+              );
+            } else { // moving right or stationary
+              start = utils.clamp(
+                c - scrollOffset,
+                0,
+                maxStart
+              );
+            }
+            selected = c - start;
+          }
+          break;
+
+        case 'edge':
+          const startScrolling = Math.max(1, props.displaySize - 1);
+          if (props.wrap) {
+            if (delta > 0) {
+              if (prev.selected < startScrolling) {
+                selected = prev.selected + 1;
+              } else {
+                start = utils.mod(prev.start + 1, total);
+                selected = startScrolling;
+              }
+            } else if (delta < 0) {
+              if (prev.selected > 1) {
+                selected = prev.selected - 1;
+              } else {
+                start = utils.mod(prev.start - 1, total);
+                selected = 1;
+              }
+            } else {
+              start = utils.mod(c - 1, total);
+              selected = 1;
+            }
+          } else {
+            if (c < startScrolling && prev.start === 0) {
+              start = 0;
+              selected = c;
+            } else if (c >= total - bufferSize()) {
+              start = Math.max(0, total - props.displaySize);
+              selected = c - start;
+            } else if (delta > 0) {
+              start = c - startScrolling + 1;
+              selected = startScrolling - 1;
+            } else if (c > total - props.displaySize + 1) {
+              start = Math.max(0, total - props.displaySize);
+              selected = c - start;
+            } else {
+              start = Math.max(0, c - 1);
+              selected = 1;
+            }
+          }
+          break;
+
+        case 'none':
+        default:
+          start = 0;
+          selected = c;
+          break;
+      }
+
+      let newSlice = prev.slice;
+      if (start !== prev.start || newSlice.length === 0) {
+        newSlice = props.wrap
+          ? Array.from(
+              { length },
+              (_, i) => items()[utils.mod(start + i, total)],
+            ) as T[]
+          : items().slice(start, start + length);
+      }
+
+      const state: SliceState = { start, slice: newSlice, selected, delta };
+
+      if (props.debugInfo) {
+        console.log(`[Virtual]`, {
+          cursor: c,
+          delta,
+          start,
+          selected,
+          slice: newSlice.map((_, i) => utils.mod(start + i, total)),
+        });
+      }
+
+      return state;
+    }
 
   let viewRef!: lngp.NavigableElement;
 
@@ -92,62 +197,52 @@ function createVirtual<T>(
     let lastIdx = _lastIdx || 0;
     let active = _active;
     const initialRun = idx === lastIdx;
+    const total = itemCount();
+    const isRow = component === lngp.Row;
+    const axis = isRow ? 'x' : 'y';
 
-    if (initialRun && !props.wrap) return;
+    if (initialRun) {
+      if (props.wrap) {
+        elm.offset = elm[axis];
+      } else {
+        return;
+      }
+    }
+
+    const rawDelta = idx - (lastIdx ?? 0);
+    const windowLen =
+          elm?.children?.length ?? props.displaySize + bufferSize();
+    const delta = props.wrap
+          ? normalizeDeltaForWindow(rawDelta, windowLen)
+          : rawDelta;
 
     if (!initialRun) {
-      if (props.wrap) {
-        setCursor(c => utils.mod(c + idx - lastIdx, itemCount()));
-      } else {
-        setCursor(c => utils.clamp(c + idx - lastIdx, 0, Math.max(0, itemCount() - 1)));
-      }
+      setCursor(c => {
+        const next = c + delta;
+        return props.wrap
+          ? utils.mod(next, total)
+          : utils.clamp(next, 0, total - 1);
+      });
 
-      setSlice(getSlice());
+      const newState = computeSlice(cursor(), delta, slice());
+      setSlice(newState);
+      elm.selected = newState.selected;
 
-      const c = cursor();
-      const scroll = scrollType();
-      if (props.wrap) {
-        this.selected = Math.max(bufferSize(), scrollIndex());
-      } else if (props.scrollIndex) {
-        this.selected = Math.min(c, props.scrollIndex);
-        if (c >= itemCount() - props.displaySize + bufferSize()) {
-          this.selected = c - (itemCount() - props.displaySize) + bufferSize();
-        }
-      } else if (scroll === 'always' || scroll === 'auto') {
-        if (c < bufferSize()) {
-          this.selected = c;
-        } else if (c >= itemCount() - props.displaySize) {
-          this.selected = c - (itemCount() - props.displaySize) + bufferSize();
-        } else {
-          this.selected = bufferSize();
-        }
-      }
-
-      if (props.onEndReachedThreshold !== undefined && cursor() >= items().length - props.onEndReachedThreshold) {
+      if (
+        props.onEndReachedThreshold !== undefined &&
+        cursor() >= items().length - props.onEndReachedThreshold
+      ) {
         props.onEndReached?.();
       }
     }
-    const isRow = component === lngp.Row;
-    const prevChildPos = isRow
-      ? this.x + active.x
-      : this.y + active.y;
+
+    const prevChildPos = this[axis] + active[axis];
 
     queueMicrotask(() => {
       this.updateLayout();
-      if (this._initialPosition === undefined && props.wrap) {
-        this.offset = 0;
-        const axis = isRow ? 'x' : 'y';
-        this._initialPosition = this[axis];
-        if (scrollIndex() > 0) {
-          active = this.children[1] as lng.ElementNode;
-        }
-      }
-      if (component === lngp.Row) {
-        this.lng.x = this._targetPosition = prevChildPos - active.x;
-      } else {
-        this.lng.y = this._targetPosition = prevChildPos - active.y;
-      }
-      scrollFn(idx, elm, active, lastIdx);
+      this.lng[axis] = this._targetPosition = prevChildPos - active[axis];
+
+      scrollFn(slice().selected, elm, active, slice().selected - slice().delta);
     });
   };
 
@@ -166,7 +261,8 @@ function createVirtual<T>(
       active.setFocus();
     } else {
       setCursor(sel);
-      setSlice(getSlice());
+      const newState = computeSlice(cursor(), 0, slice());
+      setSlice(newState);
       queueMicrotask(() => {
         viewRef.updateLayout();
         active = viewRef.children.find(x => x.item === item);
@@ -185,8 +281,10 @@ function createVirtual<T>(
     if (cursor() >= itemCount()) {
       setCursor(Math.max(0, itemCount() - 1));
     }
-    setSlice(getSlice());
-  }, { defer: true }));
+    const newState = computeSlice(cursor(), 0, slice());
+    setSlice(newState);
+    viewRef.selected = newState.selected;
+  }));
 
   return (<view
       {...props}
@@ -218,7 +316,7 @@ function createVirtual<T>(
             }
       )}
     >
-      <List each={slice()}>{props.children}</List>
+      <List each={slice().slice}>{props.children}</List>
     </view>
   );
 }
