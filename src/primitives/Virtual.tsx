@@ -82,29 +82,54 @@ function createVirtual<T>(
           break;
 
         case 'auto':
-          if (props.wrap) {
-            start = utils.mod(c - 1, total);
-            selected = 1;
+        if (props.wrap) {
+          if (scrollIndex() && prev.selected < scrollIndex()) {
+            start = total - 1;
+            selected = Math.max(1, prev.selected + delta);
           } else {
-            const scrollOffset = Math.max(bufferSize(), scrollIndex());
-            const maxStart = Math.max(0, total - props.displaySize - bufferSize());
-
-            if (delta < 0) { // moving left
-              start = utils.clamp(
-                c - (props.displaySize - scrollOffset),
-                0,
-                maxStart
-              );
-            } else { // moving right or stationary
-              start = utils.clamp(
-                c - scrollOffset,
-                0,
-                maxStart
-              );
-            }
-            selected = c - start;
+            start = utils.mod(c - (scrollIndex() || 1), total);
+            selected = Math.max(1, prev.selected);
           }
-          break;
+        } else {
+          const scrollOffset = Math.max(1, bufferSize(), scrollIndex());
+
+          if (delta < 0) {
+            // Moving left
+            if (prev.start === 0) {
+              // have one buffer on left
+              start = 0;
+              selected = c;
+            } else if (prev.selected > scrollOffset - 1) {
+              // Move selection left inside slice
+              start = prev.start;
+              selected = prev.selected - 1;
+            } else {
+              // Shift window left, keep selection pinned
+              start = prev.start - 1;
+              selected = scrollOffset - 1;
+            }
+          } else if (delta > 0) {
+            // Moving right
+            if (prev.start >= total - props.displaySize - bufferSize()) {
+              // At end: clamp slice, selection drifts right
+              start = prev.start;
+              selected = c - start;
+            } else if (prev.selected < scrollOffset) {
+              // Move selection right inside slice
+              start = prev.start;
+              selected = prev.selected + 1;
+            } else {
+              // Shift window right, keep selection pinned
+              start = prev.start + 1;
+              selected = scrollOffset;
+            }
+          } else {
+            // No movement
+            start = prev.start;
+            selected = prev.selected;
+          }
+        }
+        break;
 
         case 'edge':
           const startScrolling = Math.max(1, props.displaySize - 1);
@@ -172,7 +197,7 @@ function createVirtual<T>(
           delta,
           start,
           selected,
-          slice: newSlice.map((_, i) => utils.mod(start + i, total)),
+          slice: state.slice,
         });
       }
 
@@ -183,13 +208,7 @@ function createVirtual<T>(
 
   function scrollToIndex(this: lng.ElementNode, index: number) {
     if (itemCount() === 0) return;
-    let target = index;
-    if (props.wrap) {
-      target = utils.mod(index, itemCount());
-    } else {
-      target = utils.clamp(index, 0, itemCount() - 1);
-    }
-    updateSelected([target]);
+    updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
   }
 
   const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, _active, _lastIdx) {
@@ -239,42 +258,31 @@ function createVirtual<T>(
     const prevChildPos = this[axis] + active[axis];
 
     queueMicrotask(() => {
-      this.updateLayout();
+      elm.updateLayout();
       this.lng[axis] = this._targetPosition = prevChildPos - active[axis];
-
       scrollFn(slice().selected, elm, active, slice().selected - slice().delta);
     });
   };
 
   const chainedOnSelectedChanged = lngp.chainFunctions(props.onSelectedChanged, onSelectedChanged)!;
 
-  const updateSelected = ([selected, _items]: [number?, any?]) => {
-    if (!viewRef || selected === undefined) return;
-    const sel = selected;
+  const updateSelected = ([sel, _items]: [number?, any?]) => {
+    if (!viewRef || sel === undefined || itemCount() === 0) return;
     const item = items()[sel];
-    let active = viewRef.children.find(x => x.item === item);
-    const lastSelected = viewRef.selected;
-
-    if (active instanceof lng.ElementNode) {
-      viewRef.selected = viewRef.children.indexOf(active);
-      chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
-      active.setFocus();
-    } else {
-      setCursor(sel);
-      const newState = computeSlice(cursor(), 0, slice());
-      setSlice(newState);
-      queueMicrotask(() => {
-        viewRef.updateLayout();
-        active = viewRef.children.find(x => x.item === item);
-        if (active instanceof lng.ElementNode) {
-          viewRef.selected = viewRef.children.indexOf(active);
-          chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
-        }
-      });
-    }
+    setCursor(sel);
+    const newState = computeSlice(cursor(), 0, slice());
+    setSlice(newState);
+    // setSlice({...newState});
+    queueMicrotask(() => {
+      viewRef.updateLayout();
+      let activeIndex = viewRef.children.findIndex(x => x.item === item);
+      if (activeIndex === -1) return;
+      viewRef.selected = activeIndex;
+      viewRef.children[activeIndex]?.setFocus();
+    });
   };
 
-  s.createEffect(s.on([() => props.selected, items], updateSelected));
+  s.createEffect(s.on([() => props.selected, items], updateSelected, { defer: true }));
 
   s.createEffect(s.on(items, () => {
     if (!viewRef) return;
