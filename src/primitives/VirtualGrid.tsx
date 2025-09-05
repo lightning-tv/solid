@@ -14,12 +14,6 @@ const rowStyles: lng.NodeStyles = {
   },
 };
 
-function scrollToIndex(this: lng.ElementNode, index: number) {
-  this.selected = index;
-  columnScroll(index, this);
-  this.setFocus();
-}
-
 export type VirtualGridProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   each: readonly T[] | undefined | null | false;
   columns: number; // items per row
@@ -99,9 +93,9 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
     const prevRowIndex = Math.floor((lastIdx || 0) / perRow);
     const prevStart = start();
 
+    setCursor(prevStart + idx);
     if (newRowIndex === prevRowIndex) return;
 
-    setCursor(prevStart + idx);
     setSlice(items().slice(start(), end()));
 
     // this.selected is relative to the slice
@@ -118,48 +112,69 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
     queueMicrotask(() => {
       const prevRowY = this.y + active.y;
       this.updateLayout();
-      // if (prevRowY > active.y) {
-      // }
       this.lng.y = prevRowY - active.y;
-      // this.y = prevRowY - active.y;
       columnScroll(idx, elm, active, lastIdx);
     });
   };
 
   const chainedOnSelectedChanged = lngp.chainFunctions(props.onSelectedChanged, onSelectedChanged)!;
 
-  s.createEffect(
-    s.on([() => props.selected, items], ([selected]) => {
-      if (!viewRef || selected == null) return;
+  let cachedSelected: number | undefined;
+  const updateSelected = ([selected, _items]: [number?, any?]) => {
+    if (!viewRef || selected == null) return;
 
-      const item = items()[selected];
-      let active = viewRef.children.find(x => x.item === item);
-      const lastSelected = viewRef.selected;
+    if (cachedSelected !== undefined) {
+      selected = cachedSelected;
+      cachedSelected = undefined;
+    }
 
-      if (active instanceof lng.ElementNode) {
-        viewRef.selected = viewRef.children.indexOf(active);
-        chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
-      } else {
-        setSlice(items().slice(start(), end()));
+    if (selected >= items().length && props.onEndReached) {
+      props.onEndReached?.();
+      cachedSelected = selected;
+      return;
+    }
 
-        queueMicrotask(() => {
-          viewRef.updateLayout();
-          active = viewRef.children.find(x => x.item === item);
-          if (active instanceof lng.ElementNode) {
-            viewRef.selected = viewRef.children.indexOf(active);
-            chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
-          }
-        });
-      }
-    })
-  );
+    const item = items()[selected];
+    let active = viewRef.children.find(x => x.item === item);
+    const lastSelected = viewRef.selected;
+
+    if (active instanceof lng.ElementNode) {
+      viewRef.selected = viewRef.children.indexOf(active);
+      active.setFocus();
+      chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
+    } else {
+      setCursor(selected);
+      setSlice(items().slice(start(), end()));
+
+      queueMicrotask(() => {
+        viewRef.updateLayout();
+        active = viewRef.children.find(x => x.item === item);
+        if (active instanceof lng.ElementNode) {
+          viewRef.selected = viewRef.children.indexOf(active);
+          active.setFocus();
+          chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
+        }
+      });
+    }
+  };
+
+  const scrollToIndex = (index: number) => {
+    updateSelected([index]);
+  }
+
+  s.createEffect(s.on([() => props.selected, items], updateSelected));
 
   s.createEffect(
     s.on(items, () => {
       if (!viewRef) return;
+      if (cachedSelected !== undefined) {
+        updateSelected([cachedSelected]);
+        return;
+      }
       setSlice(items().slice(start(), end()));
     }, { defer: true })
   );
+
 
   return (
     <view
