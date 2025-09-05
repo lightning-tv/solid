@@ -10,17 +10,17 @@ export type VirtualProps<T> = lng.NewOmit<lngp.RowProps, 'children'> & {
   bufferSize?: number;
   wrap?: boolean;
   scrollIndex?: number;
-  doScroll?: lngp.Scroller;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
   debugInfo?: boolean;
+  factorScale?: boolean;
+  uniformSize?: boolean;
   children: (item: s.Accessor<T>, index: s.Accessor<number>) => s.JSX.Element;
 };
 
 function createVirtual<T>(
   component: typeof lngp.Row | typeof lngp.Column,
   props: VirtualProps<T>,
-  scrollFn: ReturnType<typeof lngp.withScrolling>,
   keyHandlers: Record<string, lng.KeyHandler>
 ) {
   const [cursor, setCursor] = s.createSignal(props.selected ?? 0);
@@ -37,12 +37,21 @@ function createVirtual<T>(
     return props.selected || 0;
   };
 
-  type SliceState = { start: number; slice: T[]; selected: number, delta: number };
+  let cachedScaledSize: number | undefined;
+  let targetPosition: number | undefined;
+  let cachedAnimationController: lng.IAnimationController | undefined;
+  const uniformSize = s.createMemo(() => {
+    return props.uniformSize !== false;
+  });
+
+  type SliceState = { start: number; slice: T[]; selected: number, delta: number, shiftBy: number, atStart: boolean };
     const [slice, setSlice] = s.createSignal<SliceState>({
       start: 0,
       slice: [],
       selected: 0,
-      delta: 0
+      delta: 0,
+      shiftBy: 0,
+      atStart: true,
     });
 
     function normalizeDeltaForWindow(delta: number, windowLen: number): number {
@@ -53,13 +62,36 @@ function createVirtual<T>(
       return delta;
     }
 
+    function computeSize(selected: number = 0) {
+      if (uniformSize() && cachedScaledSize) {
+        return cachedScaledSize;
+      } else if (viewRef) {
+        const gap = viewRef.gap || 0;
+        const isRow = component === lngp.Row;
+        const dimension = isRow ? 'width' : 'height';
+        const prevSelectedChild = viewRef.children[selected];
+
+        if (prevSelectedChild instanceof lng.ElementNode) {
+          const itemSize = prevSelectedChild[dimension] || 0;
+          const focusStyle = (prevSelectedChild.style?.focus as lng.NodeStyles);
+          const scale = (focusStyle?.scale ?? prevSelectedChild.scale ?? 1);
+          const scaledSize = itemSize * (props.factorScale ? scale : 1) + gap;
+          cachedScaledSize = scaledSize;
+          return scaledSize;
+        }
+      }
+      return 0;
+    }
+
     function computeSlice(c: number, delta: number, prev: SliceState): SliceState {
       const total = itemCount();
-      if (total === 0) return { start: 0, slice: [], selected: 0, delta };
+      if (total === 0) return { start: 0, slice: [], selected: 0, delta, shiftBy: 0, atStart: true };
 
+      const length = props.displaySize + bufferSize();
       let start = prev.start;
       let selected = prev.selected;
-      const length = props.displaySize + bufferSize();
+      let atStart = prev.atStart;
+      let shiftBy = -delta;
 
       switch (scrollType()) {
         case 'always':
@@ -72,12 +104,17 @@ function createVirtual<T>(
               0,
               Math.max(0, total - props.displaySize - bufferSize()),
             );
-            selected =
-              c < bufferSize()
-                ? c
-                : c >= total - props.displaySize
-                ? c - (total - props.displaySize) + bufferSize()
-                : bufferSize();
+            if (delta === 0 && c > 3) {
+              shiftBy = c < 3 ? -c : -2;
+              selected = 2;
+            } else {
+              selected =
+                c < bufferSize()
+                  ? c
+                  : c >= total - props.displaySize
+                  ? c - (total - props.displaySize) + bufferSize()
+                  : bufferSize();
+            }
           }
           break;
 
@@ -91,42 +128,66 @@ function createVirtual<T>(
             selected = Math.max(1, prev.selected);
           }
         } else {
-          const scrollOffset = Math.max(1, bufferSize(), scrollIndex());
-
           if (delta < 0) {
             // Moving left
-            if (prev.start === 0) {
-              // have one buffer on left
-              start = 0;
-              selected = c;
-            } else if (prev.selected > scrollOffset - 1) {
+            if (prev.start > 0 && prev.selected >= props.displaySize) {
               // Move selection left inside slice
               start = prev.start;
               selected = prev.selected - 1;
-            } else {
-              // Shift window left, keep selection pinned
+            } else if (prev.start > 0) {
+              // Move selection left inside slice
               start = prev.start - 1;
-              selected = scrollOffset - 1;
+              selected = prev.selected;
+              // shiftBy = 0;
+            } else if (prev.start === 0 && !prev.atStart) {
+              start = 0;
+              selected = prev.selected - 1;
+              atStart = true;
+            }  else if (selected >= props.displaySize - 1) {
+              // Shift window left, keep selection pinned
+              start = 0;
+              selected = prev.selected - 1;
+            } else {
+              start = 0;
+              selected = prev.selected - 1;
+              shiftBy = 0;
             }
           } else if (delta > 0) {
             // Moving right
-            if (prev.start >= total - props.displaySize - bufferSize()) {
-              // At end: clamp slice, selection drifts right
-              start = prev.start;
-              selected = c - start;
-            } else if (prev.selected < scrollOffset) {
+            if (prev.selected < scrollIndex()) {
               // Move selection right inside slice
               start = prev.start;
               selected = prev.selected + 1;
+              shiftBy = 0;
+            } else if (prev.selected === scrollIndex()) {
+              start = prev.start;
+              selected = prev.selected + 1;
+              atStart = false;
+            } else if (prev.start === 0 && prev.selected === 0) {
+              start = 0;
+              selected = 1;
+              atStart = false;
+            } else if (prev.start >= total - props.displaySize) {
+              // At end: clamp slice, selection drifts right
+              start = prev.start;
+              selected = c - start;
+              shiftBy = 0;
             } else {
               // Shift window right, keep selection pinned
               start = prev.start + 1;
-              selected = scrollOffset;
+              selected = Math.max(prev.selected, scrollIndex() + 1);;
             }
           } else {
-            // No movement
-            start = prev.start;
-            selected = prev.selected;
+            // Initial setup
+            if (c > 0) {
+              start = Math.min(c - (scrollIndex() || 1), total - props.displaySize - bufferSize());
+              selected = Math.max(scrollIndex() || 1, c - start);
+              shiftBy = total - c < 3 ? c - total : -1;
+              atStart = false;
+            } else {
+              start = prev.start;
+              selected = prev.selected;
+            }
           }
         }
         break;
@@ -137,6 +198,7 @@ function createVirtual<T>(
             if (delta > 0) {
               if (prev.selected < startScrolling) {
                 selected = prev.selected + 1;
+                shiftBy = 0;
               } else {
                 start = utils.mod(prev.start + 1, total);
                 selected = startScrolling;
@@ -144,6 +206,7 @@ function createVirtual<T>(
             } else if (delta < 0) {
               if (prev.selected > 1) {
                 selected = prev.selected - 1;
+                shiftBy = 0;
               } else {
                 start = utils.mod(prev.start - 1, total);
                 selected = 1;
@@ -153,21 +216,38 @@ function createVirtual<T>(
               selected = 1;
             }
           } else {
-            if (c < startScrolling && prev.start === 0) {
-              start = 0;
-              selected = c;
-            } else if (c >= total - bufferSize()) {
-              start = Math.max(0, total - props.displaySize);
-              selected = c - start;
+            if (delta === 0 && c > 0) {
+              //initial setup
+              selected = c > startScrolling ? startScrolling : c;
+              start = Math.max(0, c - startScrolling + 1);
+              shiftBy = c > startScrolling ? -1 : 0;
+              atStart = c < startScrolling;
             } else if (delta > 0) {
-              start = c - startScrolling + 1;
-              selected = startScrolling - 1;
-            } else if (c > total - props.displaySize + 1) {
-              start = Math.max(0, total - props.displaySize);
-              selected = c - start;
-            } else {
-              start = Math.max(0, c - 1);
-              selected = 1;
+              if (prev.selected < startScrolling - 1) {
+                selected = prev.selected + 1;
+                shiftBy = 0;
+              } else {
+                start = prev.start + 1;
+                selected = prev.selected;
+                atStart = false;
+              }
+            } else if (delta < 0) {
+              if (prev.selected > 1) {
+                selected = prev.selected - 1;
+                shiftBy = 0;
+              } else if (c > 1) {
+                start = Math.max(0, c - 1);
+                selected = 1;
+              } else if (!atStart) {
+                start = 0;
+                selected = 0;
+                atStart = true;
+              } else {
+                start = 0;
+                selected = 0;
+                shiftBy = 0;
+                atStart = true;
+              }
             }
           }
           break;
@@ -176,6 +256,7 @@ function createVirtual<T>(
         default:
           start = 0;
           selected = c;
+          shiftBy = 0;
           break;
       }
 
@@ -189,7 +270,7 @@ function createVirtual<T>(
           : items().slice(start, start + length);
       }
 
-      const state: SliceState = { start, slice: newSlice, selected, delta };
+      const state: SliceState = { start, slice: newSlice, selected, delta, shiftBy, atStart };
 
       if (props.debugInfo) {
         console.log(`[Virtual]`, {
@@ -197,6 +278,7 @@ function createVirtual<T>(
           delta,
           start,
           selected,
+          shiftBy,
           slice: state.slice,
         });
       }
@@ -211,6 +293,16 @@ function createVirtual<T>(
     updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
   }
 
+  let lastNavTime = 0;
+
+  function getAdaptiveDuration(duration: number = 250) {
+    const now = performance.now();
+    const delta = now - lastNavTime;
+    lastNavTime = now;
+    if (delta < duration) return delta;
+    return duration;
+  }
+
   const onSelectedChanged: lngp.OnSelectedChanged = function (_idx, elm, _active, _lastIdx) {
     let idx = _idx;
     let lastIdx = _lastIdx || 0;
@@ -220,13 +312,11 @@ function createVirtual<T>(
     const isRow = component === lngp.Row;
     const axis = isRow ? 'x' : 'y';
 
-    if (initialRun) {
-      if (props.wrap) {
-        elm.offset = elm[axis];
-      } else {
-        return;
-      }
+    if (props.onSelectedChanged) {
+      props.onSelectedChanged.call(this as lngp.NavigableElement, idx, this as lngp.NavigableElement, active, lastIdx);
     }
+
+    if (initialRun && !props.wrap) return;
 
     const rawDelta = idx - (lastIdx ?? 0);
     const windowLen =
@@ -253,18 +343,28 @@ function createVirtual<T>(
       ) {
         props.onEndReached?.();
       }
+
+      if (newState.shiftBy === 0) return;
     }
 
-    const prevChildPos = this[axis] + active[axis];
+    const prevChildPos = (targetPosition ?? this[axis]) + active[axis];
 
     queueMicrotask(() => {
       elm.updateLayout();
-      this.lng[axis] = this._targetPosition = prevChildPos - active[axis];
-      scrollFn(slice().selected, elm, active, slice().selected - slice().delta);
+      const childSize = computeSize(slice().selected);
+
+      if (cachedAnimationController && cachedAnimationController.state === 'running') {
+        cachedAnimationController.stop();;
+      }
+      this.lng[axis] = prevChildPos - active[axis];
+      let offset = this.lng[axis] + (childSize * slice().shiftBy);
+      targetPosition = offset;
+      cachedAnimationController = this.animate(
+        { [axis]: offset },
+        { ...this.animationSettings, duration: getAdaptiveDuration(this.animationSettings?.duration)}
+      ).start();
     });
   };
-
-  const chainedOnSelectedChanged = lngp.chainFunctions(props.onSelectedChanged, onSelectedChanged)!;
 
   const updateSelected = ([sel, _items]: [number?, any?]) => {
     if (!viewRef || sel === undefined || itemCount() === 0) return;
@@ -272,9 +372,16 @@ function createVirtual<T>(
     setCursor(sel);
     const newState = computeSlice(cursor(), 0, slice());
     setSlice(newState);
-    // setSlice({...newState});
+
     queueMicrotask(() => {
       viewRef.updateLayout();
+      if (slice().shiftBy) {
+        const isRow = component === lngp.Row;
+        const axis = isRow ? 'x' : 'y';
+        const childSize = computeSize(slice().selected);
+        viewRef.lng[axis] = viewRef.lng[axis]! + (childSize * slice().shiftBy);
+        targetPosition = viewRef.lng[axis];
+      }
       let activeIndex = viewRef.children.findIndex(x => x.item === item);
       if (activeIndex === -1) return;
       viewRef.selected = activeIndex;
@@ -285,9 +392,9 @@ function createVirtual<T>(
   s.createEffect(s.on([() => props.selected, items], updateSelected, { defer: true }));
 
   s.createEffect(s.on(items, () => {
-    if (!viewRef) return;
+    if (!viewRef || itemCount() === 0) return;
     if (cursor() >= itemCount()) {
-      setCursor(Math.max(0, itemCount() - 1));
+      setCursor(itemCount() - 1);
     }
     const newState = computeSlice(cursor(), 0, slice());
     setSlice(newState);
@@ -296,18 +403,13 @@ function createVirtual<T>(
 
   return (<view
       {...props}
+      {...keyHandlers}
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)}
       selected={selected()}
       cursor={cursor()}
-      {...keyHandlers}
       forwardFocus={/* @once */ lngp.navigableForwardFocus}
       scrollToIndex={/* @once */ scrollToIndex}
-      onCreate={/* @once */
-        props.selected
-          ? lngp.chainFunctions(props.onCreate, scrollFn)
-          : props.onCreate
-      }
-      onSelectedChanged={/* @once */ chainedOnSelectedChanged}
+      onSelectedChanged={/* @once */ onSelectedChanged}
       style={/* @once */ lng.combineStyles(
         props.style,
         component === lngp.Row
@@ -330,14 +432,14 @@ function createVirtual<T>(
 }
 
 export function VirtualRow<T>(props: VirtualProps<T>) {
-  return createVirtual(lngp.Row, props, props.doScroll || lngp.scrollRow, {
+  return createVirtual(lngp.Row, props, {
     onLeft: lngp.chainFunctions(props.onLeft, lngp.handleNavigation('left')) as lng.KeyHandler,
     onRight: lngp.chainFunctions(props.onRight, lngp.handleNavigation('right')) as lng.KeyHandler,
   });
 }
 
 export function VirtualColumn<T>(props: VirtualProps<T>) {
-  return createVirtual(lngp.Column, props, props.doScroll || lngp.scrollColumn, {
+  return createVirtual(lngp.Column, props, {
     onUp: lngp.chainFunctions(props.onUp, lngp.handleNavigation('up')) as lng.KeyHandler,
     onDown: lngp.chainFunctions(props.onDown, lngp.handleNavigation('down')) as lng.KeyHandler,
   });
