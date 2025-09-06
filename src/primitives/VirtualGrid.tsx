@@ -159,7 +159,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   };
 
   const scrollToIndex = (index: number) => {
-    updateSelected([index]);
+    s.untrack(() => updateSelected([index]));
   }
 
   s.createEffect(s.on([() => props.selected, items], updateSelected));

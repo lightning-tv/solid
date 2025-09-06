@@ -38,6 +38,7 @@ function createVirtual<T>(
   };
 
   let cachedScaledSize: number | undefined;
+  let initialLayout = true;
   let targetPosition: number | undefined;
   let cachedAnimationController: lng.IAnimationController | undefined;
   const uniformSize = s.createMemo(() => {
@@ -120,12 +121,14 @@ function createVirtual<T>(
 
         case 'auto':
         if (props.wrap) {
-          if (scrollIndex() && prev.selected < scrollIndex()) {
-            start = total - 1;
-            selected = Math.max(1, prev.selected + delta);
-          } else {
+          if (delta === 0) {
+            selected = scrollIndex();
             start = utils.mod(c - (scrollIndex() || 1), total);
-            selected = Math.max(1, prev.selected);
+          } else if (delta > 0 && atStart) {
+            atStart = false;
+            selected = prev.selected + 1;
+          } else {
+            start = utils.mod(c - (prev.selected || 1), total);
           }
         } else {
           if (delta < 0) {
@@ -193,15 +196,18 @@ function createVirtual<T>(
         break;
 
         case 'edge':
-          const startScrolling = Math.max(1, props.displaySize - 1);
+          const startScrolling = Math.max(1, props.displaySize + (atStart ? -1 : 0));
           if (props.wrap) {
             if (delta > 0) {
               if (prev.selected < startScrolling) {
                 selected = prev.selected + 1;
                 shiftBy = 0;
+              } else if (prev.selected === startScrolling && atStart) {
+                selected = prev.selected + 1;
+                atStart = false;
               } else {
                 start = utils.mod(prev.start + 1, total);
-                selected = startScrolling;
+                selected = prev.selected;
               }
             } else if (delta < 0) {
               if (prev.selected > 1) {
@@ -214,6 +220,8 @@ function createVirtual<T>(
             } else {
               start = utils.mod(c - 1, total);
               selected = 1;
+              shiftBy = -1;
+              atStart = false;
             }
           } else {
             if (delta === 0 && c > 0) {
@@ -223,9 +231,12 @@ function createVirtual<T>(
               shiftBy = c > startScrolling ? -1 : 0;
               atStart = c < startScrolling;
             } else if (delta > 0) {
-              if (prev.selected < startScrolling - 1) {
+              if (prev.selected < startScrolling) {
                 selected = prev.selected + 1;
                 shiftBy = 0;
+              } else if (prev.selected === startScrolling && atStart) {
+                selected = prev.selected + 1;
+                atStart = false;
               } else {
                 start = prev.start + 1;
                 selected = prev.selected;
@@ -238,14 +249,13 @@ function createVirtual<T>(
               } else if (c > 1) {
                 start = Math.max(0, c - 1);
                 selected = 1;
-              } else if (!atStart) {
+              } else if (c === 1) {
                 start = 0;
-                selected = 0;
-                atStart = true;
+                selected = 1;
               } else {
                 start = 0;
                 selected = 0;
-                shiftBy = 0;
+                shiftBy = atStart ? 0 : shiftBy;
                 atStart = true;
               }
             }
@@ -289,8 +299,10 @@ function createVirtual<T>(
   let viewRef!: lngp.NavigableElement;
 
   function scrollToIndex(this: lng.ElementNode, index: number) {
-    if (itemCount() === 0) return;
-    updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
+    s.untrack(() => {
+      if (itemCount() === 0) return;
+      updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
+    });
   }
 
   let lastNavTime = 0;
@@ -375,10 +387,13 @@ function createVirtual<T>(
 
     queueMicrotask(() => {
       viewRef.updateLayout();
-      if (slice().shiftBy) {
+      if (slice().shiftBy && initialLayout) {
         const isRow = component === lngp.Row;
         const axis = isRow ? 'x' : 'y';
         const childSize = computeSize(slice().selected);
+        if (childSize) {
+          initialLayout = false;
+        }
         viewRef.lng[axis] = viewRef.lng[axis]! + (childSize * slice().shiftBy);
         targetPosition = viewRef.lng[axis];
       }
