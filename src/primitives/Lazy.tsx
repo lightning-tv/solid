@@ -46,7 +46,7 @@ function createLazy<T>(
 
   createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + buffer())));
 
-  if (!props.sync || props.eaglerLoad) {
+  if (!props.sync || props.eagerLoad) {
     createEffect(() => {
       if (props.each) {
         const loadItems = () => {
