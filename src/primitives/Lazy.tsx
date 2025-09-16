@@ -4,7 +4,6 @@ import * as lngp from '@lightningtv/solid/primitives';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
-  fallback?: s.JSX.Element;
   upCount: number;
   buffer?: number;
   delay?: number;
@@ -91,16 +90,14 @@ function createLazy<T>(
   const handler = keyHandler(updateOffset);
 
   return (
-    <s.Show when={items()} fallback={props.fallback}>
-      <lng.Dynamic
-        {...props}
-        component={component}
-        {/* @once */ ...handler}
-        lazyScrollToIndex={lazyScrollToIndex}
-        ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)} >
-        <s.Index each={items()} children={props.children} />
-      </lng.Dynamic>
-    </s.Show>
+    <lng.Dynamic
+      {...props}
+      component={component}
+      {/* @once */ ...handler}
+      lazyScrollToIndex={lazyScrollToIndex}
+      ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)} >
+      <s.Index each={items()} children={props.children} />
+    </lng.Dynamic>
   );
 }
 
