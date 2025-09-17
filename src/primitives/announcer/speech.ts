@@ -66,6 +66,7 @@ function focusElementForAria() {
   createAriaElement();
 
   const aria_div = document.getElementById(ARIA_PARENT_ID);
+  const canvas = document.getElementById('app')?.firstChild as HTMLElement;
 
   if (!aria_div) {
     console.error(`ARIA div not found: ${ARIA_PARENT_ID}`);
@@ -88,6 +89,7 @@ function focusElementForAria() {
   setTimeout(() => {
     setAriaLabelPhrases([]);
     cleanAriaLabelParent();
+    canvas?.focus();
   }, 100);
 }
 
