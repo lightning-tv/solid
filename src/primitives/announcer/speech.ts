@@ -1,3 +1,5 @@
+import { createSignal } from 'solid-js';
+
 type CoreSpeechType =
   | string
   | (() => SpeechType)
@@ -11,6 +13,10 @@ export interface SeriesResult {
   append: (toSpeak: SpeechType) => void;
   cancel: () => void;
 }
+
+type AriaLabel = { text: string; lang: string };
+const [ariaLabelPhrases, setAriaLabelPhrases] = createSignal<AriaLabel[]>([]);
+const ARIA_PARENT_ID = 'aria-parent';
 
 /* global SpeechSynthesisErrorEvent */
 function flattenStrings(series: SpeechType[] = []): SpeechType[] {
@@ -38,6 +44,77 @@ function delay(pause: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, pause);
   });
+}
+
+/**
+ * @description This function is called at the end of the speak series, since we have recusion possible, we need a signal to add all the phrases
+ * @param Phrase is an object containing the text and the language
+ */
+function addChildrenToAriaDiv(phrase: AriaLabel) {
+  if (phrase && phrase.text && phrase.text.trim().length === 0) return;
+
+  setAriaLabelPhrases((phrases) => [
+    ...phrases,
+    { text: `${phrase.text}, `, lang: phrase.lang },
+  ]);
+}
+
+/**
+ * @description This function is triggered finally when the speak series is finished and we are to speak the aria labels
+ */
+function focusElementForAria() {
+  createAriaElement();
+
+  const aria_div = document.getElementById(ARIA_PARENT_ID);
+
+  if (!aria_div) {
+    console.error(`ARIA div not found: ${ARIA_PARENT_ID}`);
+    return;
+  }
+
+  for (const object of ariaLabelPhrases()) {
+    const span = document.createElement('span');
+
+    // TODO: Not sure LG or Samsung support lang attribute on span or switching language
+    if (object.lang.includes('fr')) span.setAttribute('lang', 'fr');
+    else span.setAttribute('lang', 'en');
+
+    span.setAttribute('aria-label', object.text);
+    aria_div.appendChild(span);
+  }
+
+  // Cleanup
+  aria_div.focus();
+  setTimeout(() => {
+    setAriaLabelPhrases([]);
+    cleanAriaLabelParent();
+  }, 100);
+}
+
+/**
+ * @description Clean the aria label parent after speaking
+ */
+function cleanAriaLabelParent() {
+  const parentTag = document.getElementById(ARIA_PARENT_ID);
+  if (parentTag) {
+    while (parentTag.firstChild) {
+      parentTag.removeChild(parentTag.firstChild);
+    }
+  }
+}
+
+/**
+ * @description Create the aria element in the DOM if it doesn't exist
+ */
+function createAriaElement() {
+  const aria = document.getElementById(ARIA_PARENT_ID);
+  if (!aria) {
+    const element = document.createElement('div');
+    element.setAttribute('id', ARIA_PARENT_ID);
+    element.setAttribute('aria-live', 'assertive');
+    element.setAttribute('tabindex', '0');
+    document.body.appendChild(element);
+  }
 }
 
 /**
@@ -83,6 +160,7 @@ function speak(
 function speakSeries(
   series: SpeechType,
   lang: string,
+  aria: boolean,
   voice?: string,
   root = true,
 ): SeriesResult {
@@ -118,7 +196,8 @@ function speakSeries(
 
           while (active && retriesLeft > 0) {
             try {
-              await speak(phrase, utterances, lang, voice);
+              if (aria) addChildrenToAriaDiv({ text: phrase, lang });
+              else await speak(phrase, utterances, lang, voice);
               retriesLeft = 0; // Exit retry loop on success
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
@@ -152,8 +231,12 @@ function speakSeries(
 
           while (active && retriesLeft > 0) {
             try {
-              await speak(text, utterances, objectLang, objectVoice?.name);
-              retriesLeft = 0; // Exit retry loop on success
+              if (text) {
+                if (aria) addChildrenToAriaDiv({ text, lang: objectLang });
+                else
+                  await speak(text, utterances, objectLang, objectVoice?.name);
+                retriesLeft = 0; // Exit retry loop on success
+              }
             } catch (e) {
               if (e instanceof SpeechSynthesisErrorEvent) {
                 if (e.error === 'network') {
@@ -178,18 +261,22 @@ function speakSeries(
           }
         } else if (typeof phrase === 'function') {
           // Handle functions
-          const seriesResult = speakSeries(phrase(), lang, voice, false);
+          const seriesResult = speakSeries(phrase(), lang, aria, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         } else if (Array.isArray(phrase)) {
           // Handle nested arrays
-          const seriesResult = speakSeries(phrase, lang, voice, false);
+          const seriesResult = speakSeries(phrase, lang, aria, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         }
       }
     } finally {
       active = false;
+      // Call completion logic only for the original (root) series
+      if (root && aria) {
+        focusElementForAria();
+      }
     }
   })();
 
@@ -206,6 +293,7 @@ function speakSeries(
         return;
       }
       if (root) {
+        // TODO: aria has to do something different
         synth.cancel(); // Cancel all ongoing speech
       }
       nestedSeriesResults.forEach((nestedSeriesResult) => {
@@ -215,13 +303,15 @@ function speakSeries(
     },
   };
 }
+
 let currentSeries: SeriesResult | undefined;
 export default function (
   toSpeak: SpeechType,
+  aria: boolean,
   lang: string = 'en-US',
   voice?: string,
 ) {
   currentSeries && currentSeries.cancel();
-  currentSeries = speakSeries(toSpeak, lang, voice);
+  currentSeries = speakSeries(toSpeak, aria, lang, voice);
   return currentSeries;
 }
