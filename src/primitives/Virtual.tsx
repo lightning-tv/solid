@@ -367,13 +367,18 @@ function createVirtual<T>(
       if (cachedAnimationController && cachedAnimationController.state === 'running') {
         cachedAnimationController.stop();;
       }
-      this.lng[axis] = prevChildPos - active[axis];
-      let offset = this.lng[axis] + (childSize * slice().shiftBy);
-      targetPosition = offset;
-      cachedAnimationController = this.animate(
-        { [axis]: offset },
-        { ...this.animationSettings, duration: getAdaptiveDuration(this.animationSettings?.duration)}
-      ).start();
+
+      if (lng.Config.animationsEnabled) {
+        this.lng[axis] = prevChildPos - active[axis];
+        let offset = this.lng[axis] + (childSize * slice().shiftBy);
+        targetPosition = offset;
+        cachedAnimationController = this.animate(
+          { [axis]: offset },
+          { ...this.animationSettings, duration: getAdaptiveDuration(this.animationSettings?.duration)}
+        ).start();
+      } else {
+        this.lng[axis] = this.lng[axis]! + (childSize * slice().shiftBy);
+      }
     });
   };
 
@@ -407,7 +412,7 @@ function createVirtual<T>(
     });
   }));
 
-  s.createEffect(s.on([() => props.selected, items], updateSelected, { defer: true }));
+  s.createEffect(s.on([() => props.selected, items], updateSelected));
 
   s.createEffect(s.on(items, () => {
     if (!viewRef || itemCount() === 0) return;
