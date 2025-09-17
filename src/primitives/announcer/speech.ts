@@ -159,8 +159,8 @@ function speak(
 
 function speakSeries(
   series: SpeechType,
-  lang: string,
   aria: boolean,
+  lang: string,
   voice?: string,
   root = true,
 ): SeriesResult {
@@ -261,12 +261,12 @@ function speakSeries(
           }
         } else if (typeof phrase === 'function') {
           // Handle functions
-          const seriesResult = speakSeries(phrase(), lang, aria, voice, false);
+          const seriesResult = speakSeries(phrase(), aria, lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         } else if (Array.isArray(phrase)) {
           // Handle nested arrays
-          const seriesResult = speakSeries(phrase, lang, aria, voice, false);
+          const seriesResult = speakSeries(phrase, aria, lang, voice, false);
           nestedSeriesResults.push(seriesResult);
           await seriesResult.series;
         }
