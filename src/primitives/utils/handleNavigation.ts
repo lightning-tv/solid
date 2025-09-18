@@ -92,6 +92,8 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   let selected = navigable.selected;
   selected = idxInArray(selected, this.children) ? selected : 0;
   selected = findFirstFocusableChildIdx(navigable, selected);
+  // update selected as firstfocusable maybe different if first element has skipFocus
+  navigable.selected = selected;
   return selectChild(navigable, selected);
 };
 
