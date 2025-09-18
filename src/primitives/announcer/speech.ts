@@ -1,5 +1,3 @@
-import { createSignal } from 'solid-js';
-
 type CoreSpeechType =
   | string
   | (() => SpeechType)
@@ -14,9 +12,10 @@ export interface SeriesResult {
   cancel: () => void;
 }
 
+// Aria label
 type AriaLabel = { text: string; lang: string };
-const [ariaLabelPhrases, setAriaLabelPhrases] = createSignal<AriaLabel[]>([]);
 const ARIA_PARENT_ID = 'aria-parent';
+let ariaLabelPhrases: AriaLabel[] = [];
 
 /* global SpeechSynthesisErrorEvent */
 function flattenStrings(series: SpeechType[] = []): SpeechType[] {
@@ -52,51 +51,41 @@ function delay(pause: number) {
  */
 function addChildrenToAriaDiv(phrase: AriaLabel) {
   if (phrase && phrase.text && phrase.text.trim().length === 0) return;
-
-  setAriaLabelPhrases((phrases) => [
-    ...phrases,
-    { text: `${phrase.text}, `, lang: phrase.lang },
-  ]);
+  ariaLabelPhrases.push(phrase);
 }
 
 /**
  * @description This function is triggered finally when the speak series is finished and we are to speak the aria labels
  */
 function focusElementForAria() {
-  createAriaElement();
+  const element = createAriaElement();
 
-  const aria_div = document.getElementById(ARIA_PARENT_ID);
-  const canvas = document.getElementById('app')?.firstChild as HTMLElement;
-
-  if (!aria_div) {
+  if (!element) {
     console.error(`ARIA div not found: ${ARIA_PARENT_ID}`);
     return;
   }
 
-  for (const object of ariaLabelPhrases()) {
+  for (const object of ariaLabelPhrases) {
     const span = document.createElement('span');
 
     // TODO: Not sure LG or Samsung support lang attribute on span or switching language
-    if (object.lang.includes('fr')) span.setAttribute('lang', 'fr');
-    else span.setAttribute('lang', 'en');
-
+    span.setAttribute('lang', object.lang);
     span.setAttribute('aria-label', object.text);
-    aria_div.appendChild(span);
+    element.appendChild(span);
   }
 
   // Cleanup
-  aria_div.focus();
   setTimeout(() => {
-    setAriaLabelPhrases([]);
+    ariaLabelPhrases = [];
     cleanAriaLabelParent();
-    canvas?.focus();
+    focusCanvas();
   }, 100);
 }
 
 /**
  * @description Clean the aria label parent after speaking
  */
-function cleanAriaLabelParent() {
+function cleanAriaLabelParent(): void {
   const parentTag = document.getElementById(ARIA_PARENT_ID);
   if (parentTag) {
     while (parentTag.firstChild) {
@@ -106,17 +95,30 @@ function cleanAriaLabelParent() {
 }
 
 /**
- * @description Create the aria element in the DOM if it doesn't exist
+ * @description Focus the canvas element
  */
-function createAriaElement() {
-  const aria = document.getElementById(ARIA_PARENT_ID);
-  if (!aria) {
+function focusCanvas(): void {
+  const canvas = document.getElementById('app')?.firstChild as HTMLElement;
+  canvas?.focus();
+}
+
+/**
+ * @description Create the aria element in the DOM if it doesn't exist
+ * @private For xbox, we may need to create a different element each time we wanna use aria
+ */
+function createAriaElement(): HTMLDivElement | HTMLElement {
+  const aria_container = document.getElementById(ARIA_PARENT_ID);
+
+  if (!aria_container) {
     const element = document.createElement('div');
     element.setAttribute('id', ARIA_PARENT_ID);
     element.setAttribute('aria-live', 'assertive');
     element.setAttribute('tabindex', '0');
     document.body.appendChild(element);
+    return element;
   }
+
+  return aria_container;
 }
 
 /**
@@ -294,8 +296,21 @@ function speakSeries(
       if (!active) {
         return;
       }
+
       if (root) {
-        // TODO: aria has to do something different
+        if (aria) {
+          const element = createAriaElement();
+
+          if (element) {
+            ariaLabelPhrases = [];
+            cleanAriaLabelParent();
+            element.focus();
+            focusCanvas();
+          }
+
+          return;
+        }
+
         synth.cancel(); // Cancel all ongoing speech
       }
       nestedSeriesResults.forEach((nestedSeriesResult) => {
