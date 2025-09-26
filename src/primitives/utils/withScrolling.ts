@@ -64,7 +64,7 @@ export function withScrolling(isRow: boolean): Scroller {
     }
 
     const lng = componentRef.lng as unknown as INode;
-    const screenSize = isRow ? lng.stage.root.width : lng.stage.root.height;
+    const screenSize = isRow ? lng.stage.root.w : lng.stage.root.h;
     // Determine if movement is incremental or decremental
     const isIncrementing =
       lastSelected === undefined || lastSelected - 1 !== selected;
