@@ -24,7 +24,7 @@ function findFirstFocusableChildIdx(
         i = (i + el.children.length) % el.children.length;
       } else break;
     }
-    if (!el.children[i]!.skipFocus) {
+    if (!el.children[i]?.skipFocus) {
       return i;
     }
   }
@@ -41,11 +41,13 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
 
   const lastSelected = el.selected;
   el.selected = index;
-  child.setFocus();
 
-  if (lastSelected !== index || !lng.hasFocus(el)) {
-    el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
+  if (!lng.isFocused(child)) {
+    child.setFocus();
   }
+
+  // Always call onSelectedChanged on first focus for clients
+  el.onSelectedChanged?.(index, el, child as lng.ElementNode, lastSelected);
 
   return true;
 }
@@ -90,10 +92,11 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   let selected = navigable.selected;
   selected = idxInArray(selected, this.children) ? selected : 0;
   selected = findFirstFocusableChildIdx(navigable, selected);
+  // update selected as firstfocusable maybe different if first element has skipFocus
+  navigable.selected = selected;
   return selectChild(navigable, selected);
 };
 
-/** @deprecated Use {@link navigableHandleNavigation} instead */
 export function handleNavigation(
   direction: 'up' | 'right' | 'down' | 'left',
 ): lng.KeyHandler {

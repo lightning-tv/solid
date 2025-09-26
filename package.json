@@ -56,11 +56,14 @@
   "dependencies": {
     "@lightningtv/core": "^3.0.0-14",
     "@solid-primitives/event-listener": "^2.3.3",
+    "@solid-primitives/keyed": "^1.5.2",
+    "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
     "@solid-primitives/scheduled": "^1.4.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@lightningjs/renderer": "^2.16.0",
     "@solid-devtools/debugger": "^0.27.0",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
@@ -73,7 +76,6 @@
     "lint-staged": "^15.2.10",
     "prettier": "^3.4.2",
     "release-it": "^17.10.0",
-    "solid-js": "^1.9.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.17.0",
     "vite-plugin-solid": "^2.11.6",

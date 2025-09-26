@@ -21,6 +21,9 @@ export {
   scrollColumn,
   scrollRow,
 } from './utils/withScrolling.js';
+export * from './VirtualGrid.jsx';
+export * from './Virtual.jsx';
+export * from './utils/withScrolling.js';
 export {
   type AnyFunction,
   chainFunctions,
