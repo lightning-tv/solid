@@ -9,11 +9,17 @@ importers:
   .:
     dependencies:
       '@lightningtv/core':
-        specifier: ^2.9.3
-        version: 2.9.3(@lightningjs/renderer@2.15.0)
+        specifier: ^2.12.2
+        version: 2.12.2(@lightningjs/renderer@2.18.2)
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
+      '@solid-primitives/keyed':
+        specifier: ^1.5.2
+        version: 1.5.2(solid-js@1.9.3)
+      '@solid-primitives/list':
+        specifier: ^0.1.2
+        version: 0.1.2(solid-js@1.9.3)
       '@solid-primitives/mouse':
         specifier: ^2.0.20
         version: 2.0.20(solid-js@1.9.3)
@@ -23,16 +29,22 @@ importers:
       '@solidjs/router':
         specifier: ^0.15.1
         version: 0.15.1(solid-js@1.9.3)
+      solid-js:
+        specifier: '*'
+        version: 1.9.3
     devDependencies:
       '@eslint/js':
         specifier: ^9.16.0
         version: 9.16.0
+      '@lightningjs/renderer':
+        specifier: ^2.18.1
+        version: 2.18.2
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.17.0
-        version: 8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.8.3))(eslint@9.16.0)(typescript@5.8.3)
+        version: 8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.9.2))(eslint@9.16.0)(typescript@5.9.2)
       '@typescript-eslint/parser':
         specifier: ^8.17.0
-        version: 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+        version: 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       eslint:
         specifier: ^9.16.0
         version: 9.16.0
@@ -59,16 +71,13 @@ importers:
         version: 3.4.2
       release-it:
         specifier: ^17.10.0
-        version: 17.10.0(typescript@5.8.3)
-      solid-js:
-        specifier: ^1.9.3
-        version: 1.9.3
+        version: 17.10.0(typescript@5.9.2)
       typescript:
-        specifier: ^5.8.3
-        version: 5.8.3
+        specifier: ^5.9.2
+        version: 5.9.2
       typescript-eslint:
         specifier: ^8.17.0
-        version: 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+        version: 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       vite-plugin-solid:
         specifier: ^2.11.6
         version: 2.11.6(solid-js@1.9.3)(vite@6.3.3(@types/node@22.14.1)(yaml@2.5.1))
@@ -423,14 +432,14 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@lightningjs/renderer@2.15.0':
-    resolution: {integrity: sha512-/e4b4XXTCytChfpjyy4hNPwGjPvQCM3Rsj5r5aPbcc3wX3CnpOJVgqdvZryM/9ltW0i4rOUYLV5VGkxv6/awpw==}
+  '@lightningjs/renderer@2.18.2':
+    resolution: {integrity: sha512-nMwJSUj0VzF48u76f4zwcEWUfqiZfeqa67iT4jSQ9vXJVyfOfS3XqpcgPYgSEm+7S1vcHQh7dVNbO/jdHAB63w==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.9.3':
-    resolution: {integrity: sha512-RpRjNXWyUdLcxp57V9ioA8L8NtnKYoxbqiftrvPLpDxvr+SlU4SxyEffVCLWdCfvw3aeKdmPryGwkhpFRqbk/Q==}
+  '@lightningtv/core@2.12.2':
+    resolution: {integrity: sha512-yYwh05Ck8TKr6fNvEtGeAoz2ocZHFiF3jrF6FmyRa/jcrFPn0NHBZSUinHFSaeI3Mkgofe92EqLNJLEcS3+6kg==}
     peerDependencies:
-      '@lightningjs/renderer': ^2.15.0
+      '@lightningjs/renderer': ^2.16.0
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -646,6 +655,16 @@ packages:
 
   '@solid-primitives/keyboard@1.3.3':
     resolution: {integrity: sha512-9dQHTTgLBqyAI7aavtO+HnpTVJgWQA1ghBSrmLtMu1SMxLPDuLfuNr+Tk5udb4AL4Ojg7h9JrKOGEEDqsJXWJA==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/keyed@1.5.2':
+    resolution: {integrity: sha512-BgoEdqPw48URnI+L5sZIHdF4ua4Las1eWEBBPaoSFs42kkhnHue+rwCBPL2Z9ebOyQ75sUhUfOETdJfmv0D6Kg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/list@0.1.2':
+    resolution: {integrity: sha512-gAnGUgXN9as0TBr2QAwLqWAbEo0ALqx2VI+lr7B2r8o3QFaFxiz7dw/qOx50Ko7TGcrYxgsYiwc9OYaS+eY89w==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -2285,8 +2304,8 @@ packages:
       typescript:
         optional: true
 
-  typescript@5.8.3:
-    resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
+  typescript@5.9.2:
+    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2811,11 +2830,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@lightningjs/renderer@2.15.0': {}
+  '@lightningjs/renderer@2.18.2': {}
 
-  '@lightningtv/core@2.9.3(@lightningjs/renderer@2.15.0)':
+  '@lightningtv/core@2.12.2(@lightningjs/renderer@2.18.2)':
     dependencies:
-      '@lightningjs/renderer': 2.15.0
+      '@lightningjs/renderer': 2.18.2
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -3027,6 +3046,14 @@ snapshots:
       solid-js: 1.9.3
     optional: true
 
+  '@solid-primitives/keyed@1.5.2(solid-js@1.9.3)':
+    dependencies:
+      solid-js: 1.9.3
+
+  '@solid-primitives/list@0.1.2(solid-js@1.9.3)':
+    dependencies:
+      solid-js: 1.9.3
+
   '@solid-primitives/media@2.3.3(solid-js@1.9.3)':
     dependencies:
       '@solid-primitives/event-listener': 2.4.3(solid-js@1.9.3)
@@ -3144,34 +3171,34 @@ snapshots:
       undici-types: 6.21.0
     optional: true
 
-  '@typescript-eslint/eslint-plugin@8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.8.3))(eslint@9.16.0)(typescript@5.8.3)':
+  '@typescript-eslint/eslint-plugin@8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.9.2))(eslint@9.16.0)(typescript@5.9.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+      '@typescript-eslint/parser': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       '@typescript-eslint/scope-manager': 8.17.0
-      '@typescript-eslint/type-utils': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+      '@typescript-eslint/type-utils': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
+      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       '@typescript-eslint/visitor-keys': 8.17.0
       eslint: 9.16.0
       graphemer: 1.4.0
       ignore: 5.3.2
       natural-compare: 1.4.0
-      ts-api-utils: 1.4.3(typescript@5.8.3)
+      ts-api-utils: 1.4.3(typescript@5.9.2)
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.8.3)':
+  '@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.9.2)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.17.0
       '@typescript-eslint/types': 8.17.0
-      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.8.3)
+      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.9.2)
       '@typescript-eslint/visitor-keys': 8.17.0
       debug: 4.3.7
       eslint: 9.16.0
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
@@ -3180,21 +3207,21 @@ snapshots:
       '@typescript-eslint/types': 8.17.0
       '@typescript-eslint/visitor-keys': 8.17.0
 
-  '@typescript-eslint/type-utils@8.17.0(eslint@9.16.0)(typescript@5.8.3)':
+  '@typescript-eslint/type-utils@8.17.0(eslint@9.16.0)(typescript@5.9.2)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.9.2)
+      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       debug: 4.3.7
       eslint: 9.16.0
-      ts-api-utils: 1.4.3(typescript@5.8.3)
+      ts-api-utils: 1.4.3(typescript@5.9.2)
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
   '@typescript-eslint/types@8.17.0': {}
 
-  '@typescript-eslint/typescript-estree@8.17.0(typescript@5.8.3)':
+  '@typescript-eslint/typescript-estree@8.17.0(typescript@5.9.2)':
     dependencies:
       '@typescript-eslint/types': 8.17.0
       '@typescript-eslint/visitor-keys': 8.17.0
@@ -3203,21 +3230,21 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.5
       semver: 7.6.3
-      ts-api-utils: 1.4.3(typescript@5.8.3)
+      ts-api-utils: 1.4.3(typescript@5.9.2)
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.17.0(eslint@9.16.0)(typescript@5.8.3)':
+  '@typescript-eslint/utils@8.17.0(eslint@9.16.0)(typescript@5.9.2)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.16.0)
       '@typescript-eslint/scope-manager': 8.17.0
       '@typescript-eslint/types': 8.17.0
-      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.8.3)
+      '@typescript-eslint/typescript-estree': 8.17.0(typescript@5.9.2)
       eslint: 9.16.0
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
@@ -3471,14 +3498,14 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cosmiconfig@9.0.0(typescript@5.8.3):
+  cosmiconfig@9.0.0(typescript@5.9.2):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
 
   cross-spawn@7.0.6:
     dependencies:
@@ -4428,14 +4455,14 @@ snapshots:
     dependencies:
       rc: 1.2.8
 
-  release-it@17.10.0(typescript@5.8.3):
+  release-it@17.10.0(typescript@5.9.2):
     dependencies:
       '@iarna/toml': 2.2.5
       '@octokit/rest': 20.1.1
       async-retry: 1.3.3
       chalk: 5.3.0
       ci-info: 4.1.0
-      cosmiconfig: 9.0.0(typescript@5.8.3)
+      cosmiconfig: 9.0.0(typescript@5.9.2)
       execa: 8.0.0
       git-url-parse: 14.0.0
       globby: 14.0.2
@@ -4699,9 +4726,9 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  ts-api-utils@1.4.3(typescript@5.8.3):
+  ts-api-utils@1.4.3(typescript@5.9.2):
     dependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
 
   tslib@2.8.1: {}
 
@@ -4715,18 +4742,18 @@ snapshots:
 
   type-fest@4.30.0: {}
 
-  typescript-eslint@8.17.0(eslint@9.16.0)(typescript@5.8.3):
+  typescript-eslint@8.17.0(eslint@9.16.0)(typescript@5.9.2):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.8.3))(eslint@9.16.0)(typescript@5.8.3)
-      '@typescript-eslint/parser': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.8.3)
+      '@typescript-eslint/eslint-plugin': 8.17.0(@typescript-eslint/parser@8.17.0(eslint@9.16.0)(typescript@5.9.2))(eslint@9.16.0)(typescript@5.9.2)
+      '@typescript-eslint/parser': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
+      '@typescript-eslint/utils': 8.17.0(eslint@9.16.0)(typescript@5.9.2)
       eslint: 9.16.0
     optionalDependencies:
-      typescript: 5.8.3
+      typescript: 5.9.2
     transitivePeerDependencies:
       - supports-color
 
-  typescript@5.8.3: {}
+  typescript@5.9.2: {}
 
   undici-types@6.21.0:
     optional: true

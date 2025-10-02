@@ -10,6 +10,10 @@
 - Additional items are loaded incrementally as the user navigates.
 - If `sync` is `true`, all `upCount` items are loaded immediately.
 
+### lazyScrollToIndex
+
+You can also `lazyScrollToIndex` by using a ref on LazyRow or LazyColumn, simply `rowRef.lazyScrollToIndex(3)`
+
 ### Example Usage
 
 ```javascript

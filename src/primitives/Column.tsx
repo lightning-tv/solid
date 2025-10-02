@@ -1,10 +1,9 @@
 import { type Component } from 'solid-js';
 import { ElementNode, combineStyles, type NodeStyles } from '@lightningtv/solid';
 import {
-  handleNavigation,
-  onGridFocus,
+  navigableForwardFocus, handleNavigation
 } from './utils/handleNavigation.js';
-import { withScrolling } from './utils/withScrolling.js';
+import { scrollColumn } from './utils/withScrolling.js';
 import { chainFunctions } from './utils/chainFunctions.js';
 import type { ColumnProps } from './types.js';
 
@@ -20,15 +19,14 @@ const ColumnStyles: NodeStyles = {
   },
 };
 
-const onUp = handleNavigation('up');
-const onDown = handleNavigation('down');
-const scroll = withScrolling(false);
-
 function scrollToIndex(this: ElementNode, index: number) {
   this.selected = index;
-  scroll(index, this);
-  this.setFocus();
+  scrollColumn(index, this);
+  this.children[index]?.setFocus();
 }
+
+const onUp = handleNavigation('up');
+const onDown = handleNavigation('down');
 
 export const Column: Component<ColumnProps> = (props) => {
   return (
@@ -38,15 +36,15 @@ export const Column: Component<ColumnProps> = (props) => {
       onDown={/* @once */ chainFunctions(props.onDown, onDown)}
       selected={props.selected || 0}
       scrollToIndex={scrollToIndex}
-      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
+      forwardFocus={navigableForwardFocus}
       onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onLayout, scroll) : props.onLayout
+        props.selected ? chainFunctions(props.onLayout, scrollColumn) : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
           props.onSelectedChanged,
-          props.scroll !== 'none' ? scroll : undefined,
+          props.scroll !== 'none' ? scrollColumn : undefined,
         )
       }
       style={/* @once */ combineStyles(props.style, ColumnStyles)}

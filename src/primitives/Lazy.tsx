@@ -1,40 +1,28 @@
-import {
-  Index,
-  createEffect,
-  createRenderEffect,
-  createMemo,
-  createSignal,
-  createReaction,
-  Show,
-  type JSX,
-  type ValidComponent,
-  untrack,
-  type Accessor,
-} from 'solid-js'; // Dynamic removed
-import { type NewOmit, scheduleTask, type NodeProps, Dynamic, ElementNode } from '@lightningtv/solid'; // Dynamic removed from imports
-import { Row, Column } from '@lightningtv/solid/primitives';
+import * as s from 'solid-js';
+import * as lng from '@lightningtv/solid';
+import * as lngp from '@lightningtv/solid/primitives';
 
-type LazyProps<T extends readonly any[]> = NewOmit<NodeProps, 'children'> & {
+type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
-  fallback?: JSX.Element;
   upCount: number;
   buffer?: number;
   delay?: number;
   sync?: boolean;
   eagerLoad?: boolean;
-  children: (item: Accessor<T[number]>, index: number) => JSX.Element;
+  children: (item: s.Accessor<T[number]>, index: number) => s.JSX.Element;
 };
 
 function createLazy<T>(
-  component: ValidComponent,
+  component: s.ValidComponent,
   props: LazyProps<readonly T[]>,
-  keyHandler: (updateOffset: (event: KeyboardEvent, container: ElementNode) => void) => Record<string, (event: KeyboardEvent, container: ElementNode) => void>
+  keyHandler: (updateOffset: (event: KeyboardEvent, container: lng.ElementNode) => void) => Record<string, (event: KeyboardEvent, container: lng.ElementNode) => void>
 ) {
   // Need at least one item so it can be focused
-  const [offset, setOffset] = createSignal<number>(props.sync ? props.upCount : 0);
+  const [offset, setOffset] = s.createSignal<number>(props.sync ? props.upCount : 0);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  let viewRef!: lngp.NavigableElement;
 
-  const buffer = createMemo(() => {
+  const buffer = s.createMemo(() => {
     if (typeof props.buffer === 'number') {
       return props.buffer;
     }
@@ -44,13 +32,13 @@ function createLazy<T>(
     return 2;
   });
 
-  createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + buffer())));
+  s.createRenderEffect(() => setOffset(offset => Math.max(offset, (props.selected || 0) + buffer())));
 
-  if (!props.sync || props.eaglerLoad) {
-    createEffect(() => {
+  if (!props.sync || props.eagerLoad) {
+    s.createEffect(() => {
       if (props.each) {
         const loadItems = () => {
-          let count = untrack(offset);
+          let count = s.untrack(offset);
           if (count < props.upCount) {
             setOffset(count + 1);
             timeoutId = setTimeout(loadItems, 16); // ~60fps
@@ -59,7 +47,7 @@ function createLazy<T>(
             const maxOffset = props.each ? props.each.length : 0;
             if (count >= maxOffset) return;
             setOffset((prev) => Math.min(prev + 1, maxOffset));
-            scheduleTask(loadItems);
+            lng.scheduleTask(loadItems);
           }
         };
         loadItems();
@@ -67,11 +55,16 @@ function createLazy<T>(
     });
   }
 
-  const items = createMemo(() => (
+  const items: s.Accessor<T[]> = s.createMemo(() => (
     Array.isArray(props.each) ? props.each.slice(0, offset()) : [])
   );
 
-  const updateOffset = (_event: KeyboardEvent, container: ElementNode) => {
+  function lazyScrollToIndex(this: lngp.NavigableElement, index: number) {
+    setOffset(Math.max(index, 0) + buffer())
+    queueMicrotask(() => viewRef.scrollToIndex(index));
+  }
+
+  const updateOffset = (_event: KeyboardEvent, container: lng.ElementNode) => {
     const maxOffset = props.each ? props.each.length : 0;
     const selected = container.selected || 0;
     const numChildren = container.children.length;
@@ -97,18 +90,21 @@ function createLazy<T>(
   const handler = keyHandler(updateOffset);
 
   return (
-    <Show when={items()} fallback={props.fallback}>
-      <Dynamic component={component} {...props} {/* @once */ ...handler}>
-        <Index each={items()} children={props.children} />
-      </Dynamic>
-    </Show>
+    <lng.Dynamic
+      {...props}
+      component={component}
+      {/* @once */ ...handler}
+      lazyScrollToIndex={lazyScrollToIndex}
+      ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)} >
+      <s.Index each={items()} children={props.children} />
+    </lng.Dynamic>
   );
 }
 
 export function LazyRow<T extends readonly any[]>(props: LazyProps<T>) {
-  return createLazy(Row, props, (updateOffset) => ({ onRight: updateOffset }));
+  return createLazy(lngp.Row, props, (updateOffset) => ({ onRight: updateOffset }));
 }
 
 export function LazyColumn<T extends readonly any[]>(props: LazyProps<T>) {
-  return createLazy(Column, props, (updateOffset) => ({ onDown: updateOffset }));
+  return createLazy(lngp.Column, props, (updateOffset) => ({ onDown: updateOffset }));
 }

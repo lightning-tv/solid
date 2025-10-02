@@ -54,6 +54,7 @@ export interface NavigableProps extends NodeProps {
 // @ts-expect-error animationSettings is not identical - weird
 export interface NavigableElement extends ElementNode, NavigableProps {
   selected: number;
+  scrollToIndex: (this: NavigableElement, index: number) => void;
 }
 
 export interface NavigableStyleProperties {

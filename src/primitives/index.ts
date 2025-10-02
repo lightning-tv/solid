@@ -17,13 +17,15 @@ export * from './Marquee.jsx';
 export * from './createFocusStack.jsx';
 export * from './useHold.js';
 export * from './KeepAlive.jsx';
-export { withScrolling } from './utils/withScrolling.js';
+export * from './VirtualGrid.jsx';
+export * from './Virtual.jsx';
+export * from './utils/withScrolling.js';
 export {
   type AnyFunction,
   chainFunctions,
   chainRefs,
 } from './utils/chainFunctions.js';
-export { handleNavigation, onGridFocus } from './utils/handleNavigation.js';
+export * from './utils/handleNavigation.js';
 export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
 
 export type * from './types.js';

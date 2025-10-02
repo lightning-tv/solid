@@ -3,10 +3,10 @@ import { combineStyles, type NodeStyles, type ElementNode } from '@lightningtv/s
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,
-  onGridFocus,
+  navigableForwardFocus
 } from './utils/handleNavigation.js';
-import { withScrolling } from './utils/withScrolling.js';
 import type { RowProps } from './types.js';
+import { scrollRow } from './utils/withScrolling.js';
 
 const RowStyles: NodeStyles = {
   display: 'flex',
@@ -19,15 +19,14 @@ const RowStyles: NodeStyles = {
   },
 };
 
-const onLeft = handleNavigation('left');
-const onRight = handleNavigation('right');
-const scroll = withScrolling(true);
-
 function scrollToIndex(this: ElementNode, index: number) {
   this.selected = index;
-  scroll(index, this);
-  this.setFocus();
+  scrollRow(index, this);
+  this.children[index]?.setFocus();
 }
+
+const onLeft = handleNavigation('left');
+const onRight = handleNavigation('right');
 
 export const Row: Component<RowProps> = (props) => {
   return (
@@ -36,16 +35,16 @@ export const Row: Component<RowProps> = (props) => {
       selected={props.selected || 0}
       onLeft={/* @once */ chainFunctions(props.onLeft, onLeft)}
       onRight={/* @once */ chainFunctions(props.onRight, onRight)}
-      forwardFocus={/* once */ onGridFocus(props.onSelectedChanged)}
+      forwardFocus={navigableForwardFocus}
       scrollToIndex={scrollToIndex}
-      onCreate={
+      onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onCreate, scroll) : props.onCreate
+        props.selected ? chainFunctions(props.onLayout, scrollRow) : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
           props.onSelectedChanged,
-          props.scroll !== 'none' ? scroll : undefined,
+          props.scroll !== 'none' ? scrollRow : undefined,
         )
       }
       style={/* @once */ combineStyles(props.style, RowStyles)}

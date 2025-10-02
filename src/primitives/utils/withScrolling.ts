@@ -5,6 +5,13 @@ import type {
   Styles,
 } from '@lightningtv/core';
 
+export type Scroller = (
+  selected: number | ElementNode,
+  component?: ElementNode,
+  selectedElement?: ElementNode | ElementText,
+  lastSelected?: number,
+) => void;
+
 // Adds properties expected by withScrolling
 export interface ScrollableElement extends ElementNode {
   scrollIndex?: number;
@@ -33,16 +40,12 @@ const isNotShown = (node: ElementNode | ElementText) => {
   Always scroll moves the list every time
 */
 
-export function withScrolling(isRow: boolean) {
+/** @deprecated Use {@link scrollRow} or {@link scrollColumn} */
+export function withScrolling(isRow: boolean): Scroller {
   const dimension = isRow ? 'width' : 'height';
   const axis = isRow ? 'x' : 'y';
 
-  return (
-    selected: number | ElementNode,
-    component?: ElementNode,
-    selectedElement?: ElementNode | ElementText,
-    lastSelected?: number,
-  ) => {
+  return (selected, component, selectedElement, lastSelected) => {
     let componentRef = component as ScrollableElement;
     if (typeof selected !== 'number') {
       componentRef = selected as ScrollableElement;
@@ -51,6 +54,7 @@ export function withScrolling(isRow: boolean) {
     if (
       !componentRef ||
       componentRef.scroll === 'none' ||
+      selected === lastSelected ||
       !componentRef.children.length
     )
       return;
@@ -90,10 +94,9 @@ export function withScrolling(isRow: boolean) {
 
     // Allows manual position control
     const targetPosition = componentRef._targetPosition ?? componentRef[axis];
-    const rootPosition =
-      isIncrementing || scroll === 'auto'
-        ? Math.min(targetPosition, componentRef[axis])
-        : Math.max(targetPosition, componentRef[axis]);
+    const rootPosition = isIncrementing
+      ? Math.min(targetPosition, componentRef[axis])
+      : Math.max(targetPosition, componentRef[axis]);
     componentRef.offset = componentRef.offset ?? rootPosition;
     const offset = componentRef.offset;
     selectedElement =
@@ -156,7 +159,8 @@ export function withScrolling(isRow: boolean) {
           nextPosition = rootPosition + selectedSize + gap;
         }
       } else if (isIncrementing) {
-        nextPosition = -selectedPosition + offset;
+        //nextPosition = -selectedPosition + offset;
+        nextPosition = rootPosition - selectedSize - gap;
       } else {
         nextPosition = rootPosition + selectedSize + gap;
       }
@@ -186,3 +190,6 @@ export function withScrolling(isRow: boolean) {
     }
   };
 }
+
+export const scrollRow = /* @__PURE__ */ withScrolling(true);
+export const scrollColumn = /* @__PURE__ */ withScrolling(false);

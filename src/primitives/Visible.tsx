@@ -13,7 +13,6 @@ import { ElementNode } from '@lightningtv/solid';
 export function Visible<T>(props: {
   when: T | undefined | null | false;
   keyed?: boolean;
-  fallback?: JSX.Element;
   children: JSX.Element;
 }): JSX.Element {
   let child: ChildrenReturn | undefined;
@@ -55,6 +54,6 @@ export function Visible<T>(props: {
       }
     });
 
-    return c ? child : props.fallback;
+    return c || child ? child : null;
   }) as unknown as JSX.Element;
 };

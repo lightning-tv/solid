@@ -62,6 +62,30 @@ The keyHandler signature is: `(this: ElementNode, e: Event, elm: ElementNode, fi
 
 To stop the propagation of a key press, the handler must return `true`. Any other return value or no return value will continue to propagate the key press through the focus path, looking for additional handlers.
 
+### Input Throttling (`Available Core 2.12+`)
+
+You can now control input speed in two powerful ways . This feature helps prevent unwanted behavior from rapid key presses, leading to a smoother, more predictable user experience and giving you, the developer, precise control over input handling.
+
+#### Global Throttling (`Config.throttleInput`)
+
+For a quick, app-wide solution, you can set a global throttle on all key inputs directly in your configuration. This is perfect for setting a baseline input speed for your entire application.
+
+```javascript
+import { Config } from '@lightningtv/core';
+
+// Allow one keypress every 200ms across the entire app
+Config.throttleInput = 200;
+```
+
+#### Per-Element Throttling (`throttleInput` property)
+
+For more granular control, you can add a `throttleInput` property directly to any ElementNode. This allows you specific components that might need a different throttle rate, like a fast-scrolling list or a sensitive menu item.
+
+```jsx
+// This Row will only accept a keypress every 500ms
+<Row throttleInput={500}>...</Row>
+```
+
 ### Key Release
 
 On release of a key:
