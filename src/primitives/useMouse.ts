@@ -55,10 +55,10 @@ const handleClick = (e: MouseEvent): void => {
     testCollision(
       e.clientX,
       e.clientY,
-      (active.lng.absX as number) || 0 * precision,
-      (active.lng.absY as number) || 0 * precision,
-      active.width || 0 * precision,
-      active.height || 0 * precision,
+      ((active.lng.absX as number) || 0) * precision,
+      ((active.lng.absY as number) || 0) * precision,
+      (active.width || 0) * precision,
+      (active.height || 0) * precision,
     )
   ) {
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
@@ -104,8 +104,8 @@ function getChildrenByPosition(
         testCollision(
           x,
           y,
-          (currentNode.lng.absX as number) || 0 * precision,
-          (currentNode.lng.absY as number) || 0 * precision,
+          ((currentNode.lng.absX as number) || 0) * precision,
+          ((currentNode.lng.absY as number) || 0) * precision,
           (currentNode.width || 0) * precision,
           (currentNode.height || 0) * precision,
         )
