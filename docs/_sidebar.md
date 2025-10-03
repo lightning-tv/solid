@@ -33,6 +33,7 @@
   - [Focus Stack](/primitives/createFocusStack.md)
   - [FPS Counter](/primitives/fpscounter.md)
   - [Grid](/primitives/grid.md)
+  - [KeepAlive](/primitives/KeepAlive.md)
   - [Lazy Row and Column](/primitives/lazy.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Marquee](/primitives/marquee.md)
