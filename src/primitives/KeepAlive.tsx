@@ -12,7 +12,7 @@ export interface KeepAliveElement {
 
 const keepAliveElements = new Map<string, KeepAliveElement>();
 
-export const storeElement = (
+export const storeKeepAlive = (
   element: KeepAliveElement
 ): KeepAliveElement | undefined => {
   if (keepAliveElements.has(element.id)) {
@@ -23,7 +23,7 @@ export const storeElement = (
   return element;
 };
 
-export const removeElement = (id: string): void => {
+export const removeKeepAlive = (id: string): void => {
   const element = keepAliveElements.get(id);
   if (element) {
     element.dispose();
@@ -67,7 +67,7 @@ export const KeepAlive = (props: s.ParentProps<KeepAliveProps>) => {
   if (!existing) {
     return s.createRoot((dispose) => {
       const children = wrapChildren(props);
-      storeElement({
+      storeKeepAlive({
         id: props.id,
         owner: s.getOwner(),
         children,
@@ -103,7 +103,7 @@ export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
 
     if (!existing) {
       return s.createRoot((dispose) => {
-        storeElement({
+        storeKeepAlive({
           id: key,
           owner: s.getOwner(),
           dispose,
