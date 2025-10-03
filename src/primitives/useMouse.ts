@@ -104,8 +104,8 @@ function getChildrenByPosition(
         testCollision(
           x,
           y,
-          (currentNode.lng.absX as number) || 0 * precision,
-          (currentNode.lng.absY as number) || 0 * precision,
+          ((currentNode.lng.absX as number) || 0) * precision,
+          ((currentNode.lng.absY as number) || 0) * precision,
           (currentNode.width || 0) * precision,
           (currentNode.height || 0) * precision,
         )
