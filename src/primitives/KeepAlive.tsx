@@ -17,7 +17,7 @@ export const storeElement = (
 ): KeepAliveElement | undefined => {
   if (keepAliveElements.has(element.id)) {
     console.warn(`[KeepAlive] Element with id "${element.id}" already in cache. Recreating.`);
-    removeElement(element.id);
+    return element;
   }
   keepAliveElements.set(element.id, element);
   return element;
@@ -33,86 +33,63 @@ export const removeElement = (id: string): void => {
 
 interface KeepAliveProps {
   id: string;
+  shouldDispose?: (key: string) => boolean;
+  onRemove?: ElementNode['onRemove'];
+  onRender?: ElementNode['onRender'];
+  transition?: ElementNode['transition'];
 }
 
 function wrapChildren(props: s.ParentProps<KeepAliveProps>) {
+  const onRemove = props.onRemove || ((elm: ElementNode) => { elm.alpha = 0; });
+  const onRender = props.onRender || ((elm: ElementNode) => { elm.alpha = 1; });
+  const transition = props.transition || { alpha: true };
+
   return (
     <view
       preserve
-      onRemove={(elm) => (elm.alpha = 0)}
-      onRender={(elm) => {
-        elm.alpha = 1;
-        elm.children[0]?.setFocus();
-      }}
+      onRemove={onRemove}
+      onRender={onRender}
       forwardFocus={0}
-      transition={{ alpha: true }}
+      transition={transition}
       {...props}
     />)
 }
 
-export const KeepAliveWrapper = (Component: s.Component<s.ParentProps<KeepAliveProps>>) => {
-  return (props: s.ParentProps<KeepAliveProps>) => {
-    const existing = keepAliveElements.get(props.id)
-
-    if (!existing) {
-      s.createRoot((dispose) => {
-        storeElement({
-          id: props.id,
-          owner: s.getOwner(),
-          children: (<view
-            preserve
-            onRemove={(elm) => (elm.alpha = 0)}
-            onRender={(elm) => {
-              elm.alpha = 1;
-              elm.children[0]?.setFocus();
-            }}
-            forwardFocus={0}
-            transition={{ alpha: true }}
-          ><Component {...props} /></view>),
-          dispose,
-        });
-      });
-    }
-
-    if (existing && !existing.children) {
-      existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
-    }
-
-    return () => {
-      const current = keepAliveElements.get(props.id);
-      return current?.owner
-        ? s.runWithOwner(current.owner, () => current.children)
-        : null;
-    };
-  }
-};
-
 export const KeepAlive = (props: s.ParentProps<KeepAliveProps>) => {
-  const existing = keepAliveElements.get(props.id)
+  let existing = keepAliveElements.get(props.id)
+
+  if (existing && props.shouldDispose?.(props.id)) {
+    existing.dispose();
+    keepAliveElements.delete(props.id);
+    existing = undefined;
+  }
 
   if (!existing) {
-    s.createRoot((dispose) => {
+    return s.createRoot((dispose) => {
+      const children = wrapChildren(props);
       storeElement({
         id: props.id,
         owner: s.getOwner(),
-        children: wrapChildren(props),
+        children,
         dispose,
       });
+      return children;
     });
-  }
-
-  if (existing && !existing.children) {
+  } else if (existing && !existing.children) {
     existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
   }
-
-  const current = keepAliveElements.get(props.id);
-  return current?.owner
-    ? s.runWithOwner(current.owner, () => current.children)
-    : null;
+  return existing.children;
 };
 
-export const KeepAliveRoute = <S extends string>(props: RouteProps<S> &
-  { id?: string, path: string, component: s.Component<RouteProps<S>>, shouldDispose?: (key: string) => boolean}) => {
+export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
+  id?: string,
+  path: string,
+  component: s.Component<RouteProps<S>>,
+  shouldDispose?: (key: string) => boolean,
+  onRemove?: ElementNode['onRemove'];
+  onRender?: ElementNode['onRender'];
+  transition?: ElementNode['transition'];
+}) => {
   const key = props.id || props.path;
 
   const preload = props.preload ? (preloadProps: RoutePreloadFuncArgs) => {
@@ -140,7 +117,7 @@ export const KeepAliveRoute = <S extends string>(props: RouteProps<S> &
   } : undefined;
 
   return (<Route {...props} preload={preload} component={(childProps) =>
-            <KeepAlive id={key}>
+            <KeepAlive id={key} onRemove={props.onRemove} onRender={props.onRender} transition={props.transition}>
               {props.component(childProps)}
             </KeepAlive>
         }/>);
