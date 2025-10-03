@@ -1,10 +1,11 @@
-import { Route } from "@solidjs/router";
+import { Route, RoutePreloadFuncArgs, RouteProps } from "@solidjs/router";
 import * as s from 'solid-js';
+import { ElementNode } from "@lightningtv/solid";
 
 export interface KeepAliveElement {
   id: string;
   owner: s.Owner | null;
-  children?: s.JSX.Element;
+  children: s.JSX.Element;
   routeSignal?: s.Signal<unknown>;
   dispose: () => void;
 }
@@ -34,7 +35,7 @@ interface KeepAliveProps {
   id: string;
 }
 
-function wrapChildren(props) {
+function wrapChildren(props: s.ParentProps<KeepAliveProps>) {
   return (
     <view
       preserve
@@ -49,7 +50,7 @@ function wrapChildren(props) {
     />)
 }
 
-export const KeepAliveWrapper = (Component) => {
+export const KeepAliveWrapper = (Component: s.Component<s.ParentProps<KeepAliveProps>>) => {
   return (props: s.ParentProps<KeepAliveProps>) => {
     const existing = keepAliveElements.get(props.id)
 
@@ -104,52 +105,43 @@ export const KeepAlive = (props: s.ParentProps<KeepAliveProps>) => {
     existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
   }
 
-  return () => {
-    const current = keepAliveElements.get(props.id);
-    return current?.owner
-      ? s.runWithOwner(current.owner, () => current.children)
-      : null;
-  };
+  const current = keepAliveElements.get(props.id);
+  return current?.owner
+    ? s.runWithOwner(current.owner, () => current.children)
+    : null;
 };
 
-export const KeepAliveRoute = (props) => {
+export const KeepAliveRoute = <S extends string>(props: RouteProps<S> &
+  { id?: string, path: string, component: s.Component<RouteProps<S>>, shouldDispose?: (key: string) => boolean}) => {
   const key = props.id || props.path;
 
-  const preload = props.preload ? (preloadProps) => {
-    const existing = keepAliveElements.get(props.id)
+  const preload = props.preload ? (preloadProps: RoutePreloadFuncArgs) => {
+    let existing = keepAliveElements.get(key)
+
+    if (existing && props.shouldDispose?.(key)) {
+      existing.dispose();
+      keepAliveElements.delete(key);
+      existing = undefined;
+    }
 
     if (!existing) {
-      s.createRoot((dispose) => {
+      return s.createRoot((dispose) => {
         storeElement({
           id: key,
           owner: s.getOwner(),
           dispose,
-          routeSignal: s.createSignal(),
+          children: null,
         });
+        return props.preload!(preloadProps);
       });
-    }
-    const current = keepAliveElements.get(key);
-    if (current) {
-    const [routeProps, setRouteProps] = current.routeSignal;
-    if (routeProps()) {
-      setRouteProps(preloadProps);
-      return;
-    }
-    setRouteProps(preloadProps);
-    return current?.owner ?
-      s.runWithOwner(current.owner, () => {
-        return props.preload(routeProps)
-      })
-      : null;
+    } else if (existing.children) {
+      (existing.children as unknown as ElementNode)?.setFocus();
     }
   } : undefined;
 
-  return (<Route {...props}
-      preload={preload}
-      component={(childProps) =>
-        <KeepAlive id={key}>
-          {props.component(childProps)}
-        </KeepAlive>
-      }
-    />);
+  return (<Route {...props} preload={preload} component={(childProps) =>
+            <KeepAlive id={key}>
+              {props.component(childProps)}
+            </KeepAlive>
+        }/>);
 };
