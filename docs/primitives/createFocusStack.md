@@ -53,6 +53,11 @@ function resetFocusStack() {
 
 ## API
 
+### `useFocusStack(autoClear?: boolean = true)`
+
+useFocusStack automatically creates an onCleanup to clearFocusStack when parent component is cleaned up. This allows nodes to be cleaned up.
+You can prevent by passing in false to useFocusStack.
+
 ### `storeFocus(element: ElementNode, prevElement?: ElementNode)`
 
 Stores the currently focused element. If the element is already active, it does nothing. You can attach storeFocus to an `onFocus` or `onBlur` handler directly.
