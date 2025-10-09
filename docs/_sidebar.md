@@ -3,6 +3,7 @@
   - [Real World Performance](/articles/realworldperformance.md)
   - [Solid / Blits Framework Comparison](/articles/solidvsblits.md)
 - Essentials
+  - [AI Context](/essentials/ai_context.md)
   - [Rendering Hello World](/essentials/render.md)
   - [ElementNode](/essentials/elementnode.md)
   - [Components](/essentials/components.md)
