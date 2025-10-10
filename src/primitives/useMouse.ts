@@ -29,6 +29,7 @@ function createKeyboardEvent(
   });
 }
 
+let scrollTimeout: number;
 const handleScroll = throttle((e: WheelEvent): void => {
   const deltaY = e.deltaY;
   if (deltaY < 0) {
@@ -36,6 +37,14 @@ const handleScroll = throttle((e: WheelEvent): void => {
   } else if (deltaY > 0) {
     document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40));
   }
+
+  // clear the last timeout if the user is still scrolling
+  clearTimeout(scrollTimeout);
+  // after 250ms of no scroll events, we send a keyup event to stop the scrolling
+  scrollTimeout = setTimeout(() => {
+    document.body.dispatchEvent(createKeyboardEvent('ArrowUp', 38, 'keyup'));
+    document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40, 'keyup'));
+  }, 250);
 }, 250);
 
 const handleClick = (app: ElementNode, e: MouseEvent): void => {
