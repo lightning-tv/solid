@@ -29,7 +29,6 @@ function createKeyboardEvent(
   });
 }
 
-let scrollTimeout: number;
 const handleScroll = throttle((e: WheelEvent): void => {
   const deltaY = e.deltaY;
   if (deltaY < 0) {
@@ -37,17 +36,9 @@ const handleScroll = throttle((e: WheelEvent): void => {
   } else if (deltaY > 0) {
     document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40));
   }
-
-  // clear the last timeout if the user is still scrolling
-  clearTimeout(scrollTimeout);
-  // after 250ms of no scroll events, we send a keyup event to stop the scrolling
-  scrollTimeout = setTimeout(() => {
-    document.body.dispatchEvent(createKeyboardEvent('ArrowUp', 38, 'keyup'));
-    document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40, 'keyup'));
-  }, 250);
 }, 250);
 
-const handleClick = (e: MouseEvent): void => {
+const handleClick = (app: ElementNode, e: MouseEvent): void => {
   const active = activeElement();
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
   if (
@@ -61,14 +52,55 @@ const handleClick = (e: MouseEvent): void => {
       (active.height || 0) * precision,
     )
   ) {
-    document.dispatchEvent(createKeyboardEvent('Enter', 13));
-    setTimeout(
-      () =>
-        document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
-      1,
-    );
+    if (active.onMouseClick) {
+      sendMouseClickEvent(e, active);
+    } else {
+      document.dispatchEvent(createKeyboardEvent('Enter', 13));
+      setTimeout(
+        () =>
+          document.body.dispatchEvent(
+            createKeyboardEvent('Enter', 13, 'keyup'),
+          ),
+        1,
+      );
+    }
+  } else {
+    // Currently focused element is not the one that is being hovered by the mouse. We can still send an onMouseClick event to it.
+    const elementNodesUnderMouse = getChildrenByPosition(
+      app,
+      e.clientX,
+      e.clientY,
+    ).filter((el) => el.onMouseClick);
+
+    if (elementNodesUnderMouse.length) {
+      let activeElement =
+        elementNodesUnderMouse[elementNodesUnderMouse.length - 1];
+      sendMouseClickEvent(e, activeElement);
+    }
   }
 };
+
+function sendMouseClickEvent(event: MouseEvent, element?: ElementNode) {
+  if (!element || !element.onMouseClick) {
+    return;
+  }
+  if (
+    !element.lng ||
+    element.lng.absX === undefined ||
+    element.lng.absY === undefined
+  ) {
+    console.warn(
+      'coordinates could not be established for ElementNode',
+      element,
+    );
+    return;
+  }
+  const deltaX = event.clientX - element.lng.absX;
+  const deltaY = event.clientY - element.lng.absY;
+  const deltaXPercent = deltaX! / (element.width || 1);
+  const deltaYPercent = deltaY! / (element.height || 1);
+  element.onMouseClick({ deltaX, deltaY, deltaXPercent, deltaYPercent });
+}
 
 function testCollision(
   px: number,
@@ -154,7 +186,7 @@ export function useMouse(
   const pos = useMousePosition();
   const scheduled = createScheduled((fn) => throttle(fn, throttleBy));
   makeEventListener(window, 'wheel', handleScroll);
-  makeEventListener(window, 'click', handleClick);
+  makeEventListener(window, 'click', (e) => handleClick(myApp, e));
   createEffect(() => {
     if (scheduled()) {
       const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
