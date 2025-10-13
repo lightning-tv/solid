@@ -32,7 +32,10 @@ export function FocusStackProvider(props: { children: s.JSX.Element}) {
   const [_focusStack, setFocusStack] = s.createSignal<ElementNode[]>([]);
 
   function storeFocus(element: ElementNode, prevElement?: ElementNode) {
-    setFocusStack(stack => [...stack, prevElement || element]);
+    const elm = prevElement || element;
+    if (elm) {
+      setFocusStack(stack => [...stack, elm]);
+    }
   }
 
   function restoreFocus(): boolean {
@@ -66,7 +69,10 @@ export function useFocusStack(autoClear = true) {
   }
 
   if (autoClear) {
-    s.onCleanup(() => context.clearFocusStack());
+    s.onCleanup(() => {
+      // delay clearing the focus stack so restoreFocus can happen first.
+      setTimeout(() => context.clearFocusStack(), 5);
+    });
   }
 
   return context;
