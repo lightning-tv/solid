@@ -300,8 +300,10 @@ function createVirtual<T>(
       if (itemCount() === 0) return;
 
       lastNavTime = performance.now();
-      viewRef.lng[axis] = originalPosition;
-      targetPosition = originalPosition;
+      if (originalPosition !== undefined) {
+        viewRef.lng[axis] = originalPosition;
+        targetPosition = originalPosition;
+      }
 
       updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
     });
@@ -405,9 +407,9 @@ function createVirtual<T>(
     // offset just for wrap so we keep one item before
     queueMicrotask(() => {
       const childSize = computeSize(slice().selected);
-      viewRef.lng[axis] = viewRef.lng[axis]! + (childSize * -1);
+      viewRef.lng[axis] = (viewRef.lng[axis] || 0) + (childSize * -1);
       // Original Position is offset to support scrollToIndex
-      originalPosition = viewRef.lng[axis]
+      originalPosition = viewRef.lng[axis];
       targetPosition = viewRef.lng[axis];
     });
   }));
