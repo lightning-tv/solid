@@ -9,36 +9,28 @@ export interface ImageProps extends NodeProps {
 
 export const Image: Component<ImageProps> = (props) => {
   const [texture, setTexture] = createSignal<any>(null);
+  const [src, setSrc] = createSignal<string | null>(props.placeholder || null);
 
   createRenderEffect(() => {
-    if (props.placeholder) {
-      setTexture(renderer.createTexture('ImageTexture', {
-        src: props.placeholder
-      }));
-    }
-
-    const src = renderer.createTexture('ImageTexture', {
-      src: props.src
-    }) as ImageTexture;
-
-    src.once('loaded', () => {
-      setTexture(src);
-    });
+    const srcTexture = renderer.createTexture('ImageTexture', props) as ImageTexture;
 
     if (props.fallback) {
-      src.once('failed', () => {
+      srcTexture.once('failed', () => {
         if (props.fallback === props.placeholder) {
           return;
         }
-        const src = renderer.createTexture('ImageTexture', {
-          src: props.fallback
-        });
-        setTexture(src);
+        setSrc(props.fallback!);
       });
     }
+
+    srcTexture.getTextureSource().then(resp => {
+      // if texture fails to load, this is still called after the failed handler
+      if (resp.data)
+        setTexture(srcTexture);
+    })
   })
 
   return (
-    <view {...props} src={null} color={props.color || 0xffffffff} texture={texture()} />
+    <view {...props} src={src()} color={props.color || 0xffffffff} texture={texture()} />
   );
 };
