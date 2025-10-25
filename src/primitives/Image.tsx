@@ -23,7 +23,7 @@ export const Image: Component<ImageProps> = (props) => {
       });
     }
 
-    srcTexture.getTextureSource().then(resp => {
+    srcTexture.getTextureData().then(resp => {
       // if texture fails to load, this is still called after the failed handler
       if (resp.data)
         setTexture(srcTexture);
