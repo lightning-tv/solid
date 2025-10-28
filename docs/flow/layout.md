@@ -51,6 +51,7 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 - **`flexItem`**: boolean (Set to `false` on a child to exclude it from flex calculations.)
 - **`flexOrder`**: number (Set the order on children to change the layout order.)
 - **`flexGrow`**: number (Set to number on children to specify how much room elements should take up.)
+- **`flexWrap`**: 'nowrap' | 'wrap' (Set to `wrap` to have elements flow to next line on overflow.)
 - **`gap`**: number
 - **`justifyContent`**: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
 
