@@ -8,7 +8,9 @@ Is a UI framework for [LightningJS 3 Renderer](https://lightningjs.io/) built wi
 
 ## Used by companies worldwide
 
-<img src="docs/companylogos/Angel.png" alt="Angel Studios" width="200" /> <img src="docs/companylogos/bell-fibe-tv.png" alt="Bell Fibe TV" width="80" />
+<div style="display: flex; align-items: center; gap: 20px;">
+  <img src="docs/companylogos/Angel.png" alt="Angel Studios" width="200" /> <img src="docs/companylogos/bell-fibe-tv.png" alt="Bell Fibe TV" width="80" />
+</div>
 
 ## Need Support?
 
