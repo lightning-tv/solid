@@ -1,4 +1,4 @@
-import type { ElementText, INode, TextNode } from '@lightningtv/core';
+import type { ElementText, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
@@ -6,11 +6,23 @@ import {
   isTextNode,
   rootNode,
   Config,
+  isFunc,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
 import { createEffect } from 'solid-js';
+
+declare module '@lightningtv/core' {
+  interface ElementNode {
+    /** function to be called on mouse click */
+    onMouseClick?: (
+      this: ElementNode,
+      event: MouseEvent,
+      active: ElementNode,
+    ) => void;
+  }
+}
 
 function createKeyboardEvent(
   key: string,
@@ -61,12 +73,36 @@ const handleClick = (e: MouseEvent): void => {
       (active.height || 0) * precision,
     )
   ) {
+    if (isFunc(active.onMouseClick)) {
+      active.onMouseClick.call(active, e, active);
+      return;
+    }
+
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
     setTimeout(
       () =>
         document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
       1,
     );
+  } else {
+    let parent = active?.parent;
+    while (parent) {
+      if (
+        isFunc(parent.onMouseClick) &&
+        testCollision(
+          e.clientX,
+          e.clientY,
+          ((parent.lng.absX as number) || 0) * precision,
+          ((parent.lng.absY as number) || 0) * precision,
+          (parent.width || 0) * precision,
+          (parent.height || 0) * precision,
+        )
+      ) {
+        parent.onMouseClick.call(parent, e, active!);
+        return;
+      }
+      parent = parent.parent;
+    }
   }
 };
 
