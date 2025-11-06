@@ -1,4 +1,4 @@
-import type { ElementText, INode, TextNode } from '@lightningtv/core';
+import type { ElementText, TextNode } from '@lightningtv/core';
 import {
   ElementNode,
   activeElement,
@@ -6,11 +6,23 @@ import {
   isTextNode,
   rootNode,
   Config,
+  isFunc,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
 import { createEffect } from 'solid-js';
+
+declare module '@lightningtv/core' {
+  interface ElementNode {
+    /** function to be called on mouse click */
+    onMouseClick?: (
+      this: ElementNode,
+      event: MouseEvent,
+      active: ElementNode,
+    ) => void;
+  }
+}
 
 function createKeyboardEvent(
   key: string,
@@ -29,6 +41,7 @@ function createKeyboardEvent(
   });
 }
 
+let scrollTimeout: number;
 const handleScroll = throttle((e: WheelEvent): void => {
   const deltaY = e.deltaY;
   if (deltaY < 0) {
@@ -36,6 +49,14 @@ const handleScroll = throttle((e: WheelEvent): void => {
   } else if (deltaY > 0) {
     document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40));
   }
+
+  // clear the last timeout if the user is still scrolling
+  clearTimeout(scrollTimeout);
+  // after 250ms of no scroll events, we send a keyup event to stop the scrolling
+  scrollTimeout = setTimeout(() => {
+    document.body.dispatchEvent(createKeyboardEvent('ArrowUp', 38, 'keyup'));
+    document.body.dispatchEvent(createKeyboardEvent('ArrowDown', 40, 'keyup'));
+  }, 250);
 }, 250);
 
 const handleClick = (e: MouseEvent): void => {
@@ -46,18 +67,42 @@ const handleClick = (e: MouseEvent): void => {
     testCollision(
       e.clientX,
       e.clientY,
-      (active.lng.absX as number) || 0 * precision,
-      (active.lng.absY as number) || 0 * precision,
-      active.width || 0 * precision,
-      active.height || 0 * precision,
+      ((active.lng.absX as number) || 0) * precision,
+      ((active.lng.absY as number) || 0) * precision,
+      (active.width || 0) * precision,
+      (active.height || 0) * precision,
     )
   ) {
+    if (isFunc(active.onMouseClick)) {
+      active.onMouseClick.call(active, e, active);
+      return;
+    }
+
     document.dispatchEvent(createKeyboardEvent('Enter', 13));
     setTimeout(
       () =>
         document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
       1,
     );
+  } else {
+    let parent = active?.parent;
+    while (parent) {
+      if (
+        isFunc(parent.onMouseClick) &&
+        testCollision(
+          e.clientX,
+          e.clientY,
+          ((parent.lng.absX as number) || 0) * precision,
+          ((parent.lng.absY as number) || 0) * precision,
+          (parent.width || 0) * precision,
+          (parent.height || 0) * precision,
+        )
+      ) {
+        parent.onMouseClick.call(parent, e, active!);
+        return;
+      }
+      parent = parent.parent;
+    }
   }
 };
 
@@ -95,8 +140,8 @@ function getChildrenByPosition(
         testCollision(
           x,
           y,
-          (currentNode.lng.absX as number) || 0 * precision,
-          (currentNode.lng.absY as number) || 0 * precision,
+          ((currentNode.lng.absX as number) || 0) * precision,
+          ((currentNode.lng.absY as number) || 0) * precision,
           (currentNode.width || 0) * precision,
           (currentNode.height || 0) * precision,
         )

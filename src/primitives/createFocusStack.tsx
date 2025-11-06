@@ -17,7 +17,7 @@
  * - `restoreFocus()`: Restores focus to the last stored element and removes it from the stack. Returns `true` if successful, `false` otherwise.
  * - `clearFocusStack()`: Empties the focus stack.
  */
-import { createSignal, createContext, useContext, JSX } from 'solid-js';
+import * as s from 'solid-js';
 import { type ElementNode } from '@lightningtv/solid';
 
 interface FocusStackContextType {
@@ -26,13 +26,16 @@ interface FocusStackContextType {
   clearFocusStack: () => void;
 }
 
-const FocusStackContext = createContext<FocusStackContextType | undefined>(undefined);
+const FocusStackContext = s.createContext<FocusStackContextType | undefined>(undefined);
 
-export function FocusStackProvider(props: { children: JSX.Element}) {
-  const [_focusStack, setFocusStack] = createSignal<ElementNode[]>([]);
+export function FocusStackProvider(props: { children: s.JSX.Element}) {
+  const [_focusStack, setFocusStack] = s.createSignal<ElementNode[]>([]);
 
   function storeFocus(element: ElementNode, prevElement?: ElementNode) {
-    setFocusStack((stack) => [...stack, prevElement || element]);
+    const elm = prevElement || element;
+    if (elm) {
+      setFocusStack(stack => [...stack, elm]);
+    }
   }
 
   function restoreFocus(): boolean {
@@ -59,10 +62,18 @@ export function FocusStackProvider(props: { children: JSX.Element}) {
   );
 }
 
-export function useFocusStack() {
-  const context = useContext(FocusStackContext);
+export function useFocusStack(autoClear = true) {
+  const context = s.useContext(FocusStackContext);
   if (!context) {
     throw new Error("useFocusStack must be used within a FocusStackProvider");
   }
+
+  if (autoClear) {
+    s.onCleanup(() => {
+      // delay clearing the focus stack so restoreFocus can happen first.
+      setTimeout(() => context.clearFocusStack(), 5);
+    });
+  }
+
   return context;
 }

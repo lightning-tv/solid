@@ -6,6 +6,12 @@
 
 Is a UI framework for [LightningJS 3 Renderer](https://lightningjs.io/) built with [SolidJS](https://www.solidjs.com/) Universal Renderer. It allows you to declaratively construct lightning nodes with reactive primitives, with incredible performance.
 
+## Used by companies worldwide
+
+<div style="display: flex; align-items: center; gap: 20px;">
+  <img src="docs/companylogos/Angel.png" alt="Angel Studios" width="200" /> &nbsp; <img src="docs/companylogos/bell-fibe-tv.png" alt="Bell Fibe TV" width="80" />
+</div>
+
 ## Need Support?
 
 [ConnectedTV Dev](https://lightningtv.dev/)

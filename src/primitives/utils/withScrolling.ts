@@ -73,6 +73,7 @@ export function withScrolling(isRow: boolean): Scroller {
       if (componentRef.parent!.clipping) {
         const p = componentRef.parent!;
         componentRef.endOffset =
+          componentRef.endOffset ??
           screenSize - ((isRow ? p.absX : p.absY) || 0) - p[dimension];
       }
 
@@ -118,7 +119,7 @@ export function withScrolling(isRow: boolean): Scroller {
       screenSize -
         containerSize -
         screenOffset -
-        (componentRef.endOffset || 2 * gap),
+        (componentRef.endOffset ?? 2 * gap),
       offset,
     );
 

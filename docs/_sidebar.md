@@ -3,6 +3,7 @@
   - [Real World Performance](/articles/realworldperformance.md)
   - [Solid / Blits Framework Comparison](/articles/solidvsblits.md)
 - Essentials
+  - [AI Context](/essentials/ai_context.md)
   - [Rendering Hello World](/essentials/render.md)
   - [ElementNode](/essentials/elementnode.md)
   - [Components](/essentials/components.md)
@@ -33,6 +34,8 @@
   - [Focus Stack](/primitives/createFocusStack.md)
   - [FPS Counter](/primitives/fpscounter.md)
   - [Grid](/primitives/grid.md)
+  - [Image](/primitives/image.md)
+  - [KeepAlive](/primitives/KeepAlive.md)
   - [Lazy Row and Column](/primitives/lazy.md)
   - [LazyUp](/primitives/lazyUp.md)
   - [Marquee](/primitives/marquee.md)
