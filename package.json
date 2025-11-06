@@ -54,8 +54,8 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningjs/renderer": "3.0.0-beta14",
-    "@lightningtv/core": "^3.0.0-17",
+    "@lightningjs/renderer": "3.0.0-beta15",
+    "@lightningtv/core": "^3.0.0-19",
     "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/keyed": "^1.5.2",
