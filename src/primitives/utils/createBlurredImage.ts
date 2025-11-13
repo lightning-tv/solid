@@ -57,7 +57,7 @@ interface ImageDimensions {
 }
 
 /**
- * Type for the resource return value from useBlurredImage
+ * Type for the resource return value from createBlurredImage
  */
 type BlurredImageResource<T extends NullableImageSource> = Resource<
   T extends null | undefined ? null : string
@@ -340,10 +340,10 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
  * @example
  * ```ts
  * const imageUrl = () => 'https://example.com/image.jpg';
- * const blurred = useBlurredImage(imageUrl, { radius: 15 });
+ * const blurred = createBlurredImage(imageUrl, { radius: 15 });
  * ```
  */
-export function useBlurredImage<TSource extends NullableImageSource>(
+export function createBlurredImage<TSource extends NullableImageSource>(
   imageUrl: Accessor<TSource>,
   options?: Readonly<BlurOptions>,
 ): BlurredImageResource<TSource> {
