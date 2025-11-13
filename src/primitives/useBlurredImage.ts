@@ -283,13 +283,13 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
         canvas.width = dimensions.width;
         canvas.height = dimensions.height;
 
-        ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
-
         const hasFilterSupport = ctx.filter !== undefined;
         if (hasFilterSupport) {
           ctx.filter = `blur(${radius}px)`;
-          ctx.drawImage(canvas, 0, 0);
+          ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+          ctx.filter = 'none';
         } else {
+          ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
           const imageData = ctx.getImageData(
             0,
             0,
