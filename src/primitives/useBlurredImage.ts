@@ -20,33 +20,26 @@ interface BlurOptions {
    */
   readonly radius?: number;
   /**
-   * The image format for the output blob
-   * @default 'image/jpeg'
-   */
-  readonly format?: 'image/jpeg' | 'image/png' | 'image/webp';
-  /**
-   * The quality of the output image (0.0 to 1.0)
-   * Only applies to JPEG format
-   * @default 0.9
-   */
-  readonly quality?: number;
-  /**
    * CORS setting for image loading
    * @default 'anonymous'
    */
   readonly crossOrigin?: 'anonymous' | 'use-credentials' | '';
+  /**
+   * The resolution of the output image in pixels
+   * @default 1
+   */
+  readonly resolution?: number;
 }
 
 /**
  * Default blur options
  */
 const DEFAULT_BLUR_OPTIONS: Required<
-  Pick<BlurOptions, 'radius' | 'format' | 'quality' | 'crossOrigin'>
+  Pick<BlurOptions, 'radius' | 'crossOrigin' | 'resolution'>
 > = {
   radius: 10,
-  format: 'image/jpeg',
-  quality: 0.9,
   crossOrigin: 'anonymous',
+  resolution: 1,
 } as const;
 
 /**
@@ -80,6 +73,13 @@ type ValidRadius = number & { __brand: 'ValidRadius' };
  */
 function isValidRadius(radius: number): radius is ValidRadius {
   return radius > 0 && Number.isFinite(radius);
+}
+
+/**
+ * Ensures a resolution is a positive number
+ */
+function isValidResolution(resolution: number): boolean {
+  return resolution > 0 && resolution <= 1 && Number.isFinite(resolution);
 }
 
 /**
@@ -242,10 +242,17 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
 ): Promise<string> {
   const opts = { ...DEFAULT_BLUR_OPTIONS, ...options };
   const radius = opts.radius;
+  const resolution = opts.resolution;
 
   if (!isValidRadius(radius)) {
     throw new Error(
       `Invalid blur radius: ${radius}. Must be a positive number.`,
+    );
+  }
+
+  if (!isValidResolution(resolution)) {
+    throw new Error(
+      `Invalid resolution: ${resolution}. Must be a number between 0 and 1.`,
     );
   }
 
@@ -265,15 +272,18 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
           return;
         }
 
+        const scaledWidth = Math.max(1, Math.round(img.width * resolution));
+        const scaledHeight = Math.max(1, Math.round(img.height * resolution));
+
         const dimensions: ImageDimensions = {
-          width: img.width,
-          height: img.height,
+          width: scaledWidth,
+          height: scaledHeight,
         };
 
         canvas.width = dimensions.width;
         canvas.height = dimensions.height;
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
 
         const hasFilterSupport = ctx.filter !== undefined;
         if (hasFilterSupport) {
@@ -294,18 +304,13 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
           ctx.putImageData(blurredData, 0, 0);
         }
 
-        canvas.toBlob(
-          (blob: Blob | null): void => {
-            if (blob) {
-              const blobUrl = URL.createObjectURL(blob);
-              resolve(blobUrl);
-            } else {
-              reject(new Error('Failed to create image blob'));
-            }
-          },
-          opts.format,
-          opts.format === 'image/jpeg' ? opts.quality : undefined,
-        );
+        const dataUrl = canvas.toDataURL();
+
+        if (dataUrl) {
+          resolve(dataUrl);
+        } else {
+          reject(new Error('Failed to create image data URL'));
+        }
       } catch (error) {
         reject(
           error instanceof Error
