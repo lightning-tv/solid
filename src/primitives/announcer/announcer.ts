@@ -109,18 +109,24 @@ function onFocusChangeCore(focusPath: ElementNode[] = []) {
   }
 }
 
-function textToSpeech(toSpeak: SpeechType, lang: string, voice?: string) {
+function textToSpeech(
+  toSpeak: SpeechType,
+  aria: boolean,
+  lang: string,
+  voice?: string,
+) {
   if (voiceOutDisabled) {
     return;
   }
 
-  return (currentlySpeaking = SpeechEngine(toSpeak, lang, voice));
+  return (currentlySpeaking = SpeechEngine(toSpeak, aria, lang, voice));
 }
 
 export interface Announcer {
   debug: boolean;
   enabled: boolean;
   lang: string;
+  aria: boolean;
   voice?: string;
   cancel: VoidFunction;
   clearPrevFocus: (depth?: number) => void;
@@ -140,6 +146,7 @@ export const Announcer: Announcer = {
   debug: false,
   enabled: true,
   lang: 'en-US',
+  aria: true,
   cancel: function () {
     currentlySpeaking && currentlySpeaking.cancel();
   },
@@ -153,7 +160,7 @@ export const Announcer: Announcer = {
         currentlySpeaking.append(text);
       } else {
         Announcer.cancel();
-        textToSpeech(text, Announcer.lang, Announcer.voice);
+        textToSpeech(text, Announcer.aria, Announcer.lang, Announcer.voice);
       }
 
       if (notification) {
