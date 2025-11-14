@@ -305,6 +305,11 @@ function createVirtual<T>(
         targetPosition = originalPosition;
       }
 
+      if (!lng.hasFocus(viewRef)) {
+        // force focus as scrollToIndex is manually called
+        viewRef.setFocus();
+      }
+
       updateSelected([utils.clamp(index, 0, itemCount() - 1)]);
     });
   }
@@ -396,7 +401,9 @@ function createVirtual<T>(
       let activeIndex = viewRef.children.findIndex(x => x.item === item);
       if (activeIndex === -1) return;
       viewRef.selected = activeIndex;
-      viewRef.children[activeIndex]?.setFocus();
+      if (lng.hasFocus(viewRef)) {
+        viewRef.children[activeIndex]?.setFocus();
+      }
     });
   };
 
