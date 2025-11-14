@@ -10,7 +10,7 @@ declare module '@lightningtv/core' {
 }
 
 function idxInArray(idx: number, arr: readonly any[]): boolean {
-  return idx >= 0 && idx < arr.length;
+  return idx === 0 || (idx >= 0 && idx < arr.length);
 }
 
 function findFirstFocusableChildIdx(
@@ -77,20 +77,15 @@ export function onGridFocus(
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   const navigable = this as lngp.NavigableElement;
 
-  // Undo for now - We should only do this when setFocus is called rather than on forwardFocus
-  // needs some more research
-  // if (!lng.isFocused(this)) {
-  //   // if a child already has focus, assume that should be selected
-  //   for (let [i, child] of this.children.entries()) {
-  //     if (lng.isFocused(child)) {
-  //       this.selected = i;
-  //       break;
-  //     }
-  //   }
-  // }
-
   let selected = navigable.selected;
-  selected = idxInArray(selected, this.children) ? selected : 0;
+
+  if (selected !== 0) {
+    selected = lng.clamp(selected, 0, this.children.length - 1);
+    while (!idxInArray(selected, this.children)) {
+      selected--;
+    }
+  }
+
   selected = findFirstFocusableChildIdx(navigable, selected);
   // update selected as firstfocusable maybe different if first element has skipFocus
   navigable.selected = selected;
