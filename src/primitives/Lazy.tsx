@@ -9,6 +9,7 @@ type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'
   delay?: number;
   sync?: boolean;
   eagerLoad?: boolean;
+  noRefocus?: boolean;
   children: (item: s.Accessor<T[number]>, index: number) => s.JSX.Element;
 };
 
@@ -60,7 +61,7 @@ function createLazy<T>(
     if (Array.isArray(props.each)) {
       if (itemLength != props.each.length) {
         itemLength = props.each.length;
-        if (!viewRef.noRefocus && lng.hasFocus(viewRef)) {
+        if (viewRef && !viewRef.noRefocus && lng.hasFocus(viewRef)) {
           queueMicrotask(viewRef.setFocus);
         }
       }
