@@ -233,7 +233,7 @@ function gaussianBlurConvolution(
  * Applies Gaussian blur to an image URL
  * @param imageUrl - Image source (string or URL)
  * @param options - Blur configuration options
- * @returns Promise resolving to blob URL of blurred image
+ * @returns Promise resolving to data URL of blurred image
  * @throws {Error} If image fails to load or blur operation fails
  */
 export async function applyGaussianBlur<TSource extends ImageSource>(
@@ -334,7 +334,7 @@ export async function applyGaussianBlur<TSource extends ImageSource>(
  * Hook to create a blurred image resource
  * @param imageUrl - Accessor function returning image source or null/undefined
  * @param options - Blur configuration options
- * @returns Resource containing blurred image blob URL or null
+ * @returns Resource containing blurred image data URL or null
  * @template TSource - Type of image source (string, URL, or null/undefined)
  *
  * @example
