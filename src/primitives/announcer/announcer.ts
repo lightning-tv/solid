@@ -146,7 +146,7 @@ export const Announcer: Announcer = {
   debug: false,
   enabled: true,
   lang: 'en-US',
-  aria: true,
+  aria: false,
   cancel: function () {
     currentlySpeaking && currentlySpeaking.cancel();
   },

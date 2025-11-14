@@ -46,11 +46,11 @@ function delay(pause: number) {
 }
 
 /**
- * @description This function is called at the end of the speak series, since we have recusion possible, we need a signal to add all the phrases
+ * @description This function is called at the end of the speak series
  * @param Phrase is an object containing the text and the language
  */
 function addChildrenToAriaDiv(phrase: AriaLabel) {
-  if (phrase && phrase.text && phrase.text.trim().length === 0) return;
+  if (phrase?.text?.trim().length === 0) return;
   ariaLabelPhrases.push(phrase);
 }
 
