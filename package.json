@@ -42,7 +42,8 @@
     "watch": "tsc -w",
     "prepare": "husky",
     "prepack": "npm run build",
-    "release": "release-it --only-version"
+    "release": "release-it --only-version",
+    "test:browser": "vitest --config=vitest.browser.config.ts"
   },
   "keywords": [
     "lightning",
@@ -65,8 +66,10 @@
     "@eslint/js": "^9.16.0",
     "@lightningjs/renderer": "^2.18.1",
     "@solid-devtools/debugger": "^0.27.0",
+    "@solidjs/testing-library": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
+    "@vitest/browser-playwright": "^4.0.9",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -79,7 +82,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.17.0",
     "vite-plugin-solid": "^2.11.6",
-    "vitest": "^3.1.2"
+    "vitest": "^4.0.9"
   },
   "lint-staged": {
     "*.ts": [
