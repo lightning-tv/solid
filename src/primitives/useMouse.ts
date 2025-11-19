@@ -1,20 +1,35 @@
 import type { ElementText, TextNode } from '@lightningtv/core';
 import {
+  Config,
   ElementNode,
   activeElement,
   isElementNode,
+  isFunc,
   isTextNode,
   rootNode,
-  Config,
-  isFunc,
 } from '@lightningtv/solid';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
 import { createEffect } from 'solid-js';
 
+type CustomState = `$${string}`;
+
+type StateableElement = ElementNode | ElementText | TextNode;
+
+interface MouseStateOptions {
+  hoverState: CustomState;
+  pressedState: CustomState;
+  pressedStateDuration?: number;
+}
+
+type UseMouseOptions =
+  | { customStates: MouseStateOptions }
+  | { customStates: undefined };
+
 declare module '@lightningtv/core' {
   interface ElementNode {
+    onEnter?: () => void;
     /** function to be called on mouse click */
     onMouseClick?: (
       this: ElementNode,
@@ -22,6 +37,29 @@ declare module '@lightningtv/core' {
       active: ElementNode,
     ) => void;
   }
+}
+
+const DEFAULT_PRESSED_STATE_DURATION = 150;
+
+export function addCustomStateToElement(
+  element: StateableElement,
+  state: CustomState,
+): void {
+  element.states?.add(state);
+}
+
+export function removeCustomStateFromElement(
+  element: StateableElement,
+  state: CustomState,
+): void {
+  element.states?.remove(state);
+}
+
+export function hasCustomState(
+  element: StateableElement,
+  state: CustomState,
+): boolean {
+  return element.states.has(state);
 }
 
 function createKeyboardEvent(
@@ -41,7 +79,7 @@ function createKeyboardEvent(
   });
 }
 
-let scrollTimeout: number;
+let scrollTimeout: ReturnType<typeof setTimeout>;
 const handleScroll = throttle((e: WheelEvent): void => {
   const deltaY = e.deltaY;
   if (deltaY < 0) {
@@ -59,9 +97,38 @@ const handleScroll = throttle((e: WheelEvent): void => {
   }, 250);
 }, 250);
 
-const handleClick = (e: MouseEvent): void => {
+function findElementWithCustomState<TApp extends ElementNode>(
+  myApp: TApp,
+  x: number,
+  y: number,
+  customState: CustomState,
+): ElementNode | undefined {
+  const result = getChildrenByPosition(myApp, x, y).filter((el) =>
+    hasCustomState(el, customState),
+  );
+
+  if (result.length === 0) {
+    return undefined;
+  }
+
+  let element: ElementNode | undefined = result[result.length - 1];
+
+  while (element) {
+    const elmParent = element.parent;
+    if (elmParent?.forwardStates && hasCustomState(elmParent, customState)) {
+      element = elmParent;
+    } else {
+      break;
+    }
+  }
+
+  return element;
+}
+
+function findElementByActiveElement(e: MouseEvent): ElementNode | null {
   const active = activeElement();
   const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
+
   if (
     active instanceof ElementNode &&
     testCollision(
@@ -73,38 +140,94 @@ const handleClick = (e: MouseEvent): void => {
       (active.height || 0) * precision,
     )
   ) {
-    if (isFunc(active.onMouseClick)) {
-      active.onMouseClick.call(active, e, active);
+    return active;
+  }
+
+  let parent = active?.parent;
+  while (parent) {
+    if (
+      isFunc(parent.onMouseClick) &&
+      active &&
+      testCollision(
+        e.clientX,
+        e.clientY,
+        ((parent.lng.absX as number) || 0) * precision,
+        ((parent.lng.absY as number) || 0) * precision,
+        (parent.width || 0) * precision,
+        (parent.height || 0) * precision,
+      )
+    ) {
+      return parent;
+    }
+    parent = parent.parent;
+  }
+
+  return null;
+}
+
+function applyPressedState(
+  element: ElementNode,
+  pressedState: CustomState,
+  pressedStateDuration: number = DEFAULT_PRESSED_STATE_DURATION,
+): void {
+  addCustomStateToElement(element, pressedState);
+  setTimeout(() => {
+    removeCustomStateFromElement(element, pressedState);
+  }, pressedStateDuration);
+}
+
+function handleElementClick(
+  clickedElement: ElementNode,
+  e: MouseEvent,
+  customStates?: MouseStateOptions,
+): void {
+  if (customStates) {
+    applyPressedState(
+      clickedElement,
+      customStates.pressedState,
+      customStates.pressedStateDuration,
+    );
+  }
+
+  if (isFunc(clickedElement.onMouseClick)) {
+    clickedElement.onMouseClick(e, clickedElement);
+    return;
+  }
+
+  if (customStates && isFunc(clickedElement.onEnter)) {
+    clickedElement.onEnter();
+    return;
+  }
+
+  document.dispatchEvent(createKeyboardEvent('Enter', 13));
+  setTimeout(
+    () =>
+      document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
+    1,
+  );
+}
+
+function createHandleClick<TApp extends ElementNode>(
+  myApp: TApp,
+  customStates?: MouseStateOptions,
+) {
+  return (e: MouseEvent): void => {
+    const clickedElement = customStates
+      ? findElementWithCustomState(
+          myApp,
+          e.clientX,
+          e.clientY,
+          customStates.hoverState,
+        )
+      : findElementByActiveElement(e);
+
+    if (!clickedElement) {
       return;
     }
 
-    document.dispatchEvent(createKeyboardEvent('Enter', 13));
-    setTimeout(
-      () =>
-        document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
-      1,
-    );
-  } else {
-    let parent = active?.parent;
-    while (parent) {
-      if (
-        isFunc(parent.onMouseClick) &&
-        testCollision(
-          e.clientX,
-          e.clientY,
-          ((parent.lng.absX as number) || 0) * precision,
-          ((parent.lng.absY as number) || 0) * precision,
-          (parent.width || 0) * precision,
-          (parent.height || 0) * precision,
-        )
-      ) {
-        parent.onMouseClick.call(parent, e, active!);
-        return;
-      }
-      parent = parent.parent;
-    }
-  }
-};
+    handleElementClick(clickedElement, e, customStates);
+  };
+}
 
 function testCollision(
   px: number,
@@ -117,106 +240,145 @@ function testCollision(
   return px >= cx && px <= cx + cw && py >= cy && py <= cy + ch;
 }
 
-function getChildrenByPosition(
-  node: ElementNode,
+function isNodeAtPosition(
+  node: ElementNode | ElementText | TextNode,
   x: number,
   y: number,
-): ElementNode[] {
-  const result: ElementNode[] = [];
-  const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
+  precision: number,
+): node is ElementNode {
+  if (!isElementNode(node)) {
+    return false;
+  }
 
+  return (
+    node.alpha !== 0 &&
+    !node.skipFocus &&
+    testCollision(
+      x,
+      y,
+      ((node.lng.absX as number) || 0) * precision,
+      ((node.lng.absY as number) || 0) * precision,
+      (node.width || 0) * precision,
+      (node.height || 0) * precision,
+    )
+  );
+}
+
+function findHighestZIndexNode(nodes: ElementNode[]): ElementNode | undefined {
+  if (nodes.length === 0) {
+    return undefined;
+  }
+
+  if (nodes.length === 1) {
+    return nodes[0];
+  }
+
+  let maxZIndex = -1;
+  let highestNode: ElementNode | undefined = undefined;
+
+  for (const node of nodes) {
+    const zIndex = node.zIndex ?? -1;
+    if (zIndex >= maxZIndex) {
+      maxZIndex = zIndex;
+      highestNode = node;
+    }
+  }
+
+  return highestNode;
+}
+
+function getChildrenByPosition<TElement extends ElementNode = ElementNode>(
+  node: TElement,
+  x: number,
+  y: number,
+): TElement[] {
+  const result: TElement[] = [];
+  const precision = Config.rendererOptions?.deviceLogicalPixelRatio || 1;
   // Queue for BFS
+
   let queue: (ElementNode | ElementText | TextNode)[] = [node];
 
   while (queue.length > 0) {
     // Process nodes at the current level
-    const currentLevelNodes: ElementNode[] = [];
+    const currentLevelNodes = queue.filter((currentNode) =>
+      isNodeAtPosition(currentNode, x, y, precision),
+    );
 
-    for (const currentNode of queue) {
-      if (
-        isElementNode(currentNode) &&
-        currentNode.alpha !== 0 &&
-        !currentNode.skipFocus &&
-        testCollision(
-          x,
-          y,
-          ((currentNode.lng.absX as number) || 0) * precision,
-          ((currentNode.lng.absY as number) || 0) * precision,
-          (currentNode.width || 0) * precision,
-          (currentNode.height || 0) * precision,
-        )
-      ) {
-        currentLevelNodes.push(currentNode);
-      }
-    }
-
-    const size = currentLevelNodes.length;
-    if (size === 0) {
+    if (currentLevelNodes.length === 0) {
       break;
     }
 
-    let highestZIndexNode = null;
-    if (size === 1) {
-      highestZIndexNode = currentLevelNodes[0];
-    } else {
-      let maxZIndex = -1;
+    const highestZIndexNode = findHighestZIndexNode(currentLevelNodes);
 
-      for (const node of currentLevelNodes) {
-        const zIndex = node.zIndex ?? -1;
-        if (zIndex > maxZIndex) {
-          maxZIndex = zIndex;
-          highestZIndexNode = node;
-        } else if (zIndex === maxZIndex) {
-          highestZIndexNode = node;
-        }
-      }
+    if (!highestZIndexNode || isTextNode(highestZIndexNode)) {
+      break;
     }
 
-    if (highestZIndexNode && !isTextNode(highestZIndexNode)) {
-      result.push(highestZIndexNode);
-      queue = highestZIndexNode.children;
-    } else {
-      queue = [];
-    }
+    result.push(highestZIndexNode as TElement);
+    queue = highestZIndexNode.children;
   }
 
   return result;
 }
 
-export function useMouse(
-  myApp: ElementNode = rootNode,
+export function useMouse<TApp extends ElementNode = ElementNode>(
+  myApp: TApp = rootNode as TApp,
   throttleBy: number = 100,
+  options?: UseMouseOptions,
 ): void {
   const pos = useMousePosition();
   const scheduled = createScheduled((fn) => throttle(fn, throttleBy));
+  let previousElement: ElementNode | null = null;
+  const customStates = options?.customStates;
+  const handleClick = createHandleClick(myApp, customStates);
+
   makeEventListener(window, 'wheel', handleScroll);
   makeEventListener(window, 'click', handleClick);
   createEffect(() => {
     if (scheduled()) {
       const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
-        (el) => el.focus || el.onFocus || el.onEnter,
+        (el) => !!(el.focus || el.onFocus || el.onEnter),
       );
 
       if (result.length) {
-        let activeElm = result[result.length - 1];
+        let activeElm: ElementNode | undefined = result[result.length - 1];
 
         while (activeElm) {
           const elmParent = activeElm.parent;
           if (elmParent?.forwardStates) {
-            activeElm = activeElm.parent;
+            activeElm = elmParent;
           } else {
             break;
           }
         }
 
+        if (!activeElm) {
+          return;
+        }
+
         // Update Row & Column Selected property
-        const activeElmParent = activeElm?.parent;
-        if (activeElm && activeElmParent?.selected !== undefined) {
+        const activeElmParent = activeElm.parent;
+        if (activeElmParent?.selected !== undefined) {
           activeElmParent.selected =
             activeElmParent.children.indexOf(activeElm);
         }
 
-        activeElm?.setFocus();
+        const hoverState = customStates?.hoverState;
+
+        if (previousElement && previousElement !== activeElm && hoverState) {
+          removeCustomStateFromElement(previousElement, hoverState);
+        }
+
+        if (hoverState) {
+          addCustomStateToElement(activeElm, hoverState);
+        } else {
+          activeElm.setFocus();
+        }
+
+        previousElement = activeElm;
+      } else if (previousElement && customStates?.hoverState) {
+        removeCustomStateFromElement(previousElement, customStates.hoverState);
+        previousElement = null;
       }
     }
   });
