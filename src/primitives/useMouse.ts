@@ -59,7 +59,7 @@ export function hasCustomState(
   element: RenderableNode,
   state: CustomState,
 ): boolean {
-  return element.states.has(state);
+  return element.states?.has(state);
 }
 
 function createKeyboardEvent(
