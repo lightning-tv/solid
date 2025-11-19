@@ -15,7 +15,7 @@ import { createEffect } from 'solid-js';
 
 type CustomState = `$${string}`;
 
-type StateableElement = ElementNode | ElementText | TextNode;
+type RenderableNode = ElementNode | ElementText | TextNode;
 
 interface MouseStateOptions {
   hoverState: CustomState;
@@ -42,21 +42,21 @@ declare module '@lightningtv/core' {
 const DEFAULT_PRESSED_STATE_DURATION = 150;
 
 export function addCustomStateToElement(
-  element: StateableElement,
+  element: RenderableNode,
   state: CustomState,
 ): void {
   element.states?.add(state);
 }
 
 export function removeCustomStateFromElement(
-  element: StateableElement,
+  element: RenderableNode,
   state: CustomState,
 ): void {
   element.states?.remove(state);
 }
 
 export function hasCustomState(
-  element: StateableElement,
+  element: RenderableNode,
   state: CustomState,
 ): boolean {
   return element.states.has(state);
