@@ -11,7 +11,7 @@ import {
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
-import { createEffect } from 'solid-js';
+import { createEffect, getOwner, runWithOwner } from 'solid-js';
 
 type CustomState = `$${string}`;
 
@@ -52,7 +52,7 @@ export function removeCustomStateFromElement(
   element: RenderableNode,
   state: CustomState,
 ): void {
-  element.states?.remove(state);
+  element?.states?.remove(state);
 }
 
 export function hasCustomState(
@@ -181,7 +181,7 @@ function handleElementClick(
   e: MouseEvent,
   customStates?: MouseStateOptions,
 ): void {
-  if (customStates) {
+  if (customStates?.pressedState) {
     applyPressedState(
       clickedElement,
       customStates.pressedState,
@@ -192,19 +192,20 @@ function handleElementClick(
   if (isFunc(clickedElement.onMouseClick)) {
     clickedElement.onMouseClick(e, clickedElement);
     return;
-  }
-
-  if (customStates && isFunc(clickedElement.onEnter)) {
+  } else if (isFunc(clickedElement.onEnter)) {
     clickedElement.onEnter();
     return;
   }
 
-  document.dispatchEvent(createKeyboardEvent('Enter', 13));
-  setTimeout(
-    () =>
-      document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
-    1,
-  );
+  clickedElement.setFocus();
+  setTimeout(() => {
+    document.dispatchEvent(createKeyboardEvent('Enter', 13));
+    setTimeout(
+      () =>
+        document.body.dispatchEvent(createKeyboardEvent('Enter', 13, 'keyup')),
+      1,
+    );
+  }, 1);
 }
 
 function createHandleClick<TApp extends ElementNode>(
@@ -330,14 +331,26 @@ export function useMouse<TApp extends ElementNode = ElementNode>(
   const scheduled = createScheduled((fn) => throttle(fn, throttleBy));
   let previousElement: ElementNode | null = null;
   const customStates = options?.customStates;
+  const hoverState = customStates?.hoverState;
   const handleClick = createHandleClick(myApp, customStates);
+  const owner = getOwner();
+  const handleClickContext = (e: MouseEvent) => {
+    runWithOwner(owner, () => handleClick(e));
+  };
 
   makeEventListener(window, 'wheel', handleScroll);
-  makeEventListener(window, 'click', handleClick);
+  makeEventListener(window, 'click', handleClickContext);
   createEffect(() => {
     if (scheduled()) {
       const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
-        (el) => !!(el.focus || el.onFocus || el.onEnter),
+        (el) =>
+          !!(
+            el.onEnter ||
+            el.onMouseClick ||
+            el.onFocus ||
+            el[Config.focusStateKey] ||
+            (hoverState ? el[hoverState] : false)
+          ),
       );
 
       if (result.length) {
@@ -363,8 +376,6 @@ export function useMouse<TApp extends ElementNode = ElementNode>(
             activeElmParent.children.indexOf(activeElm);
         }
 
-        const hoverState = customStates?.hoverState;
-
         if (previousElement && previousElement !== activeElm && hoverState) {
           removeCustomStateFromElement(previousElement, hoverState);
         }
@@ -376,8 +387,8 @@ export function useMouse<TApp extends ElementNode = ElementNode>(
         }
 
         previousElement = activeElm;
-      } else if (previousElement && customStates?.hoverState) {
-        removeCustomStateFromElement(previousElement, customStates.hoverState);
+      } else if (previousElement && hoverState) {
+        removeCustomStateFromElement(previousElement, hoverState);
         previousElement = null;
       }
     }
