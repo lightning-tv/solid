@@ -21,6 +21,7 @@ export * from './KeepAlive.jsx';
 export * from './VirtualGrid.jsx';
 export * from './Virtual.jsx';
 export * from './utils/withScrolling.js';
+export * from './createTag.jsx';
 export {
   type AnyFunction,
   chainFunctions,
