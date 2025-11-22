@@ -11,7 +11,7 @@ import { onCleanup } from 'solid-js';
 const App = () => {
   const DramaTag = createTag(
     <View color={'#ff0000ff'} borderRadius={8} display="flex" padding={8}>
-      <Text style={watchIconTextStyle}>Drama</Text>
+      <Text>Drama</Text>
     </View>,
   );
 
@@ -23,7 +23,7 @@ const App = () => {
       padding={8}
       effects={{ rounded: { radius: [10, 0, 10, 0] } }}
     >
-      <Text style={watchIconTextStyle} color={'#000'} fontWeight={400}>
+      <Text color={'#000'} fontWeight={400}>
         New Episode
       </Text>
     </View>,
