@@ -1,13 +1,14 @@
 import { defineConfig } from 'vitest/config';
-import solidPlugin from 'vite-plugin-solid';
+import { playwright } from '@vitest/browser-playwright';
+import solid from 'vite-plugin-solid';
 
 export default defineConfig(({ mode }) => ({
   define: {
-    __DEV__: false,
+    __DEV__: true,
     LIGHTNING_DOM_RENDERING: true,
   },
   plugins: [
-    solidPlugin({
+    solid({
       hot: false,
       solid: {
         moduleName: '@lightningtv/solid',
@@ -17,10 +18,17 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
   test: {
-    watch: false,
-    isolate: false,
-    passWithNoTests: true,
-    environment: 'jsdom',
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      // https://vitest.dev/guide/browser/playwright
+      instances: [
+        {
+          browser: 'chromium',
+          headless: false,
+        },
+      ],
+    },
   },
   resolve: {
     conditions: ['@lightningtv/source', 'browser', 'development'],

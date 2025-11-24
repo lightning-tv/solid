@@ -42,7 +42,8 @@
     "watch": "tsc -w",
     "prepare": "husky",
     "prepack": "npm run build",
-    "release": "release-it --only-version"
+    "release": "release-it --only-version",
+    "test:browser": "vitest --config=vitest.browser.config.ts"
   },
   "keywords": [
     "lightning",
@@ -54,8 +55,8 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningjs/renderer": "3.0.0-beta15",
-    "@lightningtv/core": "^3.0.0-19",
+    "@lightningjs/renderer": "3.0.0-beta16",
+    "@lightningtv/core": "3.0.0-20",
     "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/keyed": "^1.5.2",
@@ -66,8 +67,10 @@
   "devDependencies": {
     "@eslint/js": "^9.16.0",
     "@solid-devtools/debugger": "^0.27.0",
+    "@solidjs/testing-library": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
+    "@vitest/browser-playwright": "^4.0.9",
     "eslint": "^9.16.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -80,7 +83,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.17.0",
     "vite-plugin-solid": "^2.11.6",
-    "vitest": "^3.1.2"
+    "vitest": "^4.0.9"
   },
   "lint-staged": {
     "*.ts": [

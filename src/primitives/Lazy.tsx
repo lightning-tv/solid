@@ -9,6 +9,7 @@ type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'
   delay?: number;
   sync?: boolean;
   eagerLoad?: boolean;
+  noRefocus?: boolean;
   children: (item: s.Accessor<T[number]>, index: number) => s.JSX.Element;
 };
 
@@ -21,6 +22,7 @@ function createLazy<T>(
   const [offset, setOffset] = s.createSignal<number>(props.sync ? props.upCount : 0);
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   let viewRef!: lngp.NavigableElement;
+  let itemLength: number = 0;
 
   const buffer = s.createMemo(() => {
     if (typeof props.buffer === 'number') {
@@ -55,9 +57,19 @@ function createLazy<T>(
     });
   }
 
-  const items: s.Accessor<T[]> = s.createMemo(() => (
-    Array.isArray(props.each) ? props.each.slice(0, offset()) : [])
-  );
+  const items: s.Accessor<T[]> = s.createMemo(() => {
+    if (Array.isArray(props.each)) {
+      if (itemLength != props.each.length) {
+        itemLength = props.each.length;
+        if (viewRef && !viewRef.noRefocus && lng.hasFocus(viewRef)) {
+          queueMicrotask(viewRef.setFocus);
+        }
+      }
+      return props.each.slice(0, offset());
+    }
+    itemLength = 0;
+    return [];
+  });
 
   function lazyScrollToIndex(this: lngp.NavigableElement, index: number) {
     setOffset(Math.max(index, 0) + buffer())

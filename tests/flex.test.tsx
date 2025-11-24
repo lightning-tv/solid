@@ -2,7 +2,7 @@ import * as v from 'vitest'
 import * as s from 'solid-js'
 import * as lng from '@lightningtv/solid'
 
-import {renderer} from './setup.js'
+import {renderer, waitForUpdate} from './setup.js'
 
 v.test('Flex with swapping parents', async () => {
 
@@ -10,7 +10,7 @@ v.test('Flex with swapping parents', async () => {
 
   const X = 100
 
-  const one = <view width={X} height={X} />
+  const one = () => <view width={X} height={X} />
 
   let aContainer!: lng.ElementNode
   let bContainer!: lng.ElementNode
@@ -19,17 +19,17 @@ v.test('Flex with swapping parents', async () => {
 
   const dispose = renderer.render(() => <>
     <view ref={aContainer} display='flex'>
-      {condition() && one}
+      {condition() && one()}
       <view ref={aTwo} width={X} height={X} />
     </view>
     <view ref={bContainer} display='flex' y={X}>
-      {!condition() && one}
+      {!condition() && one()}
       <view ref={bTwo} width={X} height={X} />
     </view>
   </>)
 
-  await Promise.resolve()
-
+  await waitForUpdate();
+  v.assert.equal(aTwo.width, X)
   v.assert.equal(aTwo.x, X)
   v.assert.equal(bTwo.x, 0)
   v.assert.equal(aContainer.width, X*2)
@@ -40,6 +40,7 @@ v.test('Flex with swapping parents', async () => {
   setCondition(false)
   await Promise.resolve()
 
+  await waitForUpdate();
   v.assert.equal(aTwo.x, 0)
   v.assert.equal(bTwo.x, X)
   v.assert.equal(aContainer.width, X)
@@ -50,6 +51,7 @@ v.test('Flex with swapping parents', async () => {
   setCondition(true)
   await Promise.resolve()
 
+  await waitForUpdate();
   v.assert.equal(aTwo.x, X)
   v.assert.equal(bTwo.x, 0)
   v.assert.equal(aContainer.width, X*2)

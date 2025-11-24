@@ -21,6 +21,7 @@ export * from './KeepAlive.jsx';
 export * from './VirtualGrid.jsx';
 export * from './Virtual.jsx';
 export * from './utils/withScrolling.js';
+export * from './createTag.jsx';
 export {
   type AnyFunction,
   chainFunctions,
@@ -28,6 +29,7 @@ export {
 } from './utils/chainFunctions.js';
 export * from './utils/handleNavigation.js';
 export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
+export { createBlurredImage } from './utils/createBlurredImage.js';
 
 export type * from './types.js';
 export type { KeyHandler } from '@lightningtv/core/focusManager';

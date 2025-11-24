@@ -29,6 +29,8 @@
   - [WebOs/LG](/deploy/lg.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
+  - [createBlurredImage](/primitives/createBlurredImage.md)
+  - [createTag](/primitives/createTag.md)
   - [Dynamic](/primitives/dynamic.md)
   - [Focus Manager](/primitives/useFocusManager.md)
   - [Focus Stack](/primitives/createFocusStack.md)
