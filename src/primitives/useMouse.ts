@@ -20,7 +20,6 @@ type RenderableNode = ElementNode | ElementText | TextNode;
 interface MouseStateOptions {
   hoverState: CustomState;
   pressedState: CustomState;
-  pressedStateDuration?: number;
 }
 
 type UseMouseOptions =
@@ -37,8 +36,6 @@ declare module '@lightningtv/core' {
     ) => void;
   }
 }
-
-const DEFAULT_PRESSED_STATE_DURATION = 150;
 
 export function addCustomStateToElement(
   element: RenderableNode,
@@ -167,25 +164,22 @@ function findElementByActiveElement(e: MouseEvent): ElementNode | null {
 function applyPressedState(
   element: ElementNode,
   pressedState: CustomState,
-  pressedStateDuration: number = DEFAULT_PRESSED_STATE_DURATION,
 ): void {
   addCustomStateToElement(element, pressedState);
-  setTimeout(() => {
-    removeCustomStateFromElement(element, pressedState);
-  }, pressedStateDuration);
 }
 
 function handleElementClick(
   clickedElement: ElementNode,
   e: MouseEvent,
   customStates?: MouseStateOptions,
+  pressedElementRef?: { current: ElementNode | null },
 ): void {
-  if (customStates?.pressedState) {
-    applyPressedState(
-      clickedElement,
+  if (customStates?.pressedState && pressedElementRef?.current) {
+    removeCustomStateFromElement(
+      pressedElementRef.current,
       customStates.pressedState,
-      customStates.pressedStateDuration,
     );
+    pressedElementRef.current = null;
   }
 
   if (isFunc(clickedElement.onMouseClick)) {
@@ -210,6 +204,7 @@ function handleElementClick(
 function createHandleClick<TApp extends ElementNode>(
   myApp: TApp,
   customStates?: MouseStateOptions,
+  pressedElementRef?: { current: ElementNode | null },
 ) {
   return (e: MouseEvent): void => {
     const clickedElement = customStates
@@ -225,7 +220,35 @@ function createHandleClick<TApp extends ElementNode>(
       return;
     }
 
-    handleElementClick(clickedElement, e, customStates);
+    handleElementClick(clickedElement, e, customStates, pressedElementRef);
+  };
+}
+
+function createHandleMouseDown<TApp extends ElementNode>(
+  myApp: TApp,
+  customStates?: MouseStateOptions,
+  pressedElementRef?: { current: ElementNode | null },
+) {
+  return (e: MouseEvent): void => {
+    if (!customStates) {
+      return;
+    }
+
+    const pressedElement = findElementWithCustomState(
+      myApp,
+      e.clientX,
+      e.clientY,
+      customStates.hoverState,
+    );
+
+    if (!pressedElement) {
+      return;
+    }
+
+    applyPressedState(pressedElement, customStates.pressedState);
+    if (pressedElementRef) {
+      pressedElementRef.current = pressedElement;
+    }
   };
 }
 
@@ -329,16 +352,26 @@ export function useMouse<TApp extends ElementNode = ElementNode>(
   const pos = useMousePosition();
   const scheduled = createScheduled((fn) => throttle(fn, throttleBy));
   let previousElement: ElementNode | null = null;
+  const pressedElementRef: { current: ElementNode | null } = { current: null };
   const customStates = options?.customStates;
   const hoverState = customStates?.hoverState;
-  const handleClick = createHandleClick(myApp, customStates);
+  const handleClick = createHandleClick(myApp, customStates, pressedElementRef);
+  const handleMouseDown = createHandleMouseDown(
+    myApp,
+    customStates,
+    pressedElementRef,
+  );
   const owner = getOwner();
   const handleClickContext = (e: MouseEvent) => {
     runWithOwner(owner, () => handleClick(e));
   };
+  const handleMouseDownContext = (e: MouseEvent) => {
+    runWithOwner(owner, () => handleMouseDown(e));
+  };
 
   makeEventListener(window, 'wheel', handleScroll);
   makeEventListener(window, 'click', handleClickContext);
+  makeEventListener(window, 'mousedown', handleMouseDownContext);
   createEffect(() => {
     if (scheduled()) {
       const result = getChildrenByPosition(myApp, pos.x, pos.y).filter(
