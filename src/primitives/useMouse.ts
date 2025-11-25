@@ -29,7 +29,6 @@ type UseMouseOptions =
 
 declare module '@lightningtv/core' {
   interface ElementNode {
-    onEnter?: () => void;
     /** function to be called on mouse click */
     onMouseClick?: (
       this: ElementNode,
