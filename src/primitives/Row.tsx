@@ -25,6 +25,29 @@ function scrollToIndex(this: ElementNode, index: number) {
   this.children[index]?.setFocus();
 }
 
+function isInNonScrollableZone(
+  this: ElementNode,
+  element?: ElementNode,
+): boolean {
+  const scroll = this.scroll;
+  if (scroll !== 'bounded') {
+    return false;
+  }
+
+  const upCount = (this.upCount || 6) as number;
+  const totalItems = this.children.length;
+  const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
+
+  if (element) {
+    const elementIndex = this.children.indexOf(element);
+    if (elementIndex === -1) return false;
+    return elementIndex >= nonScrollableZoneStart;
+  }
+
+  const selected = this.selected ?? 0;
+  return selected >= nonScrollableZoneStart;
+}
+
 const onLeft = handleNavigation('left');
 const onRight = handleNavigation('right');
 
@@ -37,15 +60,16 @@ export const Row: Component<RowProps> = (props) => {
       onRight={/* @once */ chainFunctions(props.onRight, onRight)}
       forwardFocus={navigableForwardFocus}
       scrollToIndex={scrollToIndex}
+      isInNonScrollableZone={isInNonScrollableZone}
       onLayout={
         /* @once */
         props.selected ? chainFunctions(props.onLayout, scrollRow) : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
-          props.onSelectedChanged,
-          props.scroll !== 'none' ? scrollRow : undefined,
-        )
+        props.onSelectedChanged,
+        props.scroll !== 'none' ? scrollRow : undefined,
+      )
       }
       style={/* @once */ combineStyles(props.style, RowStyles)}
     />

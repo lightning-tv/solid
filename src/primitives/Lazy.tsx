@@ -1,6 +1,6 @@
-import * as s from 'solid-js';
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
+import * as s from 'solid-js';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
@@ -27,7 +27,13 @@ function createLazy<T>(
       return props.buffer;
     }
     const scroll = props.scroll || props.style?.scroll;
-    if (!scroll || scroll === 'auto' || scroll === 'always') return props.upCount + 1;
+    if (
+      !scroll ||
+      scroll === 'auto' ||
+      scroll === 'always' ||
+      scroll === 'bounded'
+    )
+      return props.upCount + 1;
     if (scroll === 'center') return Math.ceil(props.upCount / 2) + 1;
     return 2;
   });
@@ -64,6 +70,32 @@ function createLazy<T>(
     queueMicrotask(() => viewRef.scrollToIndex(index));
   }
 
+  function isInNonScrollableZone(
+    this: lngp.NavigableElement,
+    element?: lng.ElementNode,
+  ): boolean {
+    if (!viewRef) {
+      return false;
+    }
+    const scroll = props.scroll || viewRef.scroll;
+    if (scroll !== 'bounded') {
+      return false;
+    }
+    const upCount = props.upCount;
+    const totalItems = props.each ? props.each.length : 0;
+    if (totalItems === 0) {
+      return false;
+    }
+    const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
+    if (element) {
+      const elementIndex = viewRef.children.indexOf(element);
+      if (elementIndex === -1) return false;
+      return elementIndex >= nonScrollableZoneStart;
+    }
+    const selected = viewRef.selected ?? 0;
+    return selected >= nonScrollableZoneStart;
+  }
+
   const updateOffset = (_event: KeyboardEvent, container: lng.ElementNode) => {
     const maxOffset = props.each ? props.each.length : 0;
     const selected = container.selected || 0;
@@ -93,8 +125,10 @@ function createLazy<T>(
     <lng.Dynamic
       {...props}
       component={component}
+      upCount={props.upCount}
       {/* @once */ ...handler}
       lazyScrollToIndex={lazyScrollToIndex}
+      isInNonScrollableZone={isInNonScrollableZone}
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)} >
       <s.Index each={items()} children={props.children} />
     </lng.Dynamic>
