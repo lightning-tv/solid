@@ -44,7 +44,7 @@ const isNotShown = (node: ElementNode | ElementText) => {
 /**
  * Checks if the selected index is in the non-scrollable zone (last upCount items).
  */
-export function isInNonScrollableZone(componentRef: ElementNode): boolean {
+export function checkIsInNonScrollableZone(componentRef: ElementNode): boolean {
   const totalItems = componentRef.children.length;
   const upCount = componentRef.upCount || 6;
   const selected = componentRef.selected || 0;

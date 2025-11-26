@@ -1,7 +1,7 @@
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
 import * as s from 'solid-js';
-import { isInNonScrollableZone as checkIsInNonScrollableZone } from './utils/withScrolling.js';
+import { checkIsInNonScrollableZone } from './utils/withScrolling.js';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
