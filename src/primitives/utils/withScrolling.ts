@@ -41,6 +41,17 @@ const isNotShown = (node: ElementNode | ElementText) => {
   Always scroll moves the list every time
 */
 
+/**
+ * Checks if the selected index is in the non-scrollable zone (last upCount items).
+ */
+export function isInNonScrollableZone(componentRef: ElementNode): boolean {
+  const totalItems = componentRef.children.length;
+  const upCount = componentRef.upCount || 6;
+  const selected = componentRef.selected || 0;
+  const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
+  return selected >= nonScrollableZoneStart;
+}
+
 /** @deprecated Use {@link scrollRow} or {@link scrollColumn} */
 export function withScrolling(isRow: boolean): Scroller {
   const dimension = isRow ? 'width' : 'height';

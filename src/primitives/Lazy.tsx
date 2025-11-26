@@ -1,6 +1,7 @@
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
 import * as s from 'solid-js';
+import { isInNonScrollableZone as checkIsInNonScrollableZone } from './utils/withScrolling.js';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
@@ -70,32 +71,6 @@ function createLazy<T>(
     queueMicrotask(() => viewRef.scrollToIndex(index));
   }
 
-  function isInNonScrollableZone(
-    this: lngp.NavigableElement,
-    element?: lng.ElementNode,
-  ): boolean {
-    if (!viewRef) {
-      return false;
-    }
-    const scroll = props.scroll || viewRef.scroll;
-    if (scroll !== 'bounded') {
-      return false;
-    }
-    const upCount = props.upCount;
-    const totalItems = props.each ? props.each.length : 0;
-    if (totalItems === 0) {
-      return false;
-    }
-    const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
-    if (element) {
-      const elementIndex = viewRef.children.indexOf(element);
-      if (elementIndex === -1) return false;
-      return elementIndex >= nonScrollableZoneStart;
-    }
-    const selected = viewRef.selected ?? 0;
-    return selected >= nonScrollableZoneStart;
-  }
-
   const updateOffset = (_event: KeyboardEvent, container: lng.ElementNode) => {
     const maxOffset = props.each ? props.each.length : 0;
     const selected = container.selected || 0;
@@ -120,6 +95,10 @@ function createLazy<T>(
   };
 
   const handler = keyHandler(updateOffset);
+
+  const isInNonScrollableZone = (container: lng.ElementNode) => {
+    return checkIsInNonScrollableZone(container);
+  };
 
   return (
     <lng.Dynamic
