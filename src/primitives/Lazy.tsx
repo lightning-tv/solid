@@ -1,6 +1,7 @@
-import * as s from 'solid-js';
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
+import * as s from 'solid-js';
+import { checkIsInNonScrollableZone } from './utils/withScrolling.js';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
@@ -29,7 +30,13 @@ function createLazy<T>(
       return props.buffer;
     }
     const scroll = props.scroll || props.style?.scroll;
-    if (!scroll || scroll === 'auto' || scroll === 'always') return props.upCount + 1;
+    if (
+      !scroll ||
+      scroll === 'auto' ||
+      scroll === 'always' ||
+      scroll === 'bounded'
+    )
+      return props.upCount + 1;
     if (scroll === 'center') return Math.ceil(props.upCount / 2) + 1;
     return 2;
   });
@@ -101,12 +108,18 @@ function createLazy<T>(
 
   const handler = keyHandler(updateOffset);
 
+  const isInNonScrollableZone = (container: lng.ElementNode) => {
+    return checkIsInNonScrollableZone(container);
+  };
+
   return (
     <lng.Dynamic
       {...props}
       component={component}
+      upCount={props.upCount}
       {/* @once */ ...handler}
       lazyScrollToIndex={lazyScrollToIndex}
+      isInNonScrollableZone={isInNonScrollableZone}
       ref={lngp.chainRefs(el => { viewRef = el as lngp.NavigableElement; }, props.ref)} >
       <s.Index each={items()} children={props.children} />
     </lng.Dynamic>
