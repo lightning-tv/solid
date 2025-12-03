@@ -5,7 +5,7 @@ export default defineConfig(({ mode }) => ({
   define: {
     __DEV__: false,
     LIGHTNING_DOM_RENDERING: true,
-    'import.meta.env.VITE_LIGHTNING_DOM_RENDERING': '"true"',
+    'import.meta.env.VITE_LIGHTNING_DOM_RENDERING': true,
   },
   plugins: [
     solidPlugin({
