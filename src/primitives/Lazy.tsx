@@ -1,6 +1,6 @@
-import * as s from 'solid-js';
 import * as lng from '@lightningtv/solid';
 import * as lngp from '@lightningtv/solid/primitives';
+import * as s from 'solid-js';
 
 type LazyProps<T extends readonly any[]> = lng.NewOmit<lng.NodeProps, 'children'> & {
   each: T | undefined | null | false;
@@ -29,7 +29,13 @@ function createLazy<T>(
       return props.buffer;
     }
     const scroll = props.scroll || props.style?.scroll;
-    if (!scroll || scroll === 'auto' || scroll === 'always') return props.upCount + 1;
+    if (
+      !scroll ||
+      scroll === 'auto' ||
+      scroll === 'always' ||
+      scroll === 'bounded'
+    )
+      return props.upCount + 1;
     if (scroll === 'center') return Math.ceil(props.upCount / 2) + 1;
     return 2;
   });

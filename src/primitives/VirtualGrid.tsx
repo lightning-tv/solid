@@ -28,6 +28,7 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   const bufferSize = () => props.buffer ?? 2;
   const [ cursor, setCursor ] = s.createSignal(props.selected ?? 0);
   const items = s.createMemo(() => props.each || []);
+  const itemCount = () => items().length;
   const itemsPerRow = () => props.columns;
   const numberOfRows = () => props.rows ?? 1;
   const totalVisibleItems = () => itemsPerRow() * numberOfRows();
@@ -140,7 +141,10 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
 
     if (active instanceof lng.ElementNode) {
       viewRef.selected = viewRef.children.indexOf(active);
-      active.setFocus();
+      if (lng.hasFocus(viewRef)) {
+        // force focus as scrollToIndex is manually called
+        active.setFocus();
+      }
       chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
     } else {
       setCursor(selected);
@@ -151,7 +155,9 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
         active = viewRef.children.find(x => x.item === item);
         if (active instanceof lng.ElementNode) {
           viewRef.selected = viewRef.children.indexOf(active);
-          active.setFocus();
+          if (lng.hasFocus(viewRef)) {
+            active.setFocus();
+          }
           chainedOnSelectedChanged.call(viewRef, viewRef.selected, viewRef, active, lastSelected);
         }
       });
@@ -165,13 +171,28 @@ export function VirtualGrid<T>(props: VirtualGridProps<T>): s.JSX.Element {
   s.createEffect(s.on([() => props.selected, items], updateSelected));
 
   s.createEffect(
-    s.on(items, () => {
+    s.on(items, (gridItems, _prevGridItems, prevSize) => {
       if (!viewRef) return;
+
       if (cachedSelected !== undefined) {
+        // This occurs when VG is reloaded and user wants to select a paginated item
         updateSelected([cachedSelected]);
-        return;
+        return gridItems.length;
       }
-      setSlice(items().slice(start(), end()));
+
+      if (gridItems.length === 0) {
+        setCursor(0);
+        cachedSelected = undefined;
+        setSlice([]);
+      } else if (cursor() >= itemCount()) {
+        updateSelected([Math.max(0, itemCount() - 1)]);
+      } else if (prevSize === 0) {
+        updateSelected([0]);
+      } else {
+        setSlice(items().slice(start(), end()));
+      }
+
+      return gridItems.length;
     }, { defer: true })
   );
 

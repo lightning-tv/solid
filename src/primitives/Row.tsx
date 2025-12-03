@@ -43,9 +43,9 @@ export const Row: Component<RowProps> = (props) => {
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
-          props.onSelectedChanged,
-          props.scroll !== 'none' ? scrollRow : undefined,
-        )
+        props.onSelectedChanged,
+        props.scroll !== 'none' ? scrollRow : undefined,
+      )
       }
       style={/* @once */ combineStyles(props.style, RowStyles)}
     />
