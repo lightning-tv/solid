@@ -6,7 +6,7 @@ import {
   navigableForwardFocus
 } from './utils/handleNavigation.js';
 import type { RowProps } from './types.js';
-import { scrollRow, checkIsInNonScrollableZone } from './utils/withScrolling.js';
+import { scrollRow } from './utils/withScrolling.js';
 
 const RowStyles: NodeStyles = {
   display: 'flex',
@@ -28,10 +28,6 @@ function scrollToIndex(this: ElementNode, index: number) {
 const onLeft = handleNavigation('left');
 const onRight = handleNavigation('right');
 
-const isInNonScrollableZone = (container: ElementNode) => {
-  return checkIsInNonScrollableZone(container);
-};
-
 export const Row: Component<RowProps> = (props) => {
   return (
     <view
@@ -41,7 +37,6 @@ export const Row: Component<RowProps> = (props) => {
       onRight={/* @once */ chainFunctions(props.onRight, onRight)}
       forwardFocus={navigableForwardFocus}
       scrollToIndex={scrollToIndex}
-      isInNonScrollableZone={isInNonScrollableZone}
       onLayout={
         /* @once */
         props.selected ? chainFunctions(props.onLayout, scrollRow) : props.onLayout

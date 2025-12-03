@@ -44,7 +44,9 @@ const isNotShown = (node: ElementNode | ElementText) => {
 /**
  * Checks if the selected index is in the non-scrollable zone (last upCount items).
  */
-export function checkIsInNonScrollableZone(componentRef: ElementNode): boolean {
+export function checkIsInNonScrollableZone(
+  componentRef: ScrollableElement,
+): boolean {
   const totalItems = componentRef.children.length;
   const upCount = componentRef.upCount || 6;
   const selected = componentRef.selected || 0;
@@ -142,16 +144,15 @@ export function withScrolling(isRow: boolean): Scroller {
     // Default nextPosition to align with the selected position and offset
     let nextPosition = rootPosition;
 
-    const totalItems = componentRef.children.length;
-    const upCount = componentRef.upCount || 6;
-    const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
-
     // Update nextPosition based on scroll type and specific conditions
     if (selectedElement.centerScroll) {
       nextPosition = -selectedPosition + (screenSize - selectedSizeScaled) / 2;
     } else if (scroll === 'always') {
       nextPosition = -selectedPosition + offset;
     } else if (scroll === 'bounded') {
+      const totalItems = componentRef.children.length;
+      const upCount = componentRef.upCount || 6;
+      const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
       const isInNonScrollableZone = selected >= nonScrollableZoneStart;
       const isFirstOfNonScrollableZone = selected === nonScrollableZoneStart;
       const isEnteringZone =

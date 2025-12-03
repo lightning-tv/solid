@@ -16,7 +16,6 @@ declare module '@lightningtv/solid' {
    * Announcer-specific properties.
    */
   interface ElementNode {
-    upCount?: number;
     announce?: SpeechType;
     announceContext?: SpeechType;
     title?: SpeechType;
