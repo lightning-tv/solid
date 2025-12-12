@@ -34,8 +34,8 @@ importers:
         specifier: ^2.20.0
         version: 2.20.0
       '@lightningtv/core':
-        specifier: ^2.14.0
-        version: 2.14.0(@lightningjs/renderer@2.20.0)
+        specifier: 2.14.1-1
+        version: 2.14.1-1(@lightningjs/renderer@2.20.0)
       '@solid-devtools/debugger':
         specifier: ^0.28.0
         version: 0.28.1(solid-js@1.9.3)
@@ -448,8 +448,8 @@ packages:
     resolution: {integrity: sha512-Ko71Zs2GxeaXb4fcYK/jWWu2txUtx9v1Yg49LoFNqTUF2aCdINNRlj4l0ghlE8SunQWm3pRn38HUr/kR9wt97A==}
     engines: {node: '>= 20.9.0', npm: '>= 10.0.0', pnpm: '>= 8.9.2'}
 
-  '@lightningtv/core@2.14.0':
-    resolution: {integrity: sha512-o3EA/7HPTnfqSXK2slyCP/2xtAK/My/pvuu4zq4Xn+YgnJHOSQXSa6Cf/Y1Xfz/aPnen7N715s61vpyoUWx3fA==}
+  '@lightningtv/core@2.14.1-1':
+    resolution: {integrity: sha512-3kV3wv1E5S9SU0EXytanp5cSLoaMyaZFH6jRO5U5gPZu8lZMEX50nWtJFED1/V0mjaW7A8EScpxl/6X+uhH6dg==}
     peerDependencies:
       '@lightningjs/renderer': ^2.19.1
 
@@ -2944,7 +2944,7 @@ snapshots:
 
   '@lightningjs/renderer@2.20.0': {}
 
-  '@lightningtv/core@2.14.0(@lightningjs/renderer@2.20.0)':
+  '@lightningtv/core@2.14.1-1(@lightningjs/renderer@2.20.0)':
     dependencies:
       '@lightningjs/renderer': 2.20.0
 
