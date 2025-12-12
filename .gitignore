@@ -5,6 +5,6 @@ dist
 build
 releases
 .tmp
-.env
+.env.local
 # This project uses `pnpm` for package management
 package-lock.json
