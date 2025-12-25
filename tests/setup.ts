@@ -10,6 +10,7 @@ lng.Config.rendererOptions = {
   fontEngines: [CanvasTextRenderer],
   renderEngine: WebGlCoreRenderer,
 };
+lng.Config.domRendererEnabled = true;
 
 globalThis.ResizeObserver = class MockResizeObserver {
   constructor() {}
