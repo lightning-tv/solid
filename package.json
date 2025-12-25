@@ -42,7 +42,7 @@
     "watch": "tsc -w",
     "prepare": "husky",
     "prepack": "npm run build",
-    "release": "release-it --only-version",
+    "release": "release-it",
     "test:browser": "vitest --config=vitest.browser.config.ts"
   },
   "keywords": [
