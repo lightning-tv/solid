@@ -55,6 +55,17 @@ export function browsePreload(props) {
 
 Note that the createMemo will be recalculated when you navigate away as params will change / are reactive. Make sure you don't update your response in those instances or the page will be updated.
 
+### Removing Cached Components
+
+You can manually remove a cached component using the `removeKeepAlive` function. This allows you to clear the cache for a specific route or component programmatically.
+
+```js
+import { removeKeepAlive } from '@lightningtv/solid';
+
+// Remove the cached component with the id 'browse'
+removeKeepAlive('browse');
+```
+
 ## API
 
 ### `<KeepAliveRoute>`
@@ -83,3 +94,13 @@ A component that caches its children. `<KeepAliveRoute>` uses this component int
 | `onRemove`      | `ElementNode['onRemove']`   | Custom `onRemove` transition for the wrapper view. Defaults to `alpha = 0`.                    |
 | `onRender`      | `ElementNode['onRender']`   | Custom `onRender` transition for the wrapper view. Defaults to `alpha = 1`.                    |
 | `transition`    | `ElementNode['transition']` | Custom `transition` for the wrapper view. Defaults to `{ alpha: true }`.                       |
+
+### Functions
+
+#### `removeKeepAlive`
+
+```ts
+function removeKeepAlive(id: string): void;
+```
+
+Manually removes a cached component by its ID.
