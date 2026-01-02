@@ -1,0 +1,13 @@
+{
+  "github": {
+    "release": true
+  },
+  "git": {
+    "commit": true,
+    "tag": true,
+    "push": true
+  },
+  "npm": {
+    "publish": true
+  }
+}

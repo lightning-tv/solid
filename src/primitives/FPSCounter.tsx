@@ -27,6 +27,7 @@ const [fps, setFps] = createSignal(0);
 const [avgFps, setAvgFps] = createSignal(0);
 const [minFps, setMinFps] = createSignal(99);
 const [maxFps, setMaxFps] = createSignal(0);
+const [quads, setQuads] = createSignal(0);
 const [criticalThresholdSignal, setCriticalThresholdSignal] = createSignal('');
 const [targetThresholdSignal, setTargetThresholdSignal] = createSignal('');
 const [renderableMemUsedSignal, setRenderableMemUsedSignal] = createSignal('');
@@ -85,6 +86,10 @@ export function setupFPS(root: any) {
       }
       frameCount++;
     }
+  });
+
+  root.renderer.on('quadsUpdate', (target: RendererMain, quadsData: any) => {
+    setQuads(quadsData.quads);
   });
 }
 
@@ -171,6 +176,15 @@ export const FPSCounter = (props: NodeProps) => {
           </text>
           <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {loadedTexturesSignal().toString()}
+          </text>
+        </view>
+
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
+            quads:
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
+            {quads().toString()}
           </text>
         </view>
       </view>

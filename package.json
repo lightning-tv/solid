@@ -42,7 +42,7 @@
     "watch": "tsc -w",
     "prepare": "husky",
     "prepack": "npm run build",
-    "release": "release-it --only-version",
+    "release": "release-it",
     "test:browser": "vitest --config=vitest.browser.config.ts"
   },
   "keywords": [
@@ -55,18 +55,17 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningjs/renderer": "3.0.0-beta16",
+    "@lightningjs/renderer": "3.0.0-beta18",
     "@lightningtv/core": "3.0.0-20",
     "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
-    "@solid-primitives/keyed": "^1.5.2",
     "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
     "@solid-primitives/scheduled": "^1.4.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
-    "@solid-devtools/debugger": "^0.27.0",
+    "@solid-devtools/debugger": "^0.28.1",
     "@solidjs/testing-library": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
@@ -93,11 +92,14 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
+    "@lightningtv/core": "^2.14.1-1",
     "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },
-  "optionalDependencies": {
-    "@solid-devtools/debugger": "^0.28.0"
+  "peerDependenciesMeta": {
+    "@lightningtv/core": {
+      "optional": false
+    }
   },
   "repository": {
     "type": "git",

@@ -15,10 +15,11 @@ export type Scroller = (
 // Adds properties expected by withScrolling
 export interface ScrollableElement extends ElementNode {
   scrollIndex?: number;
-  scroll?: 'always' | 'none' | 'edge' | 'auto' | 'center';
+  scroll?: 'always' | 'none' | 'edge' | 'auto' | 'center' | 'bounded';
   selected: number;
   offset?: number;
   endOffset?: number;
+  upCount?: number;
   onScrolled?: (
     elm: ScrollableElement,
     offset: number,
@@ -40,7 +41,20 @@ const isNotShown = (node: ElementNode | ElementText) => {
   Always scroll moves the list every time
 */
 
-/** Use {@link scrollRow} or {@link scrollColumn} */
+/**
+ * Checks if the selected index is in the non-scrollable zone (last upCount items).
+ */
+export function checkIsInNonScrollableZone(
+  componentRef: ScrollableElement,
+): boolean {
+  const totalItems = componentRef.children.length;
+  const upCount = componentRef.upCount || 6;
+  const selected = componentRef.selected || 0;
+  const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
+  return selected >= nonScrollableZoneStart;
+}
+
+/** @deprecated Use {@link scrollRow} or {@link scrollColumn} */
 export function withScrolling(isRow: boolean): Scroller {
   const dimension = isRow ? 'width' : 'height';
   const axis = isRow ? 'x' : 'y';
@@ -135,6 +149,35 @@ export function withScrolling(isRow: boolean): Scroller {
       nextPosition = -selectedPosition + (screenSize - selectedSizeScaled) / 2;
     } else if (scroll === 'always') {
       nextPosition = -selectedPosition + offset;
+    } else if (scroll === 'bounded') {
+      const totalItems = componentRef.children.length;
+      const upCount = componentRef.upCount || 6;
+      const nonScrollableZoneStart = Math.max(0, totalItems - upCount);
+      const isInNonScrollableZone = selected >= nonScrollableZoneStart;
+      const isFirstOfNonScrollableZone = selected === nonScrollableZoneStart;
+      const isEnteringZone =
+        isFirstOfNonScrollableZone &&
+        lastSelected !== undefined &&
+        lastSelected < nonScrollableZoneStart;
+
+      if (!isInNonScrollableZone) {
+        nextPosition = -selectedPosition + offset;
+      } else if (isIncrementing) {
+        if (isEnteringZone) {
+          const firstOfZoneElement =
+            componentRef.children[nonScrollableZoneStart];
+          const firstOfZonePosition = firstOfZoneElement?.[axis] ?? 0;
+          nextPosition = firstOfZoneElement
+            ? -firstOfZonePosition + offset
+            : rootPosition;
+        } else {
+          nextPosition = rootPosition;
+        }
+      } else if (isFirstOfNonScrollableZone) {
+        nextPosition = -selectedPosition + offset;
+      } else {
+        nextPosition = rootPosition;
+      }
     } else if (scroll === 'center') {
       const centerPosition =
         -selectedPosition +
@@ -160,7 +203,6 @@ export function withScrolling(isRow: boolean): Scroller {
           nextPosition = rootPosition + selectedSize + gap;
         }
       } else if (isIncrementing) {
-        //nextPosition = -selectedPosition + offset;
         nextPosition = rootPosition - selectedSize - gap;
       } else {
         nextPosition = rootPosition + selectedSize + gap;
@@ -174,7 +216,7 @@ export function withScrolling(isRow: boolean): Scroller {
 
     // Prevent container from moving beyond bounds
     nextPosition =
-      isIncrementing && scroll !== 'always'
+      isIncrementing && scroll !== 'always' && scroll !== 'bounded'
         ? Math.max(nextPosition, maxOffset)
         : Math.min(nextPosition, offset);
 

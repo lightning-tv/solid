@@ -424,9 +424,9 @@ function createVirtual<T>(
   s.createEffect(s.on([() => props.selected, items], updateSelected));
 
   s.createEffect(s.on(items, () => {
-    if (!viewRef || itemCount() === 0) return;
+    if (!viewRef) return;
     if (cursor() >= itemCount()) {
-      setCursor(itemCount() - 1);
+      setCursor(Math.max(0, itemCount() - 1));
     }
     const newState = computeSlice(cursor(), 0, slice());
     setSlice(newState);

@@ -4,7 +4,7 @@ import solidPlugin from 'vite-plugin-solid';
 export default defineConfig(({ mode }) => ({
   define: {
     __DEV__: false,
-    LIGHTNING_DOM_RENDERING: true,
+    VITE_LIGHTNING_DOM_RENDERING: true,
   },
   plugins: [
     solidPlugin({
