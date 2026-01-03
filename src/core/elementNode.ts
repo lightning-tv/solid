@@ -98,6 +98,12 @@ function convertToShader(_node: ElementNode, v: StyleEffects): IRendererShader {
   return renderer.createShader(type, v as IRendererShaderProps);
 }
 
+function getPropertyAlias(name: string) {
+  if (name === 'w') return 'width';
+  if (name === 'h') return 'height';
+  return name;
+}
+
 export const LightningRendererNumberProps = [
   'alpha',
   'color',
@@ -483,7 +489,9 @@ export class ElementNode extends Object {
       this.transition &&
       this.rendered &&
       Config.animationsEnabled &&
-      (this.transition === true || this.transition[name])
+      (this.transition === true ||
+        this.transition[name] ||
+        this.transition[getPropertyAlias(name)])
     ) {
       const animationSettings =
         this.transition === true || this.transition[name] === true
