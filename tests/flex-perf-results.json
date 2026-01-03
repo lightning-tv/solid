@@ -1,0 +1,495 @@
+{
+  "timestamp": "2025-07-04T17:14:36.328Z",
+  "results": [
+    {
+      "id": "Row, FlexStart, NoGrow-3",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 3,
+      "durationMs": 0.24479766666668942,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-5",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 5,
+      "durationMs": 0.09870733333332282,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-10",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 10,
+      "durationMs": 0.03500033333337645,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-15",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 15,
+      "durationMs": 0.01494566666663862,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-20",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 20,
+      "durationMs": 0.016064666666693483,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-50",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 50,
+      "durationMs": 0.03625333333335826,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, NoGrow-100",
+      "scenarioName": "Row, FlexStart, NoGrow",
+      "numChildren": 100,
+      "durationMs": 0.0696376666666841,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-3",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 3,
+      "durationMs": 0.08456633333336565,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-5",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 5,
+      "durationMs": 0.014154333333256849,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-10",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 10,
+      "durationMs": 0.019897999999974065,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-15",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 15,
+      "durationMs": 0.03914366666663227,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-20",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 20,
+      "durationMs": 0.031068333333299353,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-50",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 50,
+      "durationMs": 0.08357366666666621,
+      "containerUpdated": false
+    },
+    {
+      "id": "Column, Center, WithGrow-100",
+      "scenarioName": "Column, Center, WithGrow",
+      "numChildren": 100,
+      "durationMs": 0.1421340000000555,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-3",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 3,
+      "durationMs": 0.02381999999996272,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-5",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 5,
+      "durationMs": 0.011734666666673851,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-10",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 10,
+      "durationMs": 0.022639666666653586,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-15",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 15,
+      "durationMs": 0.05160399999999754,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-20",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 20,
+      "durationMs": 0.05060033333336378,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-50",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 50,
+      "durationMs": 0.11945166666665348,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, SpaceBetween, MixedGrow-100",
+      "scenarioName": "Row, SpaceBetween, MixedGrow",
+      "numChildren": 100,
+      "durationMs": 0.2521686666666862,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, Wrap, FlexStart-3",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 3,
+      "durationMs": 0.05415066666663885,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, Wrap, FlexStart-5",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 5,
+      "durationMs": 0.022094333333332845,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, Wrap, FlexStart-10",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 10,
+      "durationMs": 0.01997066666668464,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, Wrap, FlexStart-15",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 15,
+      "durationMs": 0.018759666666634683,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, Wrap, FlexStart-20",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 20,
+      "durationMs": 0.025255333333348062,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, Wrap, FlexStart-50",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 50,
+      "durationMs": 0.05415866666673234,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, Wrap, FlexStart-100",
+      "scenarioName": "Row, Wrap, FlexStart",
+      "numChildren": 100,
+      "durationMs": 0.10836366666664314,
+      "containerUpdated": true
+    },
+    {
+      "id": "Row, RTL, FlexEnd-3",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 3,
+      "durationMs": 0.007669666666629382,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-5",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 5,
+      "durationMs": 0.00670966666662783,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-10",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 10,
+      "durationMs": 0.010900000000030255,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-15",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 15,
+      "durationMs": 0.016606666666727204,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-20",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 20,
+      "durationMs": 0.01916666666666818,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-50",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 50,
+      "durationMs": 0.05021533333331263,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, RTL, FlexEnd-100",
+      "scenarioName": "Row, RTL, FlexEnd",
+      "numChildren": 100,
+      "durationMs": 0.16159300000000107,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-3",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 3,
+      "durationMs": 0.030483333333336304,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-5",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 5,
+      "durationMs": 0.01072599999997692,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-10",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 10,
+      "durationMs": 0.01293133333338877,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-15",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 15,
+      "durationMs": 0.019508333333305927,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-20",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 20,
+      "durationMs": 0.02293100000004718,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-50",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 50,
+      "durationMs": 0.08106500000000476,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, WithOrder-100",
+      "scenarioName": "Row, WithOrder",
+      "numChildren": 100,
+      "durationMs": 0.1687006666666472,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-3",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 3,
+      "durationMs": 0.03431000000000495,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-5",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 5,
+      "durationMs": 0.016097333333353465,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-10",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 10,
+      "durationMs": 0.008877999999981512,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-15",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 15,
+      "durationMs": 0.013968999999974585,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-20",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 20,
+      "durationMs": 0.015760666666627305,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-50",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 50,
+      "durationMs": 0.036235666666660414,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithMargins-100",
+      "scenarioName": "Row, FlexStart, WithMargins",
+      "numChildren": 100,
+      "durationMs": 0.07032799999994192,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-3",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 3,
+      "durationMs": 0.009205000000027516,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-5",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 5,
+      "durationMs": 0.005585999999993874,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-10",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 10,
+      "durationMs": 0.008997999999981706,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-15",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 15,
+      "durationMs": 0.012427000000002408,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-20",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 20,
+      "durationMs": 0.016192000000008495,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-50",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 50,
+      "durationMs": 0.037464666666664925,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, WithGap-100",
+      "scenarioName": "Row, FlexStart, WithGap",
+      "numChildren": 100,
+      "durationMs": 0.08811900000000605,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-3",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 3,
+      "durationMs": 0.011233666666650302,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-5",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 5,
+      "durationMs": 0.00605566666664951,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-10",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 10,
+      "durationMs": 0.009934666666633044,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-15",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 15,
+      "durationMs": 0.014033999999962058,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-20",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 20,
+      "durationMs": 0.01789666666669139,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-50",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 50,
+      "durationMs": 0.042219666666672616,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignCenter (Cross Axis)-100",
+      "scenarioName": "Row, FlexStart, AlignCenter (Cross Axis)",
+      "numChildren": 100,
+      "durationMs": 0.09061466666670033,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-3",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 3,
+      "durationMs": 0.01054133333335964,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-5",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 5,
+      "durationMs": 0.012765666666647727,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-10",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 10,
+      "durationMs": 0.024440000000026885,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-15",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 15,
+      "durationMs": 0.04534233333333759,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-20",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 20,
+      "durationMs": 0.04019666666666429,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-50",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 50,
+      "durationMs": 0.09621533333332384,
+      "containerUpdated": false
+    },
+    {
+      "id": "Row, FlexStart, AlignSelf (Cross Axis)-100",
+      "scenarioName": "Row, FlexStart, AlignSelf (Cross Axis)",
+      "numChildren": 100,
+      "durationMs": 0.4757013333333286,
+      "containerUpdated": false
+    }
+  ]
+}

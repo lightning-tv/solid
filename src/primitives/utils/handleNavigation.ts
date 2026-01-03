@@ -1,13 +1,6 @@
 import * as s from 'solid-js';
-import * as lng from '@lightningtv/solid';
-import * as lngp from '@lightningtv/solid/primitives';
-
-declare module '@lightningtv/core' {
-  interface ElementNode {
-    /** For children of {@link lngp.NavigableElement}, set to `true` to prevent being selected */
-    skipFocus?: boolean;
-  }
-}
+import * as lng from '../../index.js';
+import * as lngp from '../index.js';
 
 function idxInArray(idx: number, arr: readonly any[]): boolean {
   return idx === 0 || (idx >= 0 && idx < arr.length);

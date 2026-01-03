@@ -3,7 +3,7 @@ import type {
   ElementText,
   INode,
   Styles,
-} from '@lightningtv/core';
+} from '../../core/index.js';
 
 export type Scroller = (
   selected: number | ElementNode,

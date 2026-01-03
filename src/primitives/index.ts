@@ -32,4 +32,4 @@ export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
 export { createBlurredImage } from './utils/createBlurredImage.js';
 
 export type * from './types.js';
-export type { KeyHandler } from '@lightningtv/core/focusManager';
+export type { KeyHandler } from '../core/focusManager.js';

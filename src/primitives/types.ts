@@ -1,5 +1,5 @@
-import type { ElementNode, NodeProps, NodeStyles } from '@lightningtv/solid';
-import type { KeyHandler } from '@lightningtv/core/focusManager';
+import type { ElementNode, NodeProps, NodeStyles } from '../index.js';
+import type { KeyHandler } from '../core/focusManager.js';
 
 export type OnSelectedChanged = (
   this: NavigableElement,

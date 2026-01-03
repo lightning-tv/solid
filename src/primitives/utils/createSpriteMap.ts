@@ -1,4 +1,4 @@
-import { type TextureMap, renderer } from '@lightningtv/core';
+import { type TextureMap, renderer } from '../../core/index.js';
 
 export interface SpriteDef {
   name: string | number;

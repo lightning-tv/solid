@@ -6,21 +6,18 @@
   "exports": {
     ".": {
       "import": {
-        "@lightningtv/source": "./src/index.ts",
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
       }
     },
     "./primitives": {
       "import": {
-        "@lightningtv/source": "./src/primitives/index.ts",
         "types": "./dist/src/primitives/index.d.ts",
         "default": "./dist/src/primitives/index.js"
       }
     },
     "./devtools": {
       "import": {
-        "@lightningtv/source": "./src/devtools/index.ts",
         "types": "./dist/src/devtools/index.d.ts",
         "default": "./dist/src/devtools/index.js"
       }
@@ -56,7 +53,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@lightningjs/renderer": "3.0.0-beta18",
-    "@lightningtv/core": "3.0.0-20",
     "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/list": "^0.1.2",
@@ -92,15 +88,10 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningtv/core": "^2.14.1-1",
     "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },
-  "peerDependenciesMeta": {
-    "@lightningtv/core": {
-      "optional": false
-    }
-  },
+  "peerDependenciesMeta": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lightning-tv/solid.git"

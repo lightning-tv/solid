@@ -6,16 +6,8 @@ import {
   log,
   type ElementText,
   type TextNode,
-} from '@lightningtv/core';
+} from './core/index.js';
 import type { SolidNode, SolidRendererOptions } from './types.js';
-
-declare module '@lightningtv/core' {
-  interface ElementNode {
-    /** @internal for managing series of insertions and deletions */
-    _queueDelete?: number;
-    preserve?: boolean;
-  }
-}
 
 Object.defineProperty(ElementNode.prototype, 'preserve', {
   get(): boolean | undefined {
