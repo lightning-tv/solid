@@ -134,6 +134,7 @@ const updateFocusPath = (
 };
 
 let lastGlobalKeyPressTime = 0;
+let lastInputKey: string | number | undefined;
 
 const propagateKeyPress = (
   e: KeyboardEvent,
@@ -142,8 +143,15 @@ const propagateKeyPress = (
   isUp: boolean = false,
 ): boolean => {
   const currentTime = performance.now();
+  const key = e.key || e.keyCode;
+  const sameKey = lastInputKey === key;
+  lastInputKey = key;
+
   if (!isUp && Config.throttleInput) {
-    if (currentTime - lastGlobalKeyPressTime < Config.throttleInput) {
+    if (
+      sameKey &&
+      currentTime - lastGlobalKeyPressTime < Config.throttleInput
+    ) {
       if (isDev && Config.keyDebug) {
         console.log(
           `Keypress throttled by global Config.throttleInput: ${Config.throttleInput}ms`,
@@ -166,6 +174,7 @@ const propagateKeyPress = (
     // Check throttle for capture phase
     if (elm.throttleInput) {
       if (
+        sameKey &&
         elm._lastAnyKeyPressTime !== undefined &&
         currentTime - elm._lastAnyKeyPressTime < elm.throttleInput
       ) {
@@ -205,6 +214,7 @@ const propagateKeyPress = (
     // Check throttle for bubbling phase
     if (elm.throttleInput) {
       if (
+        sameKey &&
         elm._lastAnyKeyPressTime !== undefined &&
         currentTime - elm._lastAnyKeyPressTime < elm.throttleInput
       ) {

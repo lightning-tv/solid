@@ -27,7 +27,6 @@ import calculateFlex from './flex.js';
 import {
   log,
   isArray,
-  isNumber,
   isFunc,
   keyExists,
   isINode,
@@ -214,50 +213,218 @@ export interface ElementNode extends RendererNode, FocusNode {
   _type: 'element' | 'textNode';
   _undoStyles?: string[];
   autosize?: boolean;
+  /**
+   * The distance from the bottom edge of the parent element.
+   * When `bottom` is set, `mountY` is automatically set to 1.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   bottom?: number;
+  /**
+   * An array of child `ElementNode` or `ElementText` nodes.
+   */
   children: Array<ElementNode | ElementText>;
+  /**
+   * Enable debug logging for this specific node.
+   */
   debug?: boolean;
+  /**
+   * Specifies how much a flex item should grow relative to the rest of the flex items.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex-grow
+   */
   flexGrow?: number;
+  /**
+   * Specifies whether flex items are forced onto one line or can wrap onto multiple lines.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   flexWrap?: 'nowrap' | 'wrap';
+  /**
+   * Determines if an element is a flex item. If set to `false`, the element will be ignored by the flexbox layout.
+   * @default false
+   */
   flexItem?: boolean;
+  /**
+   * Specifies the order of a flex item relative to the rest of the flex items.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   flexOrder?: number;
+  /**
+   * Forwards focus to a child element. It can be a numeric index of the child or a handler function.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/focus?id=forwardfocus
+   */
   forwardFocus?: number | ForwardFocusHandler;
+  /**
+   * If `true`, the states of this node will be propagated to its children.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/states?id=forwardstates
+   */
   forwardStates?: boolean;
-  /** For children of {@link NavigableElement}, set to `true` to prevent being selected */
-  skipFocus?: boolean;
-  /** function to be called on mouse click */
-  onMouseClick?: (
-    this: ElementNode,
-    event: MouseEvent,
-    active: ElementNode,
-  ) => void;
+  /**
+   * The underlying Lightning Renderer node object. This is where the properties are ultimately set for rendering.
+   */
   lng:
     | Partial<ElementNode>
     | IRendererNode
     | (IRendererTextNode & { shader?: any });
+  /**
+   * A reference to the `ElementNode` instance. Can be an object or a callback function.
+   */
   ref?: ElementNode | ((node: ElementNode) => void) | undefined;
+  /**
+   * A boolean indicating whether the node has been rendered.
+   */
   rendered: boolean;
+  /**
+   * The main renderer instance.
+   */
   renderer?: RendererMain;
+  /**
+   * The distance from the right edge of the parent element.
+   * When `right` is set, `mountX` is automatically set to 1.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=layout-and-positioning-elements
+   */
   right?: number;
+  /**
+   * The index of the currently selected child element, used for focus management for Column and Row components.
+   */
   selected?: number;
+  /**
+   * The width of the element before flexbox layout is applied. Used internally for layout calculations.
+   */
   preFlexwidth?: number;
+  /**
+   * The height of the element before flexbox layout is applied. Used internally for layout calculations.
+   */
   preFlexheight?: number;
+  /**
+   * The text content of a text node.
+   */
   text?: string;
+  /**
+   * Aligns flex items along the cross axis of the current line of the flex container.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex-properties
+   */
   alignItems?: 'flexStart' | 'flexEnd' | 'center';
+  /**
+   * Aligns a flex item along the cross axis, overriding the `alignItems` value of the flex container.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex-properties
+   */
   alignSelf?: 'flexStart' | 'flexEnd' | 'center';
+  /**
+   * The border style for all sides of the element. Takes an object with width and color properties.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
   border?: BorderStyle;
+  /**
+   * The border style for the bottom side of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
+  borderBottom?: BorderStyle;
+  /**
+   * The border style for the left side of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
+  borderLeft?: BorderStyle;
+  /**
+   * The radius of the element's corners.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
   borderRadius?: BorderRadius;
+  /**
+   * The border style for the right side of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
+  borderRight?: BorderStyle;
+  /**
+   * The border style for the top side of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
+   */
+  borderTop?: BorderStyle;
+  /**
+   * A shorthand to set both `centerX` and `centerY` to true.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=layout-and-positioning-elements
+   */
   center?: boolean;
+  /**
+   * If `true`, centers the element horizontally within its parent.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=layout-and-positioning-elements
+   */
   centerX?: boolean;
+  /**
+   * If `true`, centers the element vertically within its parent.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=layout-and-positioning-elements
+   */
   centerY?: boolean;
+  /**
+   * Specifies the direction of the flex items.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   direction?: 'ltr' | 'rtl';
+  /**
+   * Specifies the display behavior of an element. 'flex' enables flexbox layout.
+   *
+   * @default 'block'
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   display?: 'flex' | 'block';
+  /**
+   * Defines how the flex container's size is determined. 'contain' allows it to grow with its content, 'fixed' keeps it at its specified size.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   flexBoundary?: 'contain' | 'fixed';
+  /**
+   * Defines how the flex container's cross-axis size is determined. 'fixed' keeps it at its specified size. Default is 'contain'.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   flexCrossBoundary?: 'fixed'; // default is contain
+  /**
+   * Specifies the direction of the main axis for flex items.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   flexDirection?: 'row' | 'column';
+  /**
+   * The gap between flex items.
+   *
+   * @see @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   gap?: number;
+  /**
+   * The gap between flex rows.
+   *
+   * @see @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   rowGap?: number;
+  /**
+   * The gap between flex columns.
+   *
+   * @see @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   columnGap?: number;
+  /**
+   * Defines the alignment of flex items along the main axis.
+   *
+   * @see @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
   justifyContent?:
     | 'flexStart'
     | 'flexEnd'
@@ -265,19 +432,89 @@ export interface ElementNode extends RendererNode, FocusNode {
     | 'spaceBetween'
     | 'spaceAround'
     | 'spaceEvenly';
+  /**
+   * Applies a linear gradient effect to the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects
+   */
   linearGradient?: LinearGradientProps;
+  /**
+   * Applies a radial gradient effect to the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/effects
+   */
   radialGradient?: RadialGradientProps;
+  /**
+   * The margin on the bottom side of the element for a flexItem.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   marginBottom?: number;
+  /**
+   * The margin on the left side of the element for a flexItem.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   marginLeft?: number;
+  /**
+   * The margin on the right side of the element for a flexItem.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   marginRight?: number;
+  /**
+   * The margin on the top side of the element for a flexItem.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   marginTop?: number;
+  /**
+   * The padding on all sides of the flex element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   padding?: number;
+  /**
+   * The x-coordinate of the element's position.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   x: number;
+  /**
+   * The y-coordinate of the element's position.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   y: number;
+  /**
+   * Throttles key press events by the specified number of milliseconds.
+   *
+   * @see https://lightning-tv.github.io/solid/#/primitives/useFocusManager?id=input-throttling-available-core-212
+   */
   throttleInput?: number;
+  /**
+   * The width of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   w: number;
+  /**
+   * The height of the element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   h: number;
+  /**
+   * The z-index of the element, which affects its stacking order.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   zIndex?: number;
+  /**
+   * Defines transitions for animatable properties.
+   *
+   * @see https://lightning-tv.github.io/solid/#/essentials/transitions?id=transitions-animations
+   */
   transition?:
     | Record<string, AnimationSettings | undefined | true | false>
     | true
@@ -301,21 +538,28 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/essentials/transitions?id=animation-callbacks
    */
   onAnimation?: Partial<Record<AnimationEvents, AnimationEventHandler>>;
-  /**
-   * Optional handler for when the element is created and rendered.
+  /** Optional handler for when the element is created and rendered.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/ondestroy
    */
   onCreate?: (this: ElementNode, el: ElementNode) => void;
   /**
    * Optional handler for when the element is destroyed.
    * It can return a promise to wait for the cleanup to finish before the element is destroyed.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/ondestroy
    */
   onDestroy?: (this: ElementNode, el: ElementNode) => Promise<any> | void;
   /**
    * Optional handlers for when the element is rendered—after creation and when switching parents.
+   *
+   * @see https://lightning-tv.github.io/solid/#/primitives/KeepAlive
    */
   onRender?: (this: ElementNode, el: ElementNode) => void;
   /**
    * Optional handlers for when the element is removed from a parent element.
+   *
+   * @see https://lightning-tv.github.io/solid/#/primitives/KeepAlive
    */
   onRemove?: (this: ElementNode, el: ElementNode) => void;
   /**
@@ -339,6 +583,12 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/essentials/events
    */
   onEvent?: OnEvent;
+
+  /**
+   * Callback run after flex layout is calculated on flex elements
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
   onLayout?: (this: ElementNode, target: ElementNode) => void;
 }
 
