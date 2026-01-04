@@ -5,18 +5,21 @@
   "type": "module",
   "exports": {
     ".": {
+      "@lightningtv/source": "./src/index.ts",
       "import": {
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
       }
     },
     "./primitives": {
+      "@lightningtv/source": "./src/primitives/index.ts",
       "import": {
         "types": "./dist/src/primitives/index.d.ts",
         "default": "./dist/src/primitives/index.js"
       }
     },
     "./devtools": {
+      "@lightningtv/source": "./src/devtools/index.ts",
       "import": {
         "types": "./dist/src/devtools/index.d.ts",
         "default": "./dist/src/devtools/index.js"
