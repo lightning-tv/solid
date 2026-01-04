@@ -3,7 +3,7 @@ import * as lng from '../../index.js';
 import * as lngp from '../index.js';
 
 function idxInArray(idx: number, arr: readonly any[]): boolean {
-  return idx === 0 || (idx >= 0 && idx < arr.length);
+  return idx >= 0 && idx < arr.length;
 }
 
 function findFirstFocusableChildIdx(
@@ -70,10 +70,10 @@ export function onGridFocus(
 export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   const navigable = this as lngp.NavigableElement;
 
-  let selected = navigable.selected;
+  let selected = Math.max(navigable.selected, 0);
 
   if (selected !== 0) {
-    selected = lng.clamp(selected, 0, this.children.length - 1);
+    selected = lng.clamp(selected, 0, Math.max(0, this.children.length - 1));
     while (!idxInArray(selected, this.children)) {
       selected--;
     }
