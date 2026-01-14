@@ -54,6 +54,7 @@ export interface Config {
   setActiveElement: (elm: ElementNode) => void;
   focusStateKey: DollarString;
   lockStyles?: boolean;
+  fontWeightAlias?: Record<string, number | string>;
   throttleInput?: number;
   taskDelay?: number;
 }
@@ -70,6 +71,15 @@ export const Config: Config = {
   fontSettings: {
     fontFamily: 'Ubuntu',
     fontSize: 100,
+  },
+  fontWeightAlias: {
+    thin: 100,
+    light: 300,
+    regular: '',
+    400: '',
+    medium: 500,
+    bold: 700,
+    black: 900,
   },
   setActiveElement: () => {},
   focusStateKey: '$focus',

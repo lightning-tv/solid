@@ -147,7 +147,6 @@ const LightningRendererNonAnimatingProps = [
   'fontFamily',
   'fontStretch',
   'fontStyle',
-  'fontWeight',
   'imageType',
   'letterSpacing',
   'maxHeight',
@@ -667,7 +666,12 @@ export class ElementNode extends Object {
 
   set fontWeight(v) {
     this._fontWeight = v;
-    this.fontFamily = `{${this.fontFamily}${v}`;
+    const family = this.fontFamily || Config.fontSettings?.fontFamily;
+    const weight =
+      (Config.fontWeightAlias &&
+        (Config.fontWeightAlias[v as string] as number | string)) ??
+      v;
+    this.fontFamily = `${family}${weight}`;
   }
 
   get fontWeight() {
