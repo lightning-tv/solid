@@ -654,10 +654,6 @@ export class ElementNode extends Object {
   }
 
   set height(h) {
-    if (isElementText(this)) {
-      this.maxHeight = h;
-      return;
-    }
     this.h = h;
   }
 
@@ -666,10 +662,6 @@ export class ElementNode extends Object {
   }
 
   set width(w) {
-    if (isElementText(this)) {
-      this.maxWidth = w;
-      return;
-    }
     this.w = w;
   }
 
@@ -1223,32 +1215,32 @@ export class ElementNode extends Object {
 
       // contain is either width or both
       if (textProps.contain) {
+        if (textProps.contain === 'both') {
+          textProps.maxWidth = textProps.maxWidth ?? textProps.w;
+          textProps.maxHeight = textProps.maxHeight ?? textProps.h;
+        } else if (textProps.contain === 'width') {
+          textProps.maxWidth = textProps.maxWidth ?? textProps.w;
+        }
+
+        if (!textProps.h && !textProps.maxHeight) {
+          textProps.maxLines = textProps.maxLines ?? 99;
+        }
+
         if (!textProps.maxWidth) {
           textProps.maxWidth =
             parentWidth - textProps.x! - (textProps.marginRight || 0);
         }
 
-        if (
-          textProps.contain === 'both' &&
-          !textProps.maxHeight &&
-          !textProps.maxLines
-        ) {
+        if (textProps.contain === 'both' && !textProps.maxHeight) {
           textProps.maxHeight =
             parentHeight - textProps.y! - (textProps.marginBottom || 0);
-          textProps.maxLines = 99;
         } else if (textProps.maxLines === 1) {
           textProps.maxHeight = (textProps.maxHeight ||
             textProps.lineHeight ||
             textProps.fontSize) as number;
         }
 
-        if (textProps.contain === 'both') {
-          textProps.maxWidth = textProps.w;
-          textProps.maxHeight = textProps.h;
-        } else if (textProps.contain === 'width') {
-          textProps.maxWidth = textProps.w;
-          textProps.maxLines = textProps.maxLines ?? 99;
-        }
+        textProps.w = textProps.h = undefined;
       }
 
       // Can you put effects on Text nodes? Need to confirm...
@@ -1261,7 +1253,7 @@ export class ElementNode extends Object {
         props as unknown as IRendererTextNodeProps,
       );
       if (parent.requiresLayout()) {
-        if (!props.w || !props.h) {
+        if (!textProps.maxWidth || !textProps.maxHeight) {
           node._layoutOnLoad();
         }
       }
