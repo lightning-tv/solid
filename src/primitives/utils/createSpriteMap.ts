@@ -24,8 +24,8 @@ export function createSpriteMap(
       texture: spriteMapTexture,
       x,
       y,
-      width,
-      height,
+      w: width,
+      h: height,
     }) as InstanceType<TextureMap['SubTexture']>;
     return acc;
   }, {});
