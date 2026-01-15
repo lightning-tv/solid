@@ -45,6 +45,7 @@ export const SHADERS_ENABLED = !(
 export interface Config {
   debug: boolean;
   focusDebug: boolean;
+  domRendererEnabled: boolean;
   keyDebug: boolean;
   simpleAnimationsEnabled?: boolean;
   animationSettings?: AnimationSettings;
@@ -61,6 +62,7 @@ export interface Config {
 
 export const Config: Config = {
   debug: false,
+  domRendererEnabled: false,
   focusDebug: false,
   keyDebug: false,
   animationsEnabled: true,

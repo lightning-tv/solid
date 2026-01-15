@@ -25,6 +25,13 @@
         "default": "./dist/src/devtools/index.js"
       }
     },
+    "./shaders": {
+      "@lightningtv/source": "./src/shaders/index.ts",
+      "import": {
+        "types": "./dist/src/shaders/index.d.ts",
+        "default": "./dist/src/shaders/index.js"
+      }
+    },
     "./jsx-runtime": "./jsx-runtime.d.ts"
   },
   "sideEffects": false,
