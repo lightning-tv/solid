@@ -185,8 +185,17 @@ function createVirtual<T>(
               shiftBy = total - c < 3 ? c - total : -1;
               atStart = false;
             } else {
-              start = prev.start;
-              selected = prev.selected;
+              // ScrollToIndex was called
+              if (Math.abs(c - prev.start) > 1) {
+                start = c;
+                if (c === 0) {
+                  atStart = true;
+                  selected = 0;
+                }
+              } else {
+                start = prev.start;
+                selected = prev.selected;
+              }
             }
           }
         }
@@ -377,10 +386,9 @@ function createVirtual<T>(
 
       if (lng.Config.animationsEnabled) {
         this.lng[axis] = prevChildPos - active[axis];
-        let offset = this.lng[axis] + (childSize * slice().shiftBy);
-        targetPosition = offset;
+        targetPosition = this.lng[axis] + (childSize * slice().shiftBy);
         cachedAnimationController = this.animate(
-          { [axis]: offset },
+          { [axis]: targetPosition },
           { ...this.animationSettings, duration: getAdaptiveDuration(this.animationSettings?.duration)}
         ).start();
       } else {
