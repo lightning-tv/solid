@@ -30,18 +30,15 @@ The components accept the following props:
 #### Behavior
 
 1. **Navigation**:
-
    - The `Row` listens for left and right navigation events.
    - The `Column` listens for up and down navigation events.
    - The `onLeft` and `onRight` handlers can be customized, and default navigation logic is provided via `handleNavigation`.
 
 2. **Focus Management**:
-
    - Focus events are handled via the `onFocus` prop.
    - When focus changes, the row ensures that the currently selected child is highlighted and optionally scrolls into view.
 
 3. **Scrolling**:
-
    - The `withScrolling` utility is used to handle scrolling behavior when the `scroll` prop is set to `'auto'` or `'always'`.
 
 4. **Styling**:

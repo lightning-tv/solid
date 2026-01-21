@@ -22,18 +22,15 @@ The `Grid` component is simplified version of combining Column & Row and doesn't
 ### Behavior
 
 1. **Grid Navigation**:
-
    - The `Grid` supports navigation via `onUp`, `onDown`, `onLeft`, and `onRight` events.
    - Navigation is column-aware, ensuring horizontal navigation stays within the same row unless looping is enabled.
 
 2. **Looping**:
-
    - When `looping` is enabled, navigation wraps around when reaching the grid boundaries.
    - For vertical navigation, reaching the last row loops to the first row and vice versa.
    - For horizontal navigation, reaching the end of a row wraps to the start of the same row.
 
 3. **Focus Handling**:
-
    - The `Grid` manages focus internally using a `focusedIndex` signal.
    - The `refocusParent` callback is invoked if navigation attempts to move out of the grid's bounds (when looping is disabled).
 
