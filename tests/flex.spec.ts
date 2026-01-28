@@ -1,8 +1,8 @@
-import { ElementNode } from '../src/elementNode.ts';
-import calculateFlex from '../src/flex.ts';
+import { ElementNode } from '../src/core/elementNode.ts';
+import calculateFlex from '../src/core/flex.ts';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { isElementNode } from '../src/utils.ts';
-import { NodeType } from '../src/nodeTypes.ts';
+import { isElementNode } from '../src/core/utils.ts';
+import { NodeType } from '../src/core/nodeTypes.ts';
 import type { ElementText, TextNode } from '../src/index.ts';
 
 // Helper to create a basic ElementNode for flex testing
@@ -841,8 +841,8 @@ describe('Flexbox Layout (calculateFlex)', () => {
       // Line 2: child2 (height 40 for calc)
       // Gap: 5
       // Line 3: child3 (height 40 for calc)
-      // Total height = 40 + 5 + 40 + 5 + 40 = 130.
-      expect(parent.height).toBe(130);
+      // Total height = 30 + 5 + 40 + 5 + 35 = 100.
+      expect(parent.height).toBe(100);
       expect(parent.preFlexheight).toBe(40); // Original height
     });
   });

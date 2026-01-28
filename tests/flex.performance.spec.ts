@@ -1,5 +1,5 @@
-import { ElementNode } from '../src/elementNode.ts';
-import calculateFlex from '../src/flex.ts';
+import { ElementNode } from '../src/core/elementNode.ts';
+import calculateFlex from '../src/core/flex.ts';
 import {
   describe,
   it,
@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { isElementNode } from '../src/utils.ts'; // Assuming isElementText and isTextNode are not directly needed for createTestElement logic here
+import { isElementNode } from '../src/core/utils.ts'; // Assuming isElementText and isTextNode are not directly needed for createTestElement logic here
 
 // Helper to create a basic ElementNode for flex testing
 function createTestElement(
