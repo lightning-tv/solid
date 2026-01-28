@@ -8,7 +8,7 @@ const fpsStyle = {
   x: 1900,
   y: 6,
   mountX: 1,
-  alpha: 0.8,
+  alpha: 1,
   zIndex: 100
 };
 

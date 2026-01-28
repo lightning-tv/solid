@@ -1,6 +1,7 @@
 - Articles
   - [Basics](/articles/basics.md)
   - [Migration 2.x to 3.0](/articles/migration-2x-to-3.0.md)
+  - [Boosting LightningJS Performance by 50%](/articles/boostingperf.md)
   - [Real World Performance](/articles/realworldperformance.md)
   - [Solid / Blits Framework Comparison](/articles/solidvsblits.md)
 - Essentials
