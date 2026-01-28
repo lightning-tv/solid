@@ -181,7 +181,12 @@ declare global {
 }
 
 export type RendererNode = AddColorString<
-  Partial<NewOmit<INode, 'parent' | 'shader' | 'src' | 'children' | 'id'>>
+  Partial<
+    NewOmit<
+      INode,
+      'parent' | 'shader' | 'src' | 'children' | 'id' | 'removeChild'
+    >
+  >
 >;
 export interface ElementNode extends RendererNode, FocusNode {
   [key: string]: unknown;

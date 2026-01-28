@@ -617,7 +617,6 @@ function resolveNodeDefaults(
     colorTl: props.colorTl ?? props.colorTop ?? props.colorLeft ?? color,
     colorTr: props.colorTr ?? props.colorTop ?? props.colorRight ?? color,
     zIndex: props.zIndex ?? 0,
-    zIndexLocked: props.zIndexLocked ?? 0,
     parent: props.parent ?? null,
     texture: props.texture ?? null,
     textureOptions: props.textureOptions ?? {},
@@ -870,13 +869,6 @@ class DOMNode extends EventEmitter implements IRendererNode {
   }
   set src(v) {
     this.props.src = v;
-    updateNodeStyles(this);
-  }
-  get zIndexLocked() {
-    return this.props.zIndexLocked;
-  }
-  set zIndexLocked(v) {
-    this.props.zIndexLocked = v;
     updateNodeStyles(this);
   }
   get scale() {
