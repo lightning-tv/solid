@@ -57,9 +57,11 @@ For the latest renderer options read the official [renderer documentation](https
 ### Config.rendererOptions
 
 - **appWidth**: Authored logical pixel width of the application.
+
   - _Default_: `1920`
 
 - **appHeight**: Authored logical pixel height of the application.
+
   - _Default_: `1080`
 
 - **txMemByteThreshold**: Texture Memory Byte Threshold. When the GPU VRAM used by textures exceeds this threshold, non-visible textures are freed. Set to `0` to disable.
@@ -67,24 +69,30 @@ For the latest renderer options read the official [renderer documentation](https
 - **boundsMargin**: Bounds margin to extend the boundary for adding a CoreNode as Quad. Can be a single number or an array of four numbers.
 
 - **deviceLogicalPixelRatio**: Factor to convert app-authored logical coordinates to device logical coordinates. Supports auto-scaling for different resolutions.
+
   - _Default_: `1`
 
 - **devicePhysicalPixelRatio**: Factor to convert device logical coordinates to device physical coordinates. Controls the number of physical pixels used per logical pixel.
+
   - _Default_: `window.devicePixelRatio`
 
 - **clearColor**: RGBA encoded number for the background color.
+
   - _Default_: `0x00000000`
 
 - **Texture Memory Manager Settings**:
   textureMemory?: Partial<TextureMemoryManagerSettings>;
 
 - **fpsUpdateInterval**: Interval in milliseconds for receiving FPS updates. Set to `0` to disable.
+
   - _Default_: `0`
 
 - **enableContextSpy**: Includes WebGL context call information in FPS updates. Significantly impacts performance.
+
   - _Default_: `false`
 
 - **numImageWorkers**: Number of image workers to use. Improves image loading on multi-core devices. Set to `0` to disable.
+
   - _Default_: `2`
 
 - **inspector**

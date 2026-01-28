@@ -75,10 +75,8 @@ export interface IRendererNodeShaded extends IEventEmitter {
 }
 
 /** Based on {@link lng.INodeProps} */
-export interface IRendererNodeProps extends Omit<
-  lng.INodeProps<lng.CoreShaderNode>,
-  'shader' | 'parent'
-> {
+export interface IRendererNodeProps
+  extends Omit<lng.INodeProps<lng.CoreShaderNode>, 'shader' | 'parent'> {
   shader: IRendererShader | null;
   parent: IRendererNode | null;
 }
@@ -90,17 +88,16 @@ export interface IRendererNode extends IRendererNodeShaded, IRendererNodeProps {
 }
 
 /** Based on {@link lng.ITextNodeProps} */
-export interface IRendererTextNodeProps extends Omit<
-  lng.ITextNodeProps,
-  'shader' | 'parent'
-> {
+export interface IRendererTextNodeProps
+  extends Omit<lng.ITextNodeProps, 'shader' | 'parent'> {
   shader: IRendererShader | null;
   parent: IRendererNode | null;
   fontWeight?: string;
 }
 /** Based on {@link lng.ITextNode} */
 export interface IRendererTextNode
-  extends IRendererNodeShaded, IRendererTextNodeProps {
+  extends IRendererNodeShaded,
+    IRendererTextNodeProps {
   div?: HTMLElement;
   props: IRendererTextNodeProps;
   renderState: lng.CoreNodeRenderState;

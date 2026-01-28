@@ -80,8 +80,10 @@ type CleanElementNode = NewOmit<
 >;
 /** Node text, children of a ElementNode of type TextNode */
 export interface ElementText
-  extends
-    NewOmit<ElementNode, '_type' | 'parent' | 'children' | 'src' | 'scale'>,
+  extends NewOmit<
+      ElementNode,
+      '_type' | 'parent' | 'children' | 'src' | 'scale'
+    >,
     NewOmit<RendererText, 'x' | 'y' | 'w' | 'h'> {
   _type: 'textNode';
   parent?: ElementNode;
@@ -98,8 +100,7 @@ export interface TextNode {
 }
 
 export interface NodeProps
-  extends
-    RendererNode,
+  extends RendererNode,
     EventHandlers<DefaultKeyMap>,
     EventHandlers<KeyHoldMap>,
     FocusNode,
@@ -125,8 +126,7 @@ export interface NodeStyles extends NewOmit<NodeProps, 'style'> {
 }
 
 export interface TextProps
-  extends
-    RendererText,
+  extends RendererText,
     Partial<
       NewOmit<
         CleanElementNode,
