@@ -62,7 +62,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningjs/renderer": "3.0.0-beta18",
+    "@lightningjs/renderer": "3.0.0-beta20",
     "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/list": "^0.1.2",
