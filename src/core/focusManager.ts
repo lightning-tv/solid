@@ -105,12 +105,18 @@ const updateFocusPath = (
       current === currentFocusedElm
     ) {
       current.states.add(Config.focusStateKey);
-      current.onFocus?.call(current, currentFocusedElm, prevFocusedElm);
+      current.onFocus?.call(
+        current,
+        currentFocusedElm,
+        prevFocusedElm,
+        current,
+      );
       current.onFocusChanged?.call(
         current,
         true,
         currentFocusedElm,
         prevFocusedElm,
+        current,
       );
     }
     fp.push(current);
@@ -120,8 +126,14 @@ const updateFocusPath = (
   focusPath.forEach((elm) => {
     if (!fp.includes(elm)) {
       elm.states.remove(Config.focusStateKey);
-      elm.onBlur?.call(elm, currentFocusedElm, prevFocusedElm!);
-      elm.onFocusChanged?.call(elm, false, currentFocusedElm, prevFocusedElm);
+      elm.onBlur?.call(elm, currentFocusedElm, prevFocusedElm!, elm);
+      elm.onFocusChanged?.call(
+        elm,
+        false,
+        currentFocusedElm,
+        prevFocusedElm,
+        elm,
+      );
     }
   });
 

@@ -39,10 +39,10 @@ const App = () => {
 
 The `useFocusManager` returns a signal, `focusPath`, which is an array of elements that currently have focus. When the `activeElement` changes, the focus path is recalculated. During this process:
 
-- All elements in focus will have a `focus` state added, and `onFocus(currentFocusedElm, prevFocusedElm)` event is called.
-- Elements losing focus will have the `focus` state removed, and `onBlur(currentFocusedElm, prevFocusedElm)` event is called.
+- All elements in focus will have a `focus` state added, and `onFocus(currentFocusedElm, prevFocusedElm, nodeWithCallback)` event is called.
+- Elements losing focus will have the `focus` state removed, and `onBlur(currentFocusedElm, prevFocusedElm, nodeWithCallback)` event is called.
 
-There is also an `onFocusChanged(hasFocus, currentFocusedElm, prevFocusedElm)` callback which is useful for setting a focusSignal to use for more complicated scenarios.
+There is also an `onFocusChanged(hasFocus, currentFocusedElm, prevFocusedElm, nodeWithCallback)` callback which is useful for setting a focusSignal to use for more complicated scenarios.
 
 ```jsx
 const [hasFocus, setHasFocus] = createSignal(false);

@@ -6,17 +6,20 @@ export interface FocusNode {
     this: ElementNode,
     currentFocusedElm: ElementNode,
     prevFocusedElm: ElementNode | undefined,
+    nodeWithCallback: ElementNode,
   ) => void;
   onFocusChanged?: (
     this: ElementNode,
     hasFocus: boolean,
     currentFocusedElm: ElementNode,
     prevFocusedElm: ElementNode | undefined,
+    nodeWithCallback: ElementNode,
   ) => void;
   onBlur?: (
     this: ElementNode,
     currentFocusedElm: ElementNode,
     prevFocusedElm: ElementNode,
+    nodeWithCallback: ElementNode,
   ) => void;
   onKeyPress?: (
     this: ElementNode,
