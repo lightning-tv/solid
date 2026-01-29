@@ -71,7 +71,7 @@ You can now control input speed in two powerful ways . This feature helps preven
 For a quick, app-wide solution, you can set a global throttle on all key inputs directly in your configuration. This is perfect for setting a baseline input speed for your entire application.
 
 ```javascript
-import { Config } from '@lightningtv/core';
+import { Config } from '@lightningtv/solid';
 
 // Allow one keypress every 200ms across the entire app
 Config.throttleInput = 200;

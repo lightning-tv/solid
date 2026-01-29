@@ -32,7 +32,10 @@
         "default": "./dist/src/shaders/index.js"
       }
     },
-    "./jsx-runtime": "./jsx-runtime.d.ts"
+    "./jsx-runtime": {
+      "@lightningtv/source": "./jsx-runtime.d.ts",
+      "default": "./dist/jsx-runtime.d.ts"
+    }
   },
   "sideEffects": false,
   "scripts": {
@@ -44,7 +47,7 @@
     "lint:fix:prettier": "prettier --write \"**/*.{ts,js,cjs,md}\"",
     "lint:eslint": "eslint .",
     "lint:fix:eslint": "eslint --fix .",
-    "build": "npm run tsc",
+    "build": "rm -rf dist && npm run tsc && cp jsx-runtime.d.ts dist/",
     "tsc": "tsc",
     "watch": "tsc -w",
     "prepare": "husky",
