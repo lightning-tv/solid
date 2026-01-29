@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@lightningjs/renderer':
-        specifier: 3.0.0-beta20
-        version: 3.0.0-beta20
       '@lightningtv/solid':
         specifier: 'link:'
         version: 'link:'
@@ -36,6 +33,9 @@ importers:
       '@eslint/js':
         specifier: ^9.16.0
         version: 9.16.0
+      '@lightningjs/renderer':
+        specifier: ^3.0.0-beta20
+        version: 3.0.0-beta20
       '@solid-devtools/debugger':
         specifier: ^0.28.1
         version: 0.28.1(solid-js@1.9.3)
