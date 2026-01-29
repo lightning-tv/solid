@@ -60,7 +60,6 @@ import { VirtualGrid } from './components/VirtualGrid';
 - Automatically re-calculates the slice on selection or data change.
 - Reuses Children components
 - Merges styles with internal layout defaults:
-
   - `display: flex`, `flexWrap: wrap`, `gap: 30`
   - `transition: { y: 250ms ease-out }`
 

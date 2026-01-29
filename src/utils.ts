@@ -1,4 +1,4 @@
-import { isInteger, type Styles } from '@lightningtv/core';
+import { isInteger, type Styles } from './core/index.js';
 import { Accessor, createMemo } from 'solid-js';
 
 /**

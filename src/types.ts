@@ -3,7 +3,7 @@ import {
   type Styles,
   type ElementText,
   type TextNode,
-} from '@lightningtv/core';
+} from './core/index.js';
 import type { JSXElement } from 'solid-js';
 import { createRenderer } from 'solid-js/universal';
 
@@ -20,17 +20,3 @@ export interface RenderedNode extends ElementNode {
 export type SolidNode = ElementNode | ElementText | TextNode;
 
 export type SolidStyles = Styles;
-
-declare module '@lightningtv/core' {
-  interface NodeProps {
-    children?: JSXElement | undefined;
-  }
-
-  interface TextProps {
-    children?: string | string[] | undefined;
-  }
-
-  interface Config {
-    taskDelay?: number;
-  }
-}

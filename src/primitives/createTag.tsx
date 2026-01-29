@@ -9,6 +9,8 @@ interface Destroyable {
 export function createTag(children: s.JSX.Element): Destroyable {
   const [texture, setTexture] = s.createSignal<lng.Texture | null | undefined>(null);
   const Tag = <view
+    x={lng.rootNode.w - 1}
+    y={lng.rootNode.h - 1}
     display='flex'
     onLayout={(n) => {
       if (n.preFlexwidth && n.width !== n.preFlexwidth) {

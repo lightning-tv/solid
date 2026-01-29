@@ -29,7 +29,8 @@
     // jsx
     "jsx": "preserve",
     "jsxImportSource": "@lightningtv/solid",
-    "types": ["solid-js"]
+    "types": ["solid-js"],
+    "customConditions": ["@lightningtv/source"],
   },
   "include": ["src/**/*"]
 }

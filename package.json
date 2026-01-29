@@ -1,31 +1,41 @@
 {
   "name": "@lightningtv/solid",
-  "version": "2.13.0-1",
+  "version": "3.0.0-27",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "exports": {
     ".": {
+      "@lightningtv/source": "./src/index.ts",
       "import": {
-        "@lightningtv/source": "./src/index.ts",
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
       }
     },
     "./primitives": {
+      "@lightningtv/source": "./src/primitives/index.ts",
       "import": {
-        "@lightningtv/source": "./src/primitives/index.ts",
         "types": "./dist/src/primitives/index.d.ts",
         "default": "./dist/src/primitives/index.js"
       }
     },
     "./devtools": {
+      "@lightningtv/source": "./src/devtools/index.ts",
       "import": {
-        "@lightningtv/source": "./src/devtools/index.ts",
         "types": "./dist/src/devtools/index.d.ts",
         "default": "./dist/src/devtools/index.js"
       }
     },
-    "./jsx-runtime": "./jsx-runtime.d.ts"
+    "./shaders": {
+      "@lightningtv/source": "./src/shaders/index.ts",
+      "import": {
+        "types": "./dist/src/shaders/index.d.ts",
+        "default": "./dist/src/shaders/index.js"
+      }
+    },
+    "./jsx-runtime": {
+      "@lightningtv/source": "./jsx-runtime.d.ts",
+      "default": "./dist/jsx-runtime.d.ts"
+    }
   },
   "sideEffects": false,
   "scripts": {
@@ -37,7 +47,7 @@
     "lint:fix:prettier": "prettier --write \"**/*.{ts,js,cjs,md}\"",
     "lint:eslint": "eslint .",
     "lint:fix:eslint": "eslint --fix .",
-    "build": "npm run tsc",
+    "build": "rm -rf dist && npm run tsc && cp jsx-runtime.d.ts dist/",
     "tsc": "tsc",
     "watch": "tsc -w",
     "prepare": "husky",
@@ -55,6 +65,7 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
+    "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
@@ -62,10 +73,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
-    "@lightningjs/renderer": "^2.20.0",
-    "@lightningtv/core": "2.14.1-1",
-    "@solid-devtools/debugger": "^0.28.0",
-    "@solid-primitives/keyed": "^1.5.2",
+    "@lightningjs/renderer": "^3.0.0-beta20",
+    "@solid-devtools/debugger": "^0.28.1",
     "@solidjs/testing-library": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
@@ -92,15 +101,11 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@lightningtv/core": "^2.14.1-1",
     "@solidjs/router": "^0.15.1",
+    "@lightningjs/renderer": "^3.0.0-beta20",
     "solid-js": "*"
   },
-  "peerDependenciesMeta": {
-    "@lightningtv/core": {
-      "optional": false
-    }
-  },
+  "peerDependenciesMeta": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lightning-tv/solid.git"

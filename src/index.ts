@@ -1,7 +1,7 @@
 export * from '@lightningtv/solid/jsx-runtime';
-export * from '@lightningtv/core';
-export type * from '@lightningtv/core';
-export type { KeyHandler, KeyMap } from '@lightningtv/core/focusManager';
+export * from './core/index.js';
+export type * from './core/index.js';
+export type { KeyHandler, KeyMap } from './core/focusManager.js';
 export * from './activeElement.js';
 export * from './utils.js';
 export * from './render.js';

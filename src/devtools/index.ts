@@ -1,5 +1,5 @@
 import * as debug from '@solid-devtools/debugger/types';
-import * as lng from '@lightningtv/core';
+import * as lng from '../core/index.js';
 
 const EMPTY_CHILDREN: (lng.ElementNode | lng.ElementText)[] = [];
 

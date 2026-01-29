@@ -5,7 +5,7 @@ import {
   type TextProps,
   startLightningRenderer,
   type RendererMainSettings,
-} from '@lightningtv/core';
+} from './core/index.js';
 import nodeOpts from './solidOpts.js';
 import {
   splitProps,

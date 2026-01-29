@@ -38,6 +38,7 @@ v.test('Flex with swapping parents', async () => {
   v.assert.equal(bContainer.height, X)
 
   setCondition(false)
+  await Promise.resolve()
 
   await waitForUpdate();
   v.assert.equal(aTwo.x, 0)
@@ -48,6 +49,7 @@ v.test('Flex with swapping parents', async () => {
   v.assert.equal(bContainer.height, X)
 
   setCondition(true)
+  await Promise.resolve()
 
   await waitForUpdate();
   v.assert.equal(aTwo.x, X)

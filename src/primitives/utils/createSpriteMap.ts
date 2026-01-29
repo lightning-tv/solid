@@ -1,4 +1,4 @@
-import { type TextureMap, renderer } from '@lightningtv/core';
+import { type TextureMap, renderer } from '../../core/index.js';
 
 export interface SpriteDef {
   name: string | number;
@@ -24,8 +24,8 @@ export function createSpriteMap(
       texture: spriteMapTexture,
       x,
       y,
-      width,
-      height,
+      w: width,
+      h: height,
     }) as InstanceType<TextureMap['SubTexture']>;
     return acc;
   }, {});

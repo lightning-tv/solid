@@ -1,4 +1,4 @@
-import type { ElementText, TextNode } from '@lightningtv/core';
+import type { ElementText, TextNode } from '../core/index.js';
 import {
   Config,
   ElementNode,
@@ -7,7 +7,7 @@ import {
   isFunc,
   isTextNode,
   rootNode,
-} from '@lightningtv/solid';
+} from '../index.js';
 import { makeEventListener } from '@solid-primitives/event-listener';
 import { useMousePosition } from '@solid-primitives/mouse';
 import { createScheduled, throttle } from '@solid-primitives/scheduled';
@@ -25,17 +25,6 @@ interface MouseStateOptions {
 type UseMouseOptions =
   | { customStates: MouseStateOptions }
   | { customStates: undefined };
-
-declare module '@lightningtv/core' {
-  interface ElementNode {
-    /** function to be called on mouse click */
-    onMouseClick?: (
-      this: ElementNode,
-      event: MouseEvent,
-      active: ElementNode,
-    ) => void;
-  }
-}
 
 export function addCustomStateToElement(
   element: RenderableNode,

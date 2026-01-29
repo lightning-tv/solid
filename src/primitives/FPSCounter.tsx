@@ -3,12 +3,12 @@ import { createSignal } from 'solid-js';
 
 const fpsStyle = {
   color: 0x000000ff,
-  height: 180,
+  height: 192,
   width: 330,
   x: 1900,
   y: 6,
   mountX: 1,
-  alpha: 0.8,
+  alpha: 1,
   zIndex: 100
 };
 

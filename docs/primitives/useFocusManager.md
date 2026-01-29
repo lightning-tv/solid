@@ -39,10 +39,10 @@ const App = () => {
 
 The `useFocusManager` returns a signal, `focusPath`, which is an array of elements that currently have focus. When the `activeElement` changes, the focus path is recalculated. During this process:
 
-- All elements in focus will have a `focus` state added, and `onFocus(currentFocusedElm, prevFocusedElm)` event is called.
-- Elements losing focus will have the `focus` state removed, and `onBlur(currentFocusedElm, prevFocusedElm)` event is called.
+- All elements in focus will have a `focus` state added, and `onFocus(currentFocusedElm, prevFocusedElm, nodeWithCallback)` event is called.
+- Elements losing focus will have the `focus` state removed, and `onBlur(currentFocusedElm, prevFocusedElm, nodeWithCallback)` event is called.
 
-There is also an `onFocusChanged(hasFocus, currentFocusedElm, prevFocusedElm)` callback which is useful for setting a focusSignal to use for more complicated scenarios.
+There is also an `onFocusChanged(hasFocus, currentFocusedElm, prevFocusedElm, nodeWithCallback)` callback which is useful for setting a focusSignal to use for more complicated scenarios.
 
 ```jsx
 const [hasFocus, setHasFocus] = createSignal(false);
@@ -71,7 +71,7 @@ You can now control input speed in two powerful ways . This feature helps preven
 For a quick, app-wide solution, you can set a global throttle on all key inputs directly in your configuration. This is perfect for setting a baseline input speed for your entire application.
 
 ```javascript
-import { Config } from '@lightningtv/core';
+import { Config } from '@lightningtv/solid';
 
 // Allow one keypress every 200ms across the entire app
 Config.throttleInput = 200;
