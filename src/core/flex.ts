@@ -83,8 +83,8 @@ export default function (node: ElementNode): boolean {
 
   const prop = isRow ? 'x' : 'y';
   const crossProp = isRow ? 'y' : 'x';
-  const containerSize = node[dimension] || 0;
-  let containerCrossSize = node[crossDimension] || 0;
+  const containerSize = Math.max(node[dimension] || 0, 0);
+  let containerCrossSize = Math.max(node[crossDimension] || 0, 0);
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
   let containerUpdated = false;
