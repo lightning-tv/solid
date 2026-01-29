@@ -19,10 +19,10 @@ declare global {
 
   /** Could be set by vite or other bundler */
   interface ImportMetaEnv {
-    DEV?: unknown;
+    DEV: boolean;
   }
   interface ImportMeta {
-    env?: ImportMetaEnv;
+    readonly env: ImportMetaEnv;
   }
 }
 
