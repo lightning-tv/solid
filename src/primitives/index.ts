@@ -4,6 +4,7 @@ export * from './createInfiniteItems.js';
 export * from './useMouse.js';
 export * from './portal.jsx';
 export * from './Lazy.jsx';
+export * from './LazyImport.js';
 export * from './Image.jsx';
 export * from './Visible.jsx';
 export * from './router.js';
