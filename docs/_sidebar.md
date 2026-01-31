@@ -31,6 +31,7 @@
   - [WebOs/LG](/deploy/lg.md)
 - Primitives
   - [Accessibility / Announcer](/primitives/a11y.md)
+  - [borderBox](/primitives/borderBox.md)
   - [createBlurredImage](/primitives/createBlurredImage.md)
   - [createTag](/primitives/createTag.md)
   - [Dynamic](/primitives/dynamic.md)
