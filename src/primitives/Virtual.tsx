@@ -46,7 +46,7 @@ function createVirtual<T>(
     return props.uniformSize !== false;
   });
 
-  type SliceState = { start: number; slice: T[]; selected: number, delta: number, shiftBy: number, atStart: boolean };
+  type SliceState = { start: number; slice: T[]; selected: number, delta: number, shiftBy: number, atStart: boolean; cursor: number };
     const [slice, setSlice] = s.createSignal<SliceState>({
       start: 0,
       slice: [],
@@ -54,6 +54,7 @@ function createVirtual<T>(
       delta: 0,
       shiftBy: 0,
       atStart: true,
+      cursor: 0,
     });
 
     function normalizeDeltaForWindow(delta: number, windowLen: number): number {
@@ -86,7 +87,7 @@ function createVirtual<T>(
 
     function computeSlice(c: number, delta: number, prev: SliceState): SliceState {
       const total = itemCount();
-      if (total === 0) return { start: 0, slice: [], selected: 0, delta, shiftBy: 0, atStart: true };
+      if (total === 0) return { start: 0, slice: [], selected: 0, delta, shiftBy: 0, atStart: true, cursor: 0 };
 
       const length = props.displaySize + bufferSize();
       let start = prev.start;
@@ -186,7 +187,7 @@ function createVirtual<T>(
               atStart = false;
             } else {
               // ScrollToIndex was called
-              if (Math.abs(c - prev.start) > 1) {
+              if (c !== prev.cursor) {
                 start = c;
                 if (c === 0) {
                   atStart = true;
@@ -286,7 +287,7 @@ function createVirtual<T>(
           : items().slice(start, start + length);
       }
 
-      const state: SliceState = { start, slice: newSlice, selected, delta, shiftBy, atStart };
+      const state: SliceState = { start, slice: newSlice, selected, delta, shiftBy, atStart, cursor: c };
 
       if (props.debugInfo) {
         console.log(`[Virtual]`, {
@@ -412,6 +413,15 @@ function createVirtual<T>(
       if (lng.hasFocus(viewRef)) {
         viewRef.children[activeIndex]?.setFocus();
       }
+
+      if (newState.shiftBy === 0) return;
+
+      const childSize = computeSize(slice().selected);
+      // Original Position is offset to support scrollToIndex
+      originalPosition = originalPosition ?? viewRef.lng[axis];
+      targetPosition = targetPosition ?? viewRef.lng[axis];
+
+      viewRef.lng[axis] = (viewRef.lng[axis] || 0) + (childSize * -1);
     });
   };
 
