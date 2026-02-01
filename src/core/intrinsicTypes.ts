@@ -9,12 +9,7 @@ import {
   ShaderRoundedProps,
   ShaderShadowProps,
 } from './shaders.js';
-import {
-  EventHandlers,
-  DefaultKeyMap,
-  KeyHoldMap,
-  FocusNode,
-} from './focusKeyTypes.js';
+import { EventHandlers, DefaultKeyMap, KeyHoldMap, FocusNode } from './focusKeyTypes.js';
 import type { JSXElement } from 'solid-js';
 
 export type AnimationSettings = Partial<lngr.AnimationSettings>;
@@ -52,9 +47,7 @@ export type RemoveUnderscoreProps<T> = {
   [K in keyof T as K extends `_${string}` ? never : K]: T[K];
 };
 
-type RendererText = AddColorString<
-  Partial<Omit<lngr.ITextNodeProps, 'debug' | 'shader' | 'parent'>>
->;
+type RendererText = AddColorString<Partial<Omit<lngr.ITextNodeProps, 'debug' | 'shader' | 'parent'>>>;
 
 type CleanElementNode = NewOmit<
   RemoveUnderscoreProps<ElementNode>,
@@ -80,10 +73,7 @@ type CleanElementNode = NewOmit<
 >;
 /** Node text, children of a ElementNode of type TextNode */
 export interface ElementText
-  extends NewOmit<
-      ElementNode,
-      '_type' | 'parent' | 'children' | 'src' | 'scale'
-    >,
+  extends NewOmit<ElementNode, '_type' | 'parent' | 'children' | 'src' | 'scale' | 'fontFamily'>,
     NewOmit<RendererText, 'x' | 'y' | 'w' | 'h'> {
   _type: 'textNode';
   parent?: ElementNode;
@@ -107,14 +97,7 @@ export interface NodeProps
     Partial<
       NewOmit<
         CleanElementNode,
-        | 'children'
-        | 'text'
-        | 'lng'
-        | 'rendered'
-        | 'renderer'
-        | 'emit'
-        | 'preFlexwidth'
-        | 'preFlexHeight'
+        'children' | 'text' | 'lng' | 'rendered' | 'renderer' | 'emit' | 'preFlexwidth' | 'preFlexHeight'
       >
     > {
   states?: NodeStates;
@@ -189,10 +172,7 @@ type EventPayloadMap = {
 
 type NodeEvents = keyof EventPayloadMap;
 
-type EventHandler<E extends NodeEvents> = (
-  target: ElementNode,
-  event?: EventPayloadMap[E],
-) => void;
+type EventHandler<E extends NodeEvents> = (target: ElementNode, event?: EventPayloadMap[E]) => void;
 
 export type OnEvent = Partial<{
   [K in NodeEvents]: EventHandler<K>;
