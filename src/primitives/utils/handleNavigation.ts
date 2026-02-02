@@ -6,7 +6,11 @@ function idxInArray(idx: number, arr: readonly any[]): boolean {
   return idx >= 0 && idx < arr.length;
 }
 
-function findFirstFocusableChildIdx(el: lngp.NavigableElement, from = 0, delta = 1): number {
+function findFirstFocusableChildIdx(
+  el: lngp.NavigableElement,
+  from = 0,
+  delta = 1,
+): number {
   for (let i = from; ; i += delta) {
     if (!idxInArray(i, el.children)) {
       if (el.wrap) {
@@ -42,7 +46,9 @@ function selectChild(el: lngp.NavigableElement, index: number): boolean {
 }
 
 /** @deprecated Use {@link navigableForwardFocus} instead */
-export function onGridFocus(_?: lngp.OnSelectedChanged): lng.ForwardFocusHandler {
+export function onGridFocus(
+  _?: lngp.OnSelectedChanged,
+): lng.ForwardFocusHandler {
   return function () {
     return navigableForwardFocus.call(this, this);
   };
@@ -83,9 +89,14 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
   return selectChild(navigable, selected);
 };
 
-export function handleNavigation(direction: 'up' | 'right' | 'down' | 'left'): lng.KeyHandler {
+export function handleNavigation(
+  direction: 'up' | 'right' | 'down' | 'left',
+): lng.KeyHandler {
   return function () {
-    return moveSelection(this as lngp.NavigableElement, direction === 'up' || direction === 'left' ? -1 : 1);
+    return moveSelection(
+      this as lngp.NavigableElement,
+      direction === 'up' || direction === 'left' ? -1 : 1,
+    );
   };
 }
 
@@ -106,13 +117,19 @@ export function handleNavigation(direction: 'up' | 'right' | 'down' | 'left'): l
  * ```
  */
 export const navigableHandleNavigation: lng.KeyHandler = function (e) {
-  return moveSelection(this as lngp.NavigableElement, e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1);
+  return moveSelection(
+    this as lngp.NavigableElement,
+    e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 1,
+  );
 };
 
 /**
  * Moves the selection within a {@link lngp.NavigableElement}.
  */
-export function moveSelection(el: lngp.NavigableElement, delta: number): boolean {
+export function moveSelection(
+  el: lngp.NavigableElement,
+  delta: number,
+): boolean {
   let selected = findFirstFocusableChildIdx(el, el.selected + delta, delta);
 
   if (selected === -1) {
@@ -135,7 +152,8 @@ export function moveSelection(el: lngp.NavigableElement, delta: number): boolean
     lng.assertTruthy(lastSelectedChild instanceof lng.ElementNode);
 
     const num = lastSelectedChild.selected || 0;
-    active.selected = num < active.children.length ? num : active.children.length - 1;
+    active.selected =
+      num < active.children.length ? num : active.children.length - 1;
   }
 
   return selectChild(el, selected);
@@ -147,7 +165,10 @@ function distanceBetweenRectCenters(a: lng.Rect, b: lng.Rect): number {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-function findClosestFocusableChildIdx(el: lng.ElementNode, prevEl: lng.ElementNode): number {
+function findClosestFocusableChildIdx(
+  el: lng.ElementNode,
+  prevEl: lng.ElementNode,
+): number {
   // select child closest to the previous active element
   const prevRect = lng.getElementScreenRect(prevEl);
   const elRect = lng.getElementScreenRect(el);
@@ -255,7 +276,11 @@ export const spatialHandleNavigation: lng.KeyHandler = function (e) {
 
   // Select next/prev child in the current column/row
   if (flexDelta !== 0) {
-    for (let i = selected + flexDelta; idxInArray(i, this.children); i += flexDelta) {
+    for (
+      let i = selected + flexDelta;
+      idxInArray(i, this.children);
+      i += flexDelta
+    ) {
       const child = this.children[i]!;
       if (child.skipFocus) continue;
 
@@ -270,7 +295,11 @@ export const spatialHandleNavigation: lng.KeyHandler = function (e) {
     let closestIdx = -1;
     let closestDist = Infinity;
 
-    for (let i = selected + crossDelta; idxInArray(i, this.children); i += crossDelta) {
+    for (
+      let i = selected + crossDelta;
+      idxInArray(i, this.children);
+      i += crossDelta
+    ) {
       const child = this.children[i]!;
       if (child.skipFocus) continue;
 

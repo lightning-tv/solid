@@ -49,7 +49,11 @@ import type {
 } from '@lightningjs/renderer';
 import { assertTruthy } from '@lightningjs/renderer/utils';
 import { NodeType } from './nodeTypes.js';
-import { ForwardFocusHandler, setActiveElement, FocusNode } from './focusManager.js';
+import {
+  ForwardFocusHandler,
+  setActiveElement,
+  FocusNode,
+} from './focusManager.js';
 import simpleAnimation, { SimpleAnimationSettings } from './animation.js';
 
 let layoutRunQueued = false;
@@ -73,7 +77,11 @@ function runLayout() {
   }
 }
 
-const parseAndAssignShaderProps = (prefix: string, obj: Record<string, any>, props: Record<string, any> = {}) => {
+const parseAndAssignShaderProps = (
+  prefix: string,
+  obj: Record<string, any>,
+  props: Record<string, any> = {},
+) => {
   if (!obj) return;
   props[prefix] = obj;
   Object.entries(obj).forEach(([key, value]) => {
@@ -172,7 +180,12 @@ declare global {
 }
 
 export type RendererNode = AddColorString<
-  Partial<NewOmit<INode, 'parent' | 'shader' | 'src' | 'children' | 'id' | 'removeChild'>>
+  Partial<
+    NewOmit<
+      INode,
+      'parent' | 'shader' | 'src' | 'children' | 'id' | 'removeChild'
+    >
+  >
 >;
 export interface ElementNode extends RendererNode, FocusNode {
   [key: string]: unknown;
@@ -257,7 +270,10 @@ export interface ElementNode extends RendererNode, FocusNode {
   /**
    * The underlying Lightning Renderer node object. This is where the properties are ultimately set for rendering.
    */
-  lng: Partial<ElementNode> | IRendererNode | (IRendererTextNode & { shader?: any });
+  lng:
+    | Partial<ElementNode>
+    | IRendererNode
+    | (IRendererTextNode & { shader?: any });
   /**
    * A reference to the `ElementNode` instance. Can be an object or a callback function.
    */
@@ -413,7 +429,13 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
-  justifyContent?: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
+  justifyContent?:
+    | 'flexStart'
+    | 'flexEnd'
+    | 'center'
+    | 'spaceBetween'
+    | 'spaceAround'
+    | 'spaceEvenly';
   /**
    * Applies a linear gradient effect to the element.
    *
@@ -497,7 +519,10 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/transitions?id=transitions-animations
    */
-  transition?: Record<string, AnimationSettings | undefined | true | false> | true | false;
+  transition?:
+    | Record<string, AnimationSettings | undefined | true | false>
+    | true
+    | false;
   /**
    * Optional handlers for animation events.
    *
@@ -650,7 +675,10 @@ export class ElementNode extends Object {
     }
 
     this._fontWeight = v;
-    const weight = (Config.fontWeightAlias && (Config.fontWeightAlias[v as string] as number | string)) ?? v;
+    const weight =
+      (Config.fontWeightAlias &&
+        (Config.fontWeightAlias[v as string] as number | string)) ??
+      v;
     (this.lng as any).fontFamily = `${this.fontFamily}${weight}`;
   }
 
@@ -667,7 +695,10 @@ export class ElementNode extends Object {
     return this._fontFamily || Config.fontSettings?.fontFamily;
   }
 
-  insertChild(node: ElementNode | ElementText | TextNode, beforeNode?: ElementNode | ElementText | TextNode | null) {
+  insertChild(
+    node: ElementNode | ElementText | TextNode,
+    beforeNode?: ElementNode | ElementText | TextNode | null,
+  ) {
     // always remove nodes if they have a parent - for back swap of node
     // this will then put the node at the end of the array when re-added
     if (node.parent) {
@@ -716,8 +747,12 @@ export class ElementNode extends Object {
     return undefined;
   }
 
-  set shader(shaderProps: IRendererShader | [kind: string, props: IRendererShaderProps]) {
-    this.lng.shader = isArray(shaderProps) ? renderer.createShader(...shaderProps) : shaderProps;
+  set shader(
+    shaderProps: IRendererShader | [kind: string, props: IRendererShaderProps],
+  ) {
+    this.lng.shader = isArray(shaderProps)
+      ? renderer.createShader(...shaderProps)
+      : shaderProps;
   }
 
   _sendToLightningAnimatable(name: string, value: number) {
@@ -725,7 +760,9 @@ export class ElementNode extends Object {
       this.transition &&
       this.rendered &&
       Config.animationsEnabled &&
-      (this.transition === true || this.transition[name] || this.transition[getPropertyAlias(name)])
+      (this.transition === true ||
+        this.transition[name] ||
+        this.transition[getPropertyAlias(name)])
     ) {
       const animationSettings =
         this.transition === true || this.transition[name] === true
@@ -737,20 +774,29 @@ export class ElementNode extends Object {
           this,
           name,
           value,
-          animationSettings || (this.animationSettings as SimpleAnimationSettings),
+          animationSettings ||
+            (this.animationSettings as SimpleAnimationSettings),
         );
         simpleAnimation.register(renderer.stage);
         return;
       } else {
-        const animationController = this.animate({ [name]: value }, animationSettings);
+        const animationController = this.animate(
+          { [name]: value },
+          animationSettings,
+        );
 
         if (this.onAnimation) {
-          const animationEvents = Object.keys(this.onAnimation) as AnimationEvents[];
+          const animationEvents = Object.keys(
+            this.onAnimation,
+          ) as AnimationEvents[];
           for (const event of animationEvents) {
             const handler = this.onAnimation[event];
-            animationController.on(event, (controller: IAnimationController, props?: any) => {
-              handler!.call(this, controller, name, value, props);
-            });
+            animationController.on(
+              event,
+              (controller: IAnimationController, props?: any) => {
+                handler!.call(this, controller, name, value, props);
+              },
+            );
           }
         }
 
@@ -765,11 +811,18 @@ export class ElementNode extends Object {
     props: Partial<INodeAnimateProps<CoreShaderNode>>,
     animationSettings?: AnimationSettings,
   ): IAnimationController {
-    isDev && assertTruthy(this.rendered, 'Node must be rendered before animating');
-    return (this.lng as IRendererNode).animate(props, animationSettings || this.animationSettings || {});
+    isDev &&
+      assertTruthy(this.rendered, 'Node must be rendered before animating');
+    return (this.lng as IRendererNode).animate(
+      props,
+      animationSettings || this.animationSettings || {},
+    );
   }
 
-  chain(props: Partial<INodeAnimateProps<CoreShaderNode>>, animationSettings?: AnimationSettings) {
+  chain(
+    props: Partial<INodeAnimateProps<CoreShaderNode>>,
+    animationSettings?: AnimationSettings,
+  ) {
     if (this._animationRunning) {
       this._animationQueue = [];
       this._animationRunning = false;
@@ -778,7 +831,8 @@ export class ElementNode extends Object {
     if (animationSettings) {
       this._animationQueueSettings = animationSettings;
     } else if (!this._animationQueueSettings) {
-      this._animationQueueSettings = animationSettings || this.animationSettings;
+      this._animationQueueSettings =
+        animationSettings || this.animationSettings;
     }
     animationSettings = animationSettings || this._animationQueueSettings;
     this._animationQueue = this._animationQueue || [];
@@ -790,7 +844,9 @@ export class ElementNode extends Object {
     let animation = this._animationQueue!.shift();
     while (animation) {
       this._animationRunning = true;
-      await this.animate(animation.props, animation.animationSettings).start().waitUntilStopped();
+      await this.animate(animation.props, animation.animationSettings)
+        .start()
+        .waitUntilStopped();
       animation = this._animationQueue!.shift();
     }
     this._animationRunning = false;
@@ -822,7 +878,8 @@ export class ElementNode extends Object {
             return;
           }
         } else {
-          const focusedIndex = typeof this.forwardFocus === 'number' ? this.forwardFocus : null;
+          const focusedIndex =
+            typeof this.forwardFocus === 'number' ? this.forwardFocus : null;
           const nodes = this.children;
           if (focusedIndex !== null && focusedIndex < nodes.length) {
             const child = nodes[focusedIndex];
@@ -946,7 +1003,9 @@ export class ElementNode extends Object {
   }
 
   set states(states: NodeStates) {
-    this._states = this._states ? this._states.merge(states) : new States(this._stateChanged.bind(this), states);
+    this._states = this._states
+      ? this._states.merge(states)
+      : new States(this._stateChanged.bind(this), states);
     if (this.rendered) {
       this._stateChanged();
     }
@@ -1014,7 +1073,8 @@ export class ElementNode extends Object {
 
       const flexChanged = this.display === 'flex' && calculateFlex(this);
       layoutQueue.delete(this);
-      const onLayoutChanged = isFunc(this.onLayout) && this.onLayout.call(this, this);
+      const onLayoutChanged =
+        isFunc(this.onLayout) && this.onLayout.call(this, this);
 
       if ((flexChanged || onLayoutChanged) && this.parent) {
         addToLayoutQueue(this.parent);
@@ -1071,7 +1131,9 @@ export class ElementNode extends Object {
       let newStyles: Styles;
       if (numStates === 1) {
         newStyles = this[states[0] as keyof Styles] as Styles;
-        newStyles = stylesToUndo ? { ...stylesToUndo, ...newStyles } : newStyles;
+        newStyles = stylesToUndo
+          ? { ...stylesToUndo, ...newStyles }
+          : newStyles;
       } else {
         newStyles = states.reduce((acc, state) => {
           const styles = this[state];
@@ -1186,13 +1248,17 @@ export class ElementNode extends Object {
         }
 
         if (!textProps.maxWidth) {
-          textProps.maxWidth = parentWidth - textProps.x! - (textProps.marginRight || 0);
+          textProps.maxWidth =
+            parentWidth - textProps.x! - (textProps.marginRight || 0);
         }
 
         if (textProps.contain === 'both' && !textProps.maxHeight) {
-          textProps.maxHeight = parentHeight - textProps.y! - (textProps.marginBottom || 0);
+          textProps.maxHeight =
+            parentHeight - textProps.y! - (textProps.marginBottom || 0);
         } else if (textProps.maxLines === 1) {
-          textProps.maxHeight = (textProps.maxHeight || textProps.lineHeight || textProps.fontSize) as number;
+          textProps.maxHeight = (textProps.maxHeight ||
+            textProps.lineHeight ||
+            textProps.fontSize) as number;
         }
 
         textProps.w = textProps.h = undefined;
@@ -1204,7 +1270,9 @@ export class ElementNode extends Object {
       }
 
       isDev && log('Rendering: ', this, props);
-      node.lng = renderer.createTextNode(props as unknown as IRendererTextNodeProps);
+      node.lng = renderer.createTextNode(
+        props as unknown as IRendererTextNodeProps,
+      );
       if (parent.requiresLayout()) {
         if (!textProps.maxWidth || !textProps.maxHeight) {
           node._layoutOnLoad();
@@ -1334,7 +1402,9 @@ function createRawShaderAccessor<T>(key: keyof StyleEffects) {
   };
 }
 
-function shaderAccessor<T extends Record<string, any> | number>(key: 'border' | 'shadow' | 'rounded') {
+function shaderAccessor<T extends Record<string, any> | number>(
+  key: 'border' | 'shadow' | 'rounded',
+) {
   return {
     set(this: ElementNode, value: T) {
       let target = this.lng.shader || {};
@@ -1343,12 +1413,17 @@ function shaderAccessor<T extends Record<string, any> | number>(key: 'border' | 
       if (this.lng.shader?.program) {
         target = this.lng.shader.props;
         const transitionKey = key === 'rounded' ? 'borderRadius' : key;
-        if (this.transition && (this.transition === true || this.transition[transitionKey])) {
+        if (
+          this.transition &&
+          (this.transition === true || this.transition[transitionKey])
+        ) {
           target = {};
           animationSettings =
             this.transition === true || this.transition[transitionKey] === true
               ? undefined
-              : (this.transition[transitionKey] as undefined | AnimationSettings);
+              : (this.transition[transitionKey] as
+                  | undefined
+                  | AnimationSettings);
         }
       }
 
@@ -1388,6 +1463,8 @@ Object.defineProperties(ElementNode.prototype, {
   rounded: shaderAccessor<BorderRadius>('rounded'),
   // Alias for rounded
   borderRadius: shaderAccessor<BorderRadius>('rounded'),
-  linearGradient: createRawShaderAccessor<LinearGradientProps>('linearGradient'),
-  radialGradient: createRawShaderAccessor<RadialGradientProps>('radialGradient'),
+  linearGradient:
+    createRawShaderAccessor<LinearGradientProps>('linearGradient'),
+  radialGradient:
+    createRawShaderAccessor<RadialGradientProps>('radialGradient'),
 });

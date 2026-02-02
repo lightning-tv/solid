@@ -24,7 +24,11 @@ export * from './VirtualGrid.jsx';
 export * from './Virtual.jsx';
 export * from './utils/withScrolling.js';
 export * from './createTag.jsx';
-export { type AnyFunction, chainFunctions, chainRefs } from './utils/chainFunctions.js';
+export {
+  type AnyFunction,
+  chainFunctions,
+  chainRefs,
+} from './utils/chainFunctions.js';
 export * from './utils/handleNavigation.js';
 export { createSpriteMap, type SpriteDef } from './utils/createSpriteMap.js';
 export { createBlurredImage } from './utils/createBlurredImage.js';
