@@ -509,6 +509,14 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   h: number;
   /**
+   * The maximum width of the element.
+   */
+  maxWidth?: number;
+  /**
+   * The maximum height of the element.
+   */
+  maxHeight?: number;
+  /**
    * The z-index of the element, which affects its stacking order.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
@@ -653,19 +661,19 @@ export class ElementNode extends Object {
     }
   }
 
-  get height() {
-    return this.h;
+  get height(): number {
+    return this.maxHeight || this.h;
   }
 
-  set height(h) {
+  set height(h: number) {
     this.h = h;
   }
 
-  get width() {
-    return this.w;
+  get width(): number {
+    return this.maxWidth || this.w;
   }
 
-  set width(w) {
+  set width(w: number) {
     this.w = w;
   }
 
