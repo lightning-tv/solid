@@ -6,9 +6,10 @@ import {
   type ElementNode,
   LightningRendererNumberProps,
 } from './elementNode.js';
-import { type IRendererStage } from './lightningInit.js';
 import { TimingFunction } from '@lightningjs/renderer';
 import { isFunc } from './utils.js';
+import { IRendererStage } from './dom-renderer/domRendererTypes.js';
+import { CoreAnimation } from './intrinsicTypes.js';
 
 /**
  * Simplified Animation Settings
@@ -53,7 +54,7 @@ export class SimpleAnimation {
     }
     this.isRegistered = true;
     this.stage = stage;
-    stage.animationManager.registerAnimation(this);
+    stage.animationManager.registerAnimation(this as unknown as CoreAnimation);
   }
 
   /**
@@ -174,7 +175,9 @@ export class SimpleAnimation {
         this.nodeConfigs.splice(i, 1);
       }
       if (this.nodeConfigs.length === 0) {
-        this.stage?.animationManager.unregisterAnimation(this);
+        this.stage?.animationManager.unregisterAnimation(
+          this as unknown as CoreAnimation,
+        );
         this.isRegistered = false;
       }
     }

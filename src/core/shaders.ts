@@ -19,8 +19,8 @@ export {
 import { type WebGlShaderType as WebGlShader } from '@lightningjs/renderer/webgl';
 export { WebGlShader };
 
-import { type IRendererShaderManager } from './lightningInit.js';
 import { DOM_RENDERING, SHADERS_ENABLED } from './config.js';
+import { CoreShaderManager } from './intrinsicTypes.js';
 
 export type Vec4 = [x: number, y: number, z: number, w: number];
 
@@ -59,6 +59,14 @@ export type ShaderRoundedWithBorderAndShadow =
 export type ShaderHolePunch = WebGlShader<ShaderHolePunchProps>;
 export type ShaderRadialGradient = WebGlShader<ShaderRadialGradientProps>;
 export type ShaderLinearGradient = WebGlShader<ShaderLinearGradientProps>;
+
+export type ShaderProps =
+  | ShaderBorderPrefixedProps
+  | ShaderShadowPrefixedProps
+  | ShaderRoundedProps
+  | ShaderHolePunchProps
+  | ShaderRadialGradientProps
+  | ShaderLinearGradientProps;
 
 export const defaultShaderRounded: ShaderRounded = lngr_shaders.Rounded;
 export const defaultShaderShadow: ShaderShadow = lngr_shaders.Shadow;
@@ -497,18 +505,16 @@ export const defaultShaderRoundedWithBorder: ShaderRoundedWithBorder = {
   `,
 };
 
-export function registerDefaultShaderRounded(
-  shManager: IRendererShaderManager,
-) {
+export function registerDefaultShaderRounded(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('rounded', defaultShaderRounded);
 }
-export function registerDefaultShaderShadow(shManager: IRendererShaderManager) {
+export function registerDefaultShaderShadow(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('shadow', defaultShaderShadow);
 }
 export function registerDefaultShaderRoundedWithBorder(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -517,7 +523,7 @@ export function registerDefaultShaderRoundedWithBorder(
     );
 }
 export function registerDefaultShaderRoundedWithShadow(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -526,7 +532,7 @@ export function registerDefaultShaderRoundedWithShadow(
     );
 }
 export function registerDefaultShaderRoundedWithBorderAndShadow(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -534,26 +540,24 @@ export function registerDefaultShaderRoundedWithBorderAndShadow(
       defaultShaderRoundedWithBorderAndShadow,
     );
 }
-export function registerDefaultShaderHolePunch(
-  shManager: IRendererShaderManager,
-) {
+export function registerDefaultShaderHolePunch(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('holePunch', defaultShaderHolePunch);
 }
 export function registerDefaultShaderRadialGradient(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('radialGradient', defaultShaderRadialGradient);
 }
 export function registerDefaultShaderLinearGradient(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('linearGradient', defaultShaderLinearGradient);
 }
 
-export function registerDefaultShaders(shManager: IRendererShaderManager) {
+export function registerDefaultShaders(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING) {
     registerDefaultShaderRounded(shManager);
     registerDefaultShaderShadow(shManager);
