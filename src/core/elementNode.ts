@@ -615,7 +615,7 @@ export class ElementNode extends Object {
   set effects(v: StyleEffects) {
     if (!SHADERS_ENABLED) return;
     let target = this.lng.shader || {};
-    if (this.lng.shader?.program) {
+    if (this.lng.shader?.props) {
       target = this.lng.shader.props;
     }
     if (v.rounded) target.radius = v.rounded.radius;
@@ -1408,7 +1408,7 @@ function shaderAccessor<T extends Record<string, any> | number>(
       let target = this.lng.shader || {};
 
       let animationSettings: AnimationSettings | undefined;
-      if (this.lng.shader?.program) {
+      if (this.lng.shader?.props) {
         target = this.lng.shader.props;
         const transitionKey = key === 'rounded' ? 'borderRadius' : key;
         if (
