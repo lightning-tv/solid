@@ -674,6 +674,7 @@ export class ElementNode extends Object {
 
   set fontWeight(v) {
     this._fontWeight = v;
+    (this.lng as ElementNode).fontWeight = v;
     const family = this.fontFamily || Config.fontSettings?.fontFamily;
     const weight =
       (Config.fontWeightAlias &&
@@ -1216,7 +1217,11 @@ export class ElementNode extends Object {
       if (Config.fontSettings) {
         for (const key in Config.fontSettings) {
           if (textProps[key] === undefined) {
-            textProps[key] = Config.fontSettings[key];
+            let value = Config.fontSettings[key];
+            if (key === 'fontFamily' && textProps['fontWeight'] === undefined) {
+              value = `${value}${Config.fontSettings.fontWeight || ''}`;
+            }
+            textProps[key] = value;
           }
         }
       }
