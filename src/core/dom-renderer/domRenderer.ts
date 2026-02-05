@@ -309,14 +309,35 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     let maxLines = textProps.maxLines || Infinity;
     switch (textProps.contain) {
       case 'width':
-        style += `width: ${props.w}px; overflow: hidden;`;
+        if (textProps.maxWidth && textProps.maxWidth > 0) {
+          style += `width: ${textProps.maxWidth}px;`;
+        } else {
+          style += `width: 100%;`;
+        }
+        style += `overflow: hidden;`;
         break;
       case 'both': {
         let lineHeight = getNodeLineHeight(textProps);
-        maxLines = Math.min(maxLines, Math.floor(props.h / lineHeight));
-        maxLines = Math.max(1, maxLines);
-        let height = maxLines * lineHeight;
-        style += `width: ${props.w}px; height: ${height}px; overflow: hidden;`;
+        const widthConstraint =
+          textProps.maxWidth && textProps.maxWidth > 0
+            ? `${textProps.maxWidth}px`
+            : `100%`;
+        const heightConstraint =
+          textProps.maxHeight && textProps.maxHeight > 0
+            ? textProps.maxHeight
+            : props.h;
+
+        let height = heightConstraint || 0;
+        if (height > 0) {
+          const maxLinesByHeight = Math.max(1, Math.floor(height / lineHeight));
+          maxLines = Math.min(maxLines, maxLinesByHeight);
+          height = Math.max(lineHeight, maxLines * lineHeight);
+        } else {
+          maxLines = Number.isFinite(maxLines) ? Math.max(1, maxLines) : 1;
+          height = maxLines * lineHeight;
+        }
+
+        style += `width: ${widthConstraint}; height: ${height}px; overflow: hidden;`;
         break;
       }
       case 'none':
