@@ -72,6 +72,10 @@ export const navigableForwardFocus: lng.ForwardFocusHandler = function () {
 
   let selected = Math.max(navigable.selected, 0);
 
+  if (this.children.length === 0) {
+    return false;
+  }
+
   if (selected !== 0) {
     selected = lng.clamp(selected, 0, Math.max(0, this.children.length - 1));
     while (!idxInArray(selected, this.children)) {

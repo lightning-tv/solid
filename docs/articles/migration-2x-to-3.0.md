@@ -4,6 +4,17 @@ This guide helps you migrate from Lightning 3 version 2.x to the new 3.0 release
 
 To get the full list of changes from the renderer you can check the [changelog](https://github.com/lightning-tv/renderer/blob/main/CHANGELOG.md).
 
+## Overview of Steps
+
+1. Update to the latest version of the renderer beta (v3.0.0-beta20)
+2. Update to the latest version of the solid 3.0.0
+3. Remove references for @lightningtv/core -> use @lightningtv/solid instead
+4. Update fonts.ts to new format (remove fontWeight information, add to fontFamily)
+5. Double check your fontWeightAlias if needed
+6. Import shaders in index.ts
+7. Check <Text> components to fix possible alignment + centering issues
+8. Add **DEV** flag to your vite.config.ts
+
 ### Fonts
 
 `fontWeight` was removed from the renderer and is now polyfilled by Solid. When you load fonts with different weights, ie `Roboto` 400 and 700, you'll need to update your fonts with different fontFamily names:
@@ -136,3 +147,20 @@ shManager.registerShaderType('holePunch', HolePunch);
 ```
 
 Be mindful some of the properties may have changed (like width/height).
+<<<<<<< HEAD
+=======
+
+## **DEV** flag
+
+The renderer now uses the **DEV** flag to determine if it should run in development mode. This is a global variable that is set by the build process. You can set it in your vite.config.ts file like this:
+
+```js
+defineConfig(({ mode }) => ({
+  define: {
+    __DEV__: mode !== 'production',
+  },
+  // ...
+}));
+```
+
+> > > > > > > upstream

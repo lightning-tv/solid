@@ -92,7 +92,7 @@ type CleanElementNode = NewOmit<
 export interface ElementText
   extends NewOmit<
       ElementNode,
-      '_type' | 'parent' | 'children' | 'src' | 'scale'
+      '_type' | 'parent' | 'children' | 'src' | 'scale' | 'fontFamily'
     >,
     NewOmit<RendererText, 'x' | 'y' | 'w' | 'h'> {
   _type: 'textNode';

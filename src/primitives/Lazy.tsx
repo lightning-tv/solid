@@ -68,7 +68,7 @@ function createLazy<T>(
       if (itemLength != props.each.length) {
         itemLength = props.each.length;
         if (viewRef && !viewRef.noRefocus && lng.hasFocus(viewRef)) {
-          queueMicrotask(viewRef.setFocus);
+          queueMicrotask(() => viewRef.setFocus());
         }
       }
       return props.each.slice(0, offset());

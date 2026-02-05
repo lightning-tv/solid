@@ -210,6 +210,7 @@ export interface ElementNode extends RendererNode, FocusNode {
   _containsFlexGrow?: boolean | null;
   _hasRenderedChildren?: boolean;
   _effects?: StyleEffects;
+  _fontFamily?: string;
   _id: string | undefined;
   _parent: ElementNode | undefined;
   _rendererProps?: any;
@@ -512,6 +513,14 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   h: number;
   /**
+   * The maximum width of the element.
+   */
+  maxWidth?: number;
+  /**
+   * The maximum height of the element.
+   */
+  maxHeight?: number;
+  /**
    * The z-index of the element, which affects its stacking order.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
@@ -656,35 +665,46 @@ export class ElementNode extends Object {
     }
   }
 
-  get height() {
-    return this.h;
+  get height(): number {
+    return this.maxHeight || this.h;
   }
 
-  set height(h) {
+  set height(h: number) {
     this.h = h;
   }
 
-  get width() {
-    return this.w;
+  get width(): number {
+    return this.maxWidth || this.w;
   }
 
-  set width(w) {
+  set width(w: number) {
     this.w = w;
   }
 
   set fontWeight(v) {
+    if (this._fontWeight === v) {
+      return;
+    }
+
     this._fontWeight = v;
-    (this.lng as ElementNode).fontWeight = v;
-    const family = this.fontFamily || Config.fontSettings?.fontFamily;
     const weight =
       (Config.fontWeightAlias &&
         (Config.fontWeightAlias[v as string] as number | string)) ??
       v;
-    this.fontFamily = `${family}${weight}`;
+    (this.lng as any).fontFamily = `${this.fontFamily}${weight}`;
   }
 
   get fontWeight() {
     return this._fontWeight;
+  }
+
+  set fontFamily(v) {
+    this._fontFamily = v;
+    (this.lng as any).fontFamily = v;
+  }
+
+  get fontFamily() {
+    return this._fontFamily || Config.fontSettings?.fontFamily;
   }
 
   insertChild(
