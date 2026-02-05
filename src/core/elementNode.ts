@@ -1238,7 +1238,6 @@ export class ElementNode extends Object {
           if (textProps[key] === undefined) {
             let value = Config.fontSettings[key];
             if (key === 'fontFamily' && textProps['fontWeight'] === undefined) {
-              debugger;
               value = `${value}${Config.fontSettings.fontWeight || ''}`;
             }
             textProps[key] = value;
@@ -1251,28 +1250,8 @@ export class ElementNode extends Object {
         console.warn('Text align requires contain: ', node.getText());
       }
 
-      if (textProps.contain) {
-        if (!textProps.width) {
-          textProps.width =
-            parentWidth - textProps.x! - (textProps.marginRight || 0);
-        }
-
-        if (
-          textProps.contain === 'both' &&
-          !textProps.height &&
-          !textProps.maxLines
-        ) {
-          textProps.height =
-            parentHeight - textProps.y! - (textProps.marginBottom || 0);
-        } else if (textProps.maxLines === 1) {
-          textProps.height = (textProps.height ||
-            textProps.lineHeight ||
-            textProps.fontSize) as number;
-        }
-      }
-
       // contain is either width or both
-      if (false && textProps.contain) {
+      if (textProps.contain) {
         if (textProps.contain === 'both') {
           textProps.maxWidth = textProps.maxWidth ?? textProps.w;
           textProps.maxHeight = textProps.maxHeight ?? textProps.h;
