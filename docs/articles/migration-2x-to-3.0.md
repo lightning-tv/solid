@@ -147,8 +147,6 @@ shManager.registerShaderType('holePunch', HolePunch);
 ```
 
 Be mindful some of the properties may have changed (like width/height).
-<<<<<<< HEAD
-=======
 
 ## **DEV** flag
 
@@ -162,5 +160,3 @@ defineConfig(({ mode }) => ({
   // ...
 }));
 ```
-
-> > > > > > > upstream
