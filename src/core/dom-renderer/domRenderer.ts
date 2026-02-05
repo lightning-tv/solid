@@ -232,8 +232,6 @@ function updateNodeParent(node: DOMNode | DOMText) {
   }
 }
 
-// getNodeLineHeight moved to domRendererUtils.ts
-
 function updateNodeStyles(node: DOMNode | DOMText) {
   let { props } = node;
 
@@ -280,7 +278,7 @@ function updateNodeStyles(node: DOMNode | DOMText) {
   // <Text>
   if (node instanceof DOMText) {
     let textProps = node.props;
-    const fontFamily = textProps.fontFamily || 'sans-serif';
+
     if (textProps.color != null && textProps.color !== 0) {
       style += `color: ${colorToRgba(textProps.color)};`;
     }
@@ -1043,6 +1041,26 @@ export class DOMNode extends EventEmitter implements IRendererNode {
     return this.props.h;
   }
   set h(v) {
+    if (this.props.h === v) return;
+    this.props.h = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
+    updateNodeStyles(this);
+  }
+  get width() {
+    return this.props.w;
+  }
+  set width(v) {
+    if (this.props.w === v) return;
+    this.props.w = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
+    updateNodeStyles(this);
+  }
+  get height() {
+    return this.props.h;
+  }
+  set height(v) {
     if (this.props.h === v) return;
     this.props.h = v;
     this.boundsDirty = true;

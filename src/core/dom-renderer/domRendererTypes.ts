@@ -1,5 +1,5 @@
 import * as lng from '@lightningjs/renderer';
-import { CoreAnimation, CoreShaderManager } from '../intrinsicTypes.js';
+import { CoreAnimation } from '../intrinsicTypes.js';
 import { EventEmitter } from '@lightningjs/renderer/utils';
 import {
   ShaderBorderPrefixedProps,

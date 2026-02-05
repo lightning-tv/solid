@@ -48,7 +48,9 @@ export type CoreAnimation = Parameters<
   lngr.Stage['animationManager']['registerAnimation']
 >[0];
 
-export type FontLoadOptions = Parameters<lngr.Stage['loadFont']>[1];
+export type FontLoadOptions = Parameters<lngr.Stage['loadFont']>[1] & {
+  type?: 'ssdf' | 'msdf';
+};
 
 export type CoreShaderManager = lngr.Stage['shManager'];
 
