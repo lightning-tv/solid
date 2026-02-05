@@ -478,13 +478,11 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         typeof borderColor === 'number' &&
         borderColor !== 0
       ) {
-        debugger;
         const rgbaColor = colorToRgba(borderColor);
         // Handle inset borders by making gap negative
         let gap = borderInset ? -(borderWidth + borderGap) : borderGap;
-        borderStyle += `box-shadow: inset 0px 0px 0px ${borderWidth}px ${rgbaColor};`;
-        //borderStyle += `outline: ${borderWidth}px solid ${colorToRgba(borderColor)};`;
-        //borderStyle += `outline-offset: ${gap}px;`;
+        borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
+        borderStyle += `outline-offset: ${gap}px;`;
       }
       // Rounded
       if (typeof radius === 'number' && radius > 0) {
