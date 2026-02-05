@@ -202,6 +202,10 @@ export function interpolateProp(
     : interpolate(start, end, t);
 }
 
+export function compactString(input: string): string {
+  return input.replace(/\s*\n\s*/g, ' ');
+}
+
 // #region Renderer State Utils
 
 export function isRenderStateInBounds(state: lng.CoreNodeRenderState): boolean {

@@ -30,6 +30,7 @@ import {
   isRenderStateInBounds,
   nodeHasTextureSource,
   computeRenderStateForNode,
+  compactString,
 } from './domRendererUtils.js';
 import { FontLoadOptions } from '../intrinsicTypes.js';
 
@@ -345,6 +346,8 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         style += `width: max-content;`;
         break;
     }
+
+    style += `white-space: pre-wrap;`;
 
     if (maxLines !== Infinity) {
       // https://stackoverflow.com/a/13924997
@@ -692,7 +695,7 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     }
   }
 
-  node.div.setAttribute('style', style);
+  node.div.setAttribute('style', compactString(style));
 
   if (node instanceof DOMNode && node !== node.stage.root) {
     const hasTextureSrc = nodeHasTextureSource(node);

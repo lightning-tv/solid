@@ -1277,7 +1277,8 @@ export class ElementNode extends Object {
             textProps.fontSize) as number;
         }
 
-        textProps.w = textProps.h = undefined;
+        textProps.w ??= textProps.maxWidth;
+        textProps.h ??= textProps.maxHeight;
       }
 
       // Can you put effects on Text nodes? Need to confirm...
