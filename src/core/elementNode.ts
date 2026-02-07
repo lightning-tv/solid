@@ -68,13 +68,15 @@ function addToLayoutQueue(node: ElementNode) {
 }
 
 function runLayout() {
-  layoutRunQueued = false;
-  const queue = [...layoutQueue];
-  layoutQueue.clear();
-  for (let i = queue.length - 1; i >= 0; i--) {
-    const node = queue[i] as ElementNode;
-    node.updateLayout();
+  while (layoutQueue.size > 0) {
+    const queue = [...layoutQueue];
+    layoutQueue.clear();
+    for (let i = queue.length - 1; i >= 0; i--) {
+      const node = queue[i] as ElementNode;
+      node.updateLayout();
+    }
   }
+  layoutRunQueued = false;
 }
 
 const parseAndAssignShaderProps = (
