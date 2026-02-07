@@ -44,6 +44,16 @@ export interface Effects {
 
 export type StyleEffects = Effects;
 
+export type CoreAnimation = Parameters<
+  lngr.Stage['animationManager']['registerAnimation']
+>[0];
+
+export type FontLoadOptions = Parameters<lngr.Stage['loadFont']>[1] & {
+  type?: 'ssdf' | 'msdf';
+};
+
+export type CoreShaderManager = lngr.Stage['shManager'];
+
 export type NewOmit<T, K extends PropertyKey> = {
   [P in keyof T as Exclude<P, K>]: T[P];
 };

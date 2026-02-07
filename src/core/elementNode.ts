@@ -1,12 +1,4 @@
-import {
-  IRendererNode,
-  IRendererNodeProps,
-  IRendererShader,
-  IRendererShaderProps,
-  IRendererTextNode,
-  IRendererTextNodeProps,
-  renderer,
-} from './lightningInit.js';
+import { renderer } from './lightningInit.js';
 import {
   type BorderRadius,
   type BorderStyle,
@@ -46,6 +38,8 @@ import type {
   RadialGradientProps,
   ShadowProps,
   CoreShaderNode,
+  ITextNodeProps,
+  INodeProps,
 } from '@lightningjs/renderer';
 import { assertTruthy } from '@lightningjs/renderer/utils';
 import { NodeType } from './nodeTypes.js';
@@ -55,6 +49,14 @@ import {
   FocusNode,
 } from './focusManager.js';
 import simpleAnimation, { SimpleAnimationSettings } from './animation.js';
+import {
+  IRendererNode,
+  IRendererNodeProps,
+  IRendererShader,
+  IRendererShaderProps,
+  IRendererTextNode,
+  IRendererTextNodeProps,
+} from './dom-renderer/domRendererTypes.js';
 
 let layoutRunQueued = false;
 const layoutQueue = new Set<ElementNode>();
@@ -96,7 +98,7 @@ function convertToShader(_node: ElementNode, v: StyleEffects): IRendererShader {
   let type = 'rounded';
   if (v.border) type += 'WithBorder';
   if (v.shadow) type += 'WithShadow';
-  return renderer.createShader(type, v as IRendererShaderProps);
+  return renderer.createShader(type, v);
 }
 
 function getPropertyAlias(name: string) {
@@ -273,8 +275,9 @@ export interface ElementNode extends RendererNode, FocusNode {
    * The underlying Lightning Renderer node object. This is where the properties are ultimately set for rendering.
    */
   lng:
-    | Partial<ElementNode>
+    | INode
     | IRendererNode
+    | Partial<ElementNode>
     | (IRendererTextNode & { shader?: any });
   /**
    * A reference to the `ElementNode` instance. Can be an object or a callback function.
@@ -622,7 +625,7 @@ export class ElementNode extends Object {
   set effects(v: StyleEffects) {
     if (!SHADERS_ENABLED) return;
     let target = this.lng.shader || {};
-    if (this.lng.shader?.program) {
+    if (this.lng.shader?.props) {
       target = this.lng.shader.props;
     }
     if (v.rounded) target.radius = v.rounded.radius;
@@ -814,7 +817,8 @@ export class ElementNode extends Object {
       }
     }
 
-    (this.lng[name as keyof IRendererNode] as number | string) = value;
+    (this.lng[name as keyof (IRendererNode | INode)] as number | string) =
+      value;
   }
 
   animate(
@@ -1234,7 +1238,11 @@ export class ElementNode extends Object {
       if (Config.fontSettings) {
         for (const key in Config.fontSettings) {
           if (textProps[key] === undefined) {
-            textProps[key] = Config.fontSettings[key];
+            let value = Config.fontSettings[key];
+            if (key === 'fontFamily' && textProps['fontWeight'] === undefined) {
+              value = `${value}${Config.fontSettings.fontWeight || ''}`;
+            }
+            textProps[key] = value;
           }
         }
       }
@@ -1270,8 +1278,7 @@ export class ElementNode extends Object {
             textProps.lineHeight ||
             textProps.fontSize) as number;
         }
-
-        textProps.w = textProps.h = undefined;
+        // textProps.w = textProps.h = 0;
       }
 
       // Can you put effects on Text nodes? Need to confirm...
@@ -1280,9 +1287,11 @@ export class ElementNode extends Object {
       }
 
       isDev && log('Rendering: ', this, props);
+
       node.lng = renderer.createTextNode(
-        props as unknown as IRendererTextNodeProps,
-      );
+        props as Partial<ITextNodeProps> & Partial<IRendererTextNodeProps>,
+      ) as IRendererTextNode;
+
       if (parent.requiresLayout()) {
         if (!textProps.maxWidth || !textProps.maxHeight) {
           node._layoutOnLoad();
@@ -1318,7 +1327,10 @@ export class ElementNode extends Object {
       }
 
       isDev && log('Rendering: ', this, props);
-      node.lng = renderer.createNode(props as IRendererNodeProps);
+
+      node.lng = renderer.createNode(
+        props as Partial<INodeProps<any>> & Partial<IRendererNodeProps>,
+      );
 
       if (node._hasRenderedChildren) {
         node._hasRenderedChildren = false;
@@ -1346,14 +1358,15 @@ export class ElementNode extends Object {
 
     if (node.onEvent) {
       for (const [name, handler] of Object.entries(node.onEvent)) {
-        node.lng.on(name, (_inode, data) => handler.call(node, node, data));
+        if (typeof node.lng.on === 'function') {
+          node.lng.on(name, (_inode, data) => handler.call(node, node, data));
+        }
       }
     }
 
     // L3 Inspector adds div to the lng object
-    if (node.lng?.div) {
-      node.lng.div.element = node;
-    }
+    const div: HTMLElement | undefined = (node.lng as any)?.div;
+    if (div) div.element = node;
 
     if (node._type === NodeType.Element) {
       // only element nodes will have children that need rendering
@@ -1420,7 +1433,7 @@ function shaderAccessor<T extends Record<string, any> | number>(
       let target = this.lng.shader || {};
 
       let animationSettings: AnimationSettings | undefined;
-      if (this.lng.shader?.program) {
+      if (this.lng.shader?.props) {
         target = this.lng.shader.props;
         const transitionKey = key === 'rounded' ? 'borderRadius' : key;
         if (
