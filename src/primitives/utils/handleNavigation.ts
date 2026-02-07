@@ -2,6 +2,34 @@ import * as s from 'solid-js';
 import * as lng from '../../index.js';
 import * as lngp from '../index.js';
 
+export const defaultTransitionBack = {
+  x: {
+    duration: 180,
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+};
+
+export const defaultTransitionForward = {
+  x: {
+    duration: 180,
+    easing: 'cubic-bezier(0.2, 0, 0, 1)',
+  },
+};
+
+export const defaultTransitionDown = {
+  y: {
+    duration: 300,
+    easing: 'cubic-bezier(0.2, 1, 0.8, 1)',
+  },
+};
+
+export const defaultTransitionUp = {
+  y: {
+    duration: 300,
+    easing: 'cubic-bezier(0.3, 0, 0.2, 1)',
+  },
+};
+
 function idxInArray(idx: number, arr: readonly any[]): boolean {
   return idx >= 0 && idx < arr.length;
 }
@@ -93,6 +121,30 @@ export function handleNavigation(
   direction: 'up' | 'right' | 'down' | 'left',
 ): lng.KeyHandler {
   return function () {
+    const el = this as lngp.NavigableElement;
+    const transition =
+      direction === 'up'
+        ? el.transitionUp
+        : direction === 'down'
+          ? el.transitionDown
+          : direction === 'left'
+            ? el.transitionLeft
+            : direction === 'right'
+              ? el.transitionRight
+              : undefined;
+
+    if (transition) {
+      const currentTransition =
+        typeof el.transition === 'object' && el.transition !== null
+          ? el.transition
+          : {};
+
+      el.transition = {
+        ...currentTransition,
+        ...(transition as object),
+      };
+    }
+
     return moveSelection(
       this as lngp.NavigableElement,
       direction === 'up' || direction === 'left' ? -1 : 1,

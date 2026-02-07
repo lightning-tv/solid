@@ -1,7 +1,14 @@
 import { type Component } from 'solid-js';
-import { ElementNode, combineStyles, type NodeStyles } from '@lightningtv/solid';
 import {
-  navigableForwardFocus, handleNavigation
+  ElementNode,
+  combineStyles,
+  type NodeStyles,
+} from '@lightningtv/solid';
+import {
+  navigableForwardFocus,
+  handleNavigation,
+  defaultTransitionDown,
+  defaultTransitionUp,
 } from './utils/handleNavigation.js';
 import { scrollColumn } from './utils/withScrolling.js';
 import { chainFunctions } from './utils/chainFunctions.js';
@@ -11,12 +18,6 @@ const ColumnStyles: NodeStyles = {
   display: 'flex',
   flexDirection: 'column',
   gap: 30,
-  transition: {
-    y: {
-      duration: 250,
-      easing: 'ease-in-out',
-    },
-  },
 };
 
 function scrollToIndex(this: ElementNode, index: number) {
@@ -31,6 +32,9 @@ const onDown = handleNavigation('down');
 export const Column: Component<ColumnProps> = (props) => {
   return (
     <view
+      transitionUp={defaultTransitionUp}
+      transitionDown={defaultTransitionDown}
+      transition={/* @once */ {}}
       {...props}
       onUp={/* @once */ chainFunctions(props.onUp, onUp)}
       onDown={/* @once */ chainFunctions(props.onDown, onDown)}
@@ -39,7 +43,9 @@ export const Column: Component<ColumnProps> = (props) => {
       forwardFocus={navigableForwardFocus}
       onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onLayout, scrollColumn) : props.onLayout
+        props.selected
+          ? chainFunctions(props.onLayout, scrollColumn)
+          : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
