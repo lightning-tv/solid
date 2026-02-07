@@ -969,7 +969,7 @@ export class ElementNode extends Object {
   }
 
   get style(): Styles {
-    return this._style!;
+    return this._style || {};
   }
 
   get hasChildren() {
