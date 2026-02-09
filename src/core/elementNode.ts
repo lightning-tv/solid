@@ -171,6 +171,7 @@ const LightningRendererNonAnimatingProps = [
   'texture',
   'textureOptions',
   'verticalAlign',
+  'wordBreak',
   'wordWrap',
 ];
 
