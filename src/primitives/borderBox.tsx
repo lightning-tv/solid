@@ -5,7 +5,6 @@ import {
   type NodeStyles,
 } from '@lightningtv/solid';
 import { getOwner, runWithOwner, type Accessor } from 'solid-js';
-import { fadeIn, fadeOut } from './FadeInOut.jsx';
 import { chainFunctions } from '@lightningtv/solid/primitives';
 
 export const BorderBoxStyle: NodeStyles = {
@@ -13,23 +12,27 @@ export const BorderBoxStyle: NodeStyles = {
   borderSpace: 6,
   borderRadius: 20,
   border: { color: 0xffffff, width: 2 },
-  scale: 1,
+  transition: { alpha: { duration: 100, easing: 'linear' } },
 };
 
 type BorderProps = NodeProps & { borderSpace?: number };
 const borderComponent = (props: BorderProps) => {
   const space = props.borderSpace ?? (BorderBoxStyle.borderSpace as number);
-  const scale = props.scale ?? (BorderBoxStyle.scale as number);
   return (
     <view
       skipFocus
       onCreate={(el) => {
         const parent = el.parent!;
-        el.width = parent.width * scale + space * 2;
-        el.height = parent.height * scale + space * 2;
-        fadeIn(el);
+        el.width = parent.width + space * 2;
+        el.height = parent.height + space * 2;
+        el.alpha = 1;
       }}
-      onDestroy={fadeOut}
+      onDestroy={(el) => {
+        return el
+          .animate({ alpha: 0 }, el.transition as any)
+          .start()
+          .waitUntilStopped();
+      }}
       style={BorderBoxStyle}
       x={-space}
       y={-space}

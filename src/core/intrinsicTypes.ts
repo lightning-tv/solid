@@ -26,6 +26,8 @@ export type AddColorString<T> = {
 export interface BorderStyleObject {
   width: number;
   color: number | string;
+  gap?: number;
+  align: number | 'inside' | 'center' | 'outside';
 }
 
 export type DollarString = `$${string}`;
