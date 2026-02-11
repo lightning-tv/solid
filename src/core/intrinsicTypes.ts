@@ -27,7 +27,7 @@ export interface BorderStyleObject {
   width: number;
   color: number | string;
   gap?: number;
-  align: number | 'inside' | 'center' | 'outside';
+  align?: number | 'inside' | 'center' | 'outside';
 }
 
 export type DollarString = `$${string}`;

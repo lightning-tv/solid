@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
-    "@lightningjs/renderer": "^3.0.0-beta21",
+    "@lightningjs/renderer": "3.0.0-beta21",
     "@solid-devtools/debugger": "^0.28.1",
     "@solidjs/testing-library": "^0.8.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
@@ -101,8 +101,8 @@
     "*.{js,cjs,md}": "prettier --write"
   },
   "peerDependencies": {
-    "@solidjs/router": "^0.15.1",
     "@lightningjs/renderer": "^3.0.0-beta21",
+    "@solidjs/router": "^0.15.1",
     "solid-js": "*"
   },
   "peerDependenciesMeta": {},
