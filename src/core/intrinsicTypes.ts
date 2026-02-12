@@ -27,6 +27,7 @@ export interface BorderStyleObject {
   width: number;
   color: number | string;
   gap?: number;
+  fill?: number | string;
   align?: number | 'inside' | 'center' | 'outside';
 }
 
