@@ -30,6 +30,7 @@ export interface IRendererStage {
     unregisterAnimation: (anim: any) => void;
   };
   loadFont(kind: string, props: any): Promise<void>;
+  cleanup(full: boolean): void;
 }
 
 /** Based on {@link lng.CoreShaderManager} */
