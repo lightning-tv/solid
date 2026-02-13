@@ -3,6 +3,7 @@ import type {
   TextProps,
   AnimationSettings,
   DollarString,
+  StyleEffects,
 } from './intrinsicTypes.js';
 import { type ElementNode } from './elementNode.js';
 
@@ -58,6 +59,7 @@ export interface Config {
   fontWeightAlias?: Record<string, number | string>;
   throttleInput?: number;
   taskDelay?: number;
+  customShaderTypeSuffix?: (_node: ElementNode, v: StyleEffects) => string;
 }
 
 export const Config: Config = {
