@@ -182,11 +182,7 @@ export function moveSelection(
   el: lngp.NavigableElement,
   delta: number,
 ): boolean {
-  let selected = findFirstFocusableChildIdx(
-    el,
-    Math.max(0, el.selected + delta),
-    delta,
-  );
+  let selected = findFirstFocusableChildIdx(el, el.selected + delta, delta);
 
   if (selected === -1) {
     if (
