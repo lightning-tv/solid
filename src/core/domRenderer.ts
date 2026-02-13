@@ -1212,6 +1212,7 @@ export class DOMRendererMain implements IRendererMain {
         registerAnimation() {},
         unregisterAnimation() {},
       },
+      cleanup() {},
     };
 
     this.root = new DOMNode(
