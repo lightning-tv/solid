@@ -519,6 +519,14 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   maxHeight?: number;
   /**
+   * The minimum width of the element.
+   */
+  minWidth?: number;
+  /**
+   * The minimum height of the element.
+   */
+  minHeight?: number;
+  /**
    * The z-index of the element, which affects its stacking order.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout

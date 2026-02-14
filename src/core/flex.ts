@@ -24,6 +24,8 @@ export default function (node: ElementNode): boolean {
   const crossMarginOne = isRow ? 'marginTop' : 'marginLeft';
   const marginTwo = isRow ? 'marginRight' : 'marginBottom';
   const crossMarginTwo = isRow ? 'marginBottom' : 'marginRight';
+  const minDimension = isRow ? 'minWidth' : 'minHeight';
+  const crossMinDimension = isRow ? 'minHeight' : 'minWidth';
 
   const processedChildren: ProcessedChild[] = [];
   let hasOrder = false;
@@ -51,9 +53,20 @@ export default function (node: ElementNode): boolean {
       totalFlexGrow += flexGrow!;
     }
 
+    if (c[minDimension] && (c[dimension] || 0) < c[minDimension]) {
+      c[dimension] = c[minDimension]!;
+    }
     const mainSize = c[dimension] || 0;
     const currentMarginStart = c[marginOne] || 0;
     const currentMarginEnd = c[marginTwo] || 0;
+
+    if (
+      c[crossMinDimension] &&
+      (c[crossDimension] || 0) < c[crossMinDimension]
+    ) {
+      c[crossDimension] = c[crossMinDimension]!;
+    }
+    const crossSize = c[crossDimension] || 0;
 
     processedChildren.push({
       node: c as ElementNode,
@@ -64,7 +77,7 @@ export default function (node: ElementNode): boolean {
       isGrowItem: isGrowItem,
       flexGrowValue: isGrowItem ? flexGrow! : 0,
       flexOrder: flexOrder || 0,
-      crossSize: c[crossDimension] || 0,
+      crossSize: crossSize,
       crossMarginStart: c[crossMarginOne] || 0,
       crossMarginEnd: c[crossMarginTwo] || 0,
     });
@@ -83,8 +96,16 @@ export default function (node: ElementNode): boolean {
 
   const prop = isRow ? 'x' : 'y';
   const crossProp = isRow ? 'y' : 'x';
-  const containerSize = Math.max(node[dimension] || 0, 0);
-  let containerCrossSize = Math.max(node[crossDimension] || 0, 0);
+  const containerSize = Math.max(
+    node[dimension] || 0,
+    node[minDimension] || 0,
+    0,
+  );
+  let containerCrossSize = Math.max(
+    node[crossDimension] || 0,
+    node[crossMinDimension] || 0,
+    0,
+  );
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
   let containerUpdated = false;
@@ -219,8 +240,12 @@ export default function (node: ElementNode): boolean {
     }
     // Update container size
     if (node.flexBoundary !== 'fixed' && node.flexWrap !== 'wrap') {
-      const calculatedSize = currentPos - gap + (node.padding || 0);
-      if (calculatedSize !== containerSize) {
+      let calculatedSize = currentPos - gap + (node.padding || 0);
+      const minSize = node[minDimension] || 0;
+      if (calculatedSize < minSize) {
+        calculatedSize = minSize;
+      }
+      if (calculatedSize !== (node[dimension] || 0)) {
         // store the original size for Row & Column
         node[`preFlex${dimension}`] = containerSize;
         node[dimension] = calculatedSize;
