@@ -92,13 +92,13 @@ const parseAndAssignShaderProps = (
   });
 };
 
-function convertToShader(_node: ElementNode, v: StyleEffects): IRendererShader {
+export function convertToShader(
+  _node: ElementNode,
+  v: StyleEffects,
+): IRendererShader {
   let type = 'rounded';
   if (v.border) type += 'WithBorder';
   if (v.shadow) type += 'WithShadow';
-
-  const customSuffix = Config.customShaderTypeSuffix?.(_node, v);
-  if (customSuffix) type += customSuffix;
 
   return renderer.createShader(type, v as IRendererShaderProps);
 }
@@ -644,7 +644,7 @@ export class ElementNode extends Object {
 
     if (this.rendered) {
       if (!this.lng.shader) {
-        this.lng.shader = convertToShader(this, target);
+        this.lng.shader = Config.convertToShader(this, target);
       } else if (DOM_RENDERING) {
         this.lng.shader = this.lng.shader; // lng.shader is a setter, force style update
       }
@@ -1288,7 +1288,7 @@ export class ElementNode extends Object {
 
       // Can you put effects on Text nodes? Need to confirm...
       if (SHADERS_ENABLED && props.shader && !props.shader.program) {
-        props.shader = convertToShader(node, props.shader);
+        props.shader = Config.convertToShader(node, props.shader);
       }
 
       isDev && log('Rendering: ', this, props);
@@ -1326,7 +1326,7 @@ export class ElementNode extends Object {
       }
 
       if (SHADERS_ENABLED && props.shader && !props.shader.program) {
-        props.shader = convertToShader(node, props.shader);
+        props.shader = Config.convertToShader(node, props.shader);
       }
 
       isDev && log('Rendering: ', this, props);
@@ -1459,7 +1459,7 @@ export function shaderAccessor<T extends Record<string, any> | number>(
 
       if (this.rendered) {
         if (!this.lng.shader) {
-          this.lng.shader = convertToShader(this, target);
+          this.lng.shader = Config.convertToShader(this, target);
         }
       } else {
         this.lng.shader = target;

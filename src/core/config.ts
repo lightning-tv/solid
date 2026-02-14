@@ -5,7 +5,11 @@ import type {
   DollarString,
   StyleEffects,
 } from './intrinsicTypes.js';
-import { type ElementNode } from './elementNode.js';
+import {
+  type ElementNode,
+  convertToShader as defaultConvertToShader,
+} from './elementNode.js';
+import { IRendererShader } from './lightningInit.js';
 
 /**
   STATIC LIGHTNING CONFIGURATION \
@@ -59,7 +63,7 @@ export interface Config {
   fontWeightAlias?: Record<string, number | string>;
   throttleInput?: number;
   taskDelay?: number;
-  customShaderTypeSuffix?: (_node: ElementNode, v: StyleEffects) => string;
+  convertToShader: (_node: ElementNode, v: StyleEffects) => IRendererShader;
 }
 
 export const Config: Config = {
@@ -72,6 +76,7 @@ export const Config: Config = {
     duration: 250,
     easing: 'ease-in-out',
   },
+  convertToShader: defaultConvertToShader,
   fontSettings: {
     fontFamily: 'Ubuntu',
     fontSize: 100,
