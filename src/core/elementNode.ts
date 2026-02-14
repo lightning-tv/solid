@@ -208,7 +208,7 @@ export interface ElementNode extends RendererNode, FocusNode {
   _autofocus?: boolean;
   _containsFlexGrow?: boolean | null;
   _hasRenderedChildren?: boolean;
-  _effects?: StyleEffects;
+  _effects?: Record<string, any>;
   _fontFamily?: string;
   _id: string | undefined;
   _parent: ElementNode | undefined;
@@ -1418,6 +1418,8 @@ function shaderAccessor<T extends Record<string, any> | number>(
   return {
     set(this: ElementNode, value: T) {
       let target = this.lng.shader || {};
+      this._effects = this._effects || {};
+      this._effects[key] = value;
 
       let animationSettings: AnimationSettings | undefined;
       if (this.lng.shader?.program) {
@@ -1456,7 +1458,7 @@ function shaderAccessor<T extends Record<string, any> | number>(
       }
     },
     get(this: ElementNode) {
-      return this.effects?.[key];
+      return this._effects?.[key];
     },
   };
 }
