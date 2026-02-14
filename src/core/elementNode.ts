@@ -96,6 +96,10 @@ function convertToShader(_node: ElementNode, v: StyleEffects): IRendererShader {
   let type = 'rounded';
   if (v.border) type += 'WithBorder';
   if (v.shadow) type += 'WithShadow';
+
+  const customSuffix = Config.customShaderTypeSuffix?.(_node, v);
+  if (customSuffix) type += customSuffix;
+
   return renderer.createShader(type, v as IRendererShaderProps);
 }
 
@@ -1408,7 +1412,7 @@ for (const key of LightningRendererNonAnimatingProps) {
   });
 }
 
-function createRawShaderAccessor<T>(key: keyof StyleEffects) {
+export function createRawShaderAccessor<T>(key: keyof StyleEffects) {
   return {
     set(this: ElementNode, value: T) {
       this.shader = [key, value as unknown as IRendererShaderProps];
@@ -1420,7 +1424,7 @@ function createRawShaderAccessor<T>(key: keyof StyleEffects) {
   };
 }
 
-function shaderAccessor<T extends Record<string, any> | number>(
+export function shaderAccessor<T extends Record<string, any> | number>(
   key: 'border' | 'shadow' | 'rounded',
 ) {
   return {
