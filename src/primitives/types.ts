@@ -49,6 +49,26 @@ export interface NavigableProps extends NodeProps {
     offset: number,
     isInitial: boolean,
   ) => void;
+
+  /**
+   * Defines transitions for animatable properties when navigating up.
+   */
+  transitionUp?: NodeStyles['transition'];
+
+  /**
+   * Defines transitions for animatable properties when navigating down.
+   */
+  transitionDown?: NodeStyles['transition'];
+
+  /**
+   * Defines transitions for animatable properties when navigating left.
+   */
+  transitionLeft?: NodeStyles['transition'];
+
+  /**
+   * Defines transitions for animatable properties when navigating right.
+   */
+  transitionRight?: NodeStyles['transition'];
 }
 
 // @ts-expect-error animationSettings is not identical - weird

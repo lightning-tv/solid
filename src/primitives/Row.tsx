@@ -1,9 +1,15 @@
 import { type Component } from 'solid-js';
-import { combineStyles, type NodeStyles, type ElementNode } from '@lightningtv/solid';
+import {
+  combineStyles,
+  type NodeStyles,
+  type ElementNode,
+} from '@lightningtv/solid';
 import { chainFunctions } from './utils/chainFunctions.js';
 import {
   handleNavigation,
-  navigableForwardFocus
+  navigableForwardFocus,
+  defaultTransitionBack,
+  defaultTransitionForward,
 } from './utils/handleNavigation.js';
 import type { RowProps } from './types.js';
 import { scrollRow } from './utils/withScrolling.js';
@@ -11,12 +17,6 @@ import { scrollRow } from './utils/withScrolling.js';
 const RowStyles: NodeStyles = {
   display: 'flex',
   gap: 30,
-  transition: {
-    x: {
-      duration: 250,
-      easing: 'ease-in-out',
-    },
-  },
 };
 
 function scrollToIndex(this: ElementNode, index: number) {
@@ -31,6 +31,9 @@ const onRight = handleNavigation('right');
 export const Row: Component<RowProps> = (props) => {
   return (
     <view
+      transitionLeft={defaultTransitionBack}
+      transitionRight={defaultTransitionForward}
+      transition={/* @once */ {}}
       {...props}
       selected={props.selected || 0}
       onLeft={/* @once */ chainFunctions(props.onLeft, onLeft)}
@@ -39,13 +42,15 @@ export const Row: Component<RowProps> = (props) => {
       scrollToIndex={scrollToIndex}
       onLayout={
         /* @once */
-        props.selected ? chainFunctions(props.onLayout, scrollRow) : props.onLayout
+        props.selected
+          ? chainFunctions(props.onLayout, scrollRow)
+          : props.onLayout
       }
       onSelectedChanged={
         /* @once */ chainFunctions(
-        props.onSelectedChanged,
-        props.scroll !== 'none' ? scrollRow : undefined,
-      )
+          props.onSelectedChanged,
+          props.scroll !== 'none' ? scrollRow : undefined,
+        )
       }
       style={/* @once */ combineStyles(props.style, RowStyles)}
     />
