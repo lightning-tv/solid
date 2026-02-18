@@ -919,6 +919,7 @@ export class ElementNode extends Object {
 
   _layoutOnLoad() {
     (this.lng as IRendererNode).on('loaded', () => {
+      renderer.stage.reprocessUpdates?.();
       this.parent!.updateLayout();
     });
   }
