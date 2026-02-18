@@ -111,6 +111,34 @@ _Requires `display: 'flex'`_
 | `maxLines`     | `number`                         | truncate text.  |
 | `textOverflow` | `'clip' \| 'ellipsis' \| string` |                 |
 
+### Interaction & Focus
+
+| Property         | Type       | Notes                                                                    |
+| :--------------- | :--------- | :----------------------------------------------------------------------- |
+| `onFocus`        | `function` | Called when element gains focus.                                         |
+| `onBlur`         | `function` | Called when element loses focus.                                         |
+| `onFocusChanged` | `function` | **Preferred**. `(hasFocus: boolean) => void`. Combines focus/blur logic. |
+| `onEnter`        | `function` | Called on Enter key press.                                               |
+
+#### Focus Handling Best Practice
+
+When tracking focus state (e.g., for styling), prefer `onFocusChanged` over separate `onFocus`/`onBlur` handlers.
+
+**Preferred Pattern:**
+
+```tsx
+const [focused, setFocused] = createSignal(false);
+
+return (
+  <View
+    width={180}
+    height={100}
+    color={focused() ? '#ffff00ff' : '#333333ff'}
+    onFocusChanged={setFocused}
+  />
+);
+```
+
 ## Strict "Do Not Use" List
 
 | Invalid Property      | Correct Alternative                                    |
