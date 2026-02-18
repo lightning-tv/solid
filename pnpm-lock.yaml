@@ -34,7 +34,7 @@ importers:
         specifier: ^9.16.0
         version: 9.16.0
       '@lightningjs/renderer':
-        specifier: 3.0.0-beta21
+        specifier: ^3.0.0-beta21
         version: 3.0.0-beta21
       '@solid-devtools/debugger':
         specifier: ^0.28.1
