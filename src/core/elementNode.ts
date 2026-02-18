@@ -63,12 +63,11 @@ function addToLayoutQueue(node: ElementNode) {
   layoutQueue.add(node);
   if (!layoutRunQueued) {
     layoutRunQueued = true;
-    queueMicrotask(runLayout);
+    renderer.stage.reprocessUpdates?.(runLayout);
   }
 }
 
 function runLayout() {
-  renderer.stage.reprocessUpdates?.();
   while (layoutQueue.size > 0) {
     const queue = [...layoutQueue];
     layoutQueue.clear();

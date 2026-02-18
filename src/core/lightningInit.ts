@@ -25,7 +25,7 @@ export interface IRendererStage {
   root: IRendererNode;
   renderer: IRendererCoreRenderer;
   shManager: IRendererShaderManager;
-  reprocessUpdates?: () => void;
+  reprocessUpdates?: (callback?: () => void) => void;
   animationManager: {
     registerAnimation: (anim: any) => void;
     unregisterAnimation: (anim: any) => void;
