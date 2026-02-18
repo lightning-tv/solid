@@ -116,7 +116,8 @@
     "jsx-runtime.d.ts",
     "LICENSE",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "docs/AI_CODING_GUIDELINES.md"
   ],
   "packageManager": "pnpm@10.8.0"
 }
