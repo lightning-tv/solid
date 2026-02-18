@@ -68,6 +68,7 @@ function addToLayoutQueue(node: ElementNode) {
 }
 
 function runLayout() {
+  renderer.stage.reprocessUpdates?.();
   while (layoutQueue.size > 0) {
     const queue = [...layoutQueue];
     layoutQueue.clear();
