@@ -63,7 +63,11 @@ function addToLayoutQueue(node: ElementNode) {
   layoutQueue.add(node);
   if (!layoutRunQueued) {
     layoutRunQueued = true;
-    renderer.stage.reprocessUpdates?.(runLayout);
+    if (renderer.stage.reprocessUpdates) {
+      renderer.stage.reprocessUpdates(runLayout);
+    } else {
+      queueMicrotask(runLayout);
+    }
   }
 }
 
