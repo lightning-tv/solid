@@ -94,7 +94,10 @@ const parseAndAssignShaderProps = (
   });
 };
 
-function convertToShader(_node: ElementNode, v: StyleEffects): IRendererShader {
+export function convertToShader(
+  _node: ElementNode,
+  v: StyleEffects,
+): IRendererShader {
   let type = 'rounded';
   if (v.border) type += 'WithBorder';
   if (v.shadow) type += 'WithShadow';
@@ -211,7 +214,7 @@ export interface ElementNode extends RendererNode, FocusNode {
   _autofocus?: boolean;
   _containsFlexGrow?: boolean | null;
   _hasRenderedChildren?: boolean;
-  _effects?: StyleEffects;
+  _effects?: Record<string, any>;
   _fontFamily?: string;
   _id: string | undefined;
   _parent: ElementNode | undefined;
@@ -523,6 +526,14 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   maxHeight?: number;
   /**
+   * The minimum width of the element.
+   */
+  minWidth?: number;
+  /**
+   * The minimum height of the element.
+   */
+  minHeight?: number;
+  /**
    * The z-index of the element, which affects its stacking order.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
@@ -636,7 +647,7 @@ export class ElementNode extends Object {
 
     if (this.rendered) {
       if (!this.lng.shader) {
-        this.lng.shader = convertToShader(this, target);
+        this.lng.shader = Config.convertToShader(this, target);
       } else if (DOM_RENDERING) {
         this.lng.shader = this.lng.shader; // lng.shader is a setter, force style update
       }
@@ -1284,7 +1295,7 @@ export class ElementNode extends Object {
 
       // Can you put effects on Text nodes? Need to confirm...
       if (SHADERS_ENABLED && props.shader && !props.shader.program) {
-        props.shader = convertToShader(node, props.shader);
+        props.shader = Config.convertToShader(node, props.shader);
       }
 
       isDev && log('Rendering: ', this, props);
@@ -1324,7 +1335,7 @@ export class ElementNode extends Object {
       }
 
       if (SHADERS_ENABLED && props.shader && !props.shader.program) {
-        props.shader = convertToShader(node, props.shader);
+        props.shader = Config.convertToShader(node, props.shader);
       }
 
       isDev && log('Rendering: ', this, props);
@@ -1414,7 +1425,7 @@ for (const key of LightningRendererNonAnimatingProps) {
   });
 }
 
-function createRawShaderAccessor<T>(key: keyof StyleEffects) {
+export function createRawShaderAccessor<T>(key: keyof StyleEffects) {
   return {
     set(this: ElementNode, value: T) {
       this.shader = [key, value as unknown as IRendererShaderProps];
@@ -1426,12 +1437,14 @@ function createRawShaderAccessor<T>(key: keyof StyleEffects) {
   };
 }
 
-function shaderAccessor<T extends Record<string, any> | number>(
+export function shaderAccessor<T extends Record<string, any> | number>(
   key: 'border' | 'shadow' | 'rounded',
 ) {
   return {
     set(this: ElementNode, value: T) {
       let target = this.lng.shader || {};
+      this._effects = this._effects || {};
+      this._effects[key] = value;
 
       let animationSettings: AnimationSettings | undefined;
       if (this.lng.shader?.props) {
@@ -1459,7 +1472,7 @@ function shaderAccessor<T extends Record<string, any> | number>(
 
       if (this.rendered) {
         if (!this.lng.shader) {
-          this.lng.shader = convertToShader(this, target);
+          this.lng.shader = Config.convertToShader(this, target);
         }
       } else {
         this.lng.shader = target;
@@ -1470,7 +1483,7 @@ function shaderAccessor<T extends Record<string, any> | number>(
       }
     },
     get(this: ElementNode) {
-      return this.effects?.[key];
+      return this._effects?.[key];
     },
   };
 }
