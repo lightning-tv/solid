@@ -108,6 +108,7 @@ export default function (node: ElementNode): boolean {
   );
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
+  const nodePadding = (node.padding as number) || 0;
   let containerUpdated = false;
 
   if (totalFlexGrow > 0 && numProcessedChildren > 1) {
@@ -205,7 +206,7 @@ export default function (node: ElementNode): boolean {
     }
   }
 
-  let currentPos = node.padding || 0;
+  let currentPos = nodePadding;
   if (justify === 'flexStart') {
     if (node.flexWrap === 'wrap') {
       let crossCurrentPos = 0;
@@ -216,9 +217,9 @@ export default function (node: ElementNode): boolean {
       for (const pc of processedChildren) {
         if (
           currentPos + pc.totalMainSizeOnAxis > containerSize &&
-          currentPos > (node.padding || 0)
+          currentPos > nodePadding
         ) {
-          currentPos = node.padding || 0;
+          currentPos = nodePadding;
           crossCurrentPos += childCrossSize + crossGap;
         }
         pc.node[prop] = currentPos + pc.marginStart;
@@ -240,7 +241,7 @@ export default function (node: ElementNode): boolean {
     }
     // Update container size
     if (node.flexBoundary !== 'fixed' && node.flexWrap !== 'wrap') {
-      let calculatedSize = currentPos - gap + (node.padding || 0);
+      let calculatedSize = currentPos - gap + nodePadding;
       const minSize = node[minDimension] || 0;
       if (calculatedSize < minSize) {
         calculatedSize = minSize;
@@ -253,7 +254,7 @@ export default function (node: ElementNode): boolean {
       }
     }
   } else if (justify === 'flexEnd') {
-    currentPos = containerSize - (node.padding || 0);
+    currentPos = containerSize - nodePadding;
     for (let i = numProcessedChildren - 1; i >= 0; i--) {
       const pc = processedChildren[i]!;
       pc.node[prop] = currentPos - pc.mainSize - pc.marginEnd;
@@ -263,7 +264,7 @@ export default function (node: ElementNode): boolean {
   } else if (justify === 'center') {
     currentPos =
       (containerSize - (totalItemSize + gap * (numProcessedChildren - 1))) / 2 +
-      (node.padding || 0);
+      nodePadding;
     for (const pc of processedChildren) {
       pc.node[prop] = currentPos + pc.marginStart;
       currentPos += pc.totalMainSizeOnAxis + gap;
@@ -272,10 +273,10 @@ export default function (node: ElementNode): boolean {
   } else if (justify === 'spaceBetween') {
     const spaceBetween =
       numProcessedChildren > 1
-        ? (containerSize - totalItemSize - (node.padding || 0) * 2) /
+        ? (containerSize - totalItemSize - nodePadding * 2) /
           (numProcessedChildren - 1)
         : 0;
-    currentPos = node.padding || 0;
+    currentPos = nodePadding;
     for (const pc of processedChildren) {
       pc.node[prop] = currentPos + pc.marginStart;
       currentPos += pc.totalMainSizeOnAxis + spaceBetween;
@@ -284,10 +285,10 @@ export default function (node: ElementNode): boolean {
   } else if (justify === 'spaceAround') {
     const spaceAround =
       numProcessedChildren > 0
-        ? (containerSize - totalItemSize - (node.padding || 0) * 2) /
+        ? (containerSize - totalItemSize - nodePadding * 2) /
           numProcessedChildren
         : 0;
-    currentPos = (node.padding || 0) + spaceAround / 2;
+    currentPos = nodePadding + spaceAround / 2;
     for (const pc of processedChildren) {
       pc.node[prop] = currentPos + pc.marginStart;
       currentPos += pc.totalMainSizeOnAxis + spaceAround;
@@ -295,9 +296,9 @@ export default function (node: ElementNode): boolean {
     }
   } else if (justify === 'spaceEvenly') {
     const spaceEvenly =
-      (containerSize - totalItemSize - (node.padding || 0) * 2) /
+      (containerSize - totalItemSize - nodePadding * 2) /
       (numProcessedChildren + 1);
-    currentPos = spaceEvenly + (node.padding || 0);
+    currentPos = spaceEvenly + nodePadding;
     for (const pc of processedChildren) {
       pc.node[prop] = currentPos + pc.marginStart;
       currentPos += pc.totalMainSizeOnAxis + spaceEvenly;
