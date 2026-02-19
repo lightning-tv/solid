@@ -9,7 +9,7 @@ import {
   type ElementNode,
   convertToShader as defaultConvertToShader,
 } from './elementNode.js';
-import { IRendererShader } from './lightningInit.js';
+import { IRendererShader } from './dom-renderer/domRendererTypes.js';
 
 /**
   STATIC LIGHTNING CONFIGURATION \
