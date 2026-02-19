@@ -34,8 +34,8 @@ importers:
         specifier: ^9.16.0
         version: 9.16.0
       '@lightningjs/renderer':
-        specifier: 3.0.0-beta21
-        version: 3.0.0-beta21
+        specifier: 3.0.0-beta22
+        version: 3.0.0-beta22
       '@solid-devtools/debugger':
         specifier: ^0.28.1
         version: 0.28.1(solid-js@1.9.3)
@@ -441,8 +441,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@lightningjs/renderer@3.0.0-beta21':
-    resolution: {integrity: sha512-FzSTjQJv+87wi1n29yD+RBfQiJdownrZQloqHsv7UcuoSD7WXIZXFdMPBgbXZPW9Zv5OovONa7qNbTQ7INJBjw==}
+  '@lightningjs/renderer@3.0.0-beta22':
+    resolution: {integrity: sha512-4aBBSRJ+gczGQ0vAXYAGJpcrPh1WocWajuaHy2FO2RKmrPwOp8CRAR6s3g1coR9x0lbphBZEI/hSzu1zhGXiPQ==}
     engines: {node: '>= 18.0.0', npm: '>= 10.0.0', pnpm: '>= 10.17.0'}
 
   '@nodelib/fs.scandir@2.1.5':
@@ -2929,7 +2929,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@lightningjs/renderer@3.0.0-beta21': {}
+  '@lightningjs/renderer@3.0.0-beta22': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
