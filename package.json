@@ -65,7 +65,6 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
