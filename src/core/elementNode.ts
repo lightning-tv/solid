@@ -503,13 +503,21 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
-  padding?: number | [number, number, number, number];
+  padding?:
+    | number
+    | [number, number]
+    | [number, number, number]
+    | [number, number, number, number];
   /**
    * The margin on all sides of the flex element, or an array defining [Top, Right, Bottom, Left] margins.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
-  margin?: number | [number, number, number, number];
+  margin?:
+    | number
+    | [number, number]
+    | [number, number, number]
+    | [number, number, number, number];
   /**
    * The x-coordinate of the element's position.
    *
