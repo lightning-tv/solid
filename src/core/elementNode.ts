@@ -642,6 +642,18 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
   onLayout?: (this: ElementNode, target: ElementNode) => void;
+
+  /**
+   * The individual padding on each side of an element, acting as an override to the `padding` array property.
+   * `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`.
+   * Only in the new flex engine.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
 }
 
 export class ElementNode extends Object {

@@ -101,10 +101,14 @@ Produces:
 
 To control the layout further, you can use the following properties on individual items:
 
-- **`padding`**: number (Specifies padding on the element itself on main axis. Only in current flex engine.)
+- **`padding`**: number (Specifies padding on the element itself on main axis. Only in legacy flex engine.)
 
-- **`padding`**: number | [number, number, number, number] (Specifies padding on the element itself. Using an array aligns with the CSS `[Top, Right, Bottom, Left]` specification.) Only in new flex engine.
-- **`margin`**: [number, number, number, number] (Specifies margins on the element using the `[Top, Right, Bottom, Left]` CSS array syntax.) Only in new flex engine.
+- **`padding`**: number | [number, number, number, number] (Specifies padding on the element itself. Using an array aligns with the CSS `[Top, Right, Bottom, Left]` specification. Available in the new flex engine.)
+- **`paddingTop`**: number (Overrides the top value of the padding array. Available in the new flex engine.)
+- **`paddingRight`**: number (Overrides the right value of the padding array. Available in the new flex engine.)
+- **`paddingBottom`**: number (Overrides the bottom value of the padding array. Available in the new flex engine.)
+- **`paddingLeft`**: number (Overrides the left value of the padding array. Available in the new flex engine.)
+- **`margin`**: [number, number, number, number] (Specifies margins on the element using the `[Top, Right, Bottom, Left]` CSS array syntax. Available in the new flex engine.)
 - **`marginBottom`**: number
 - **`marginLeft`**: number
 - **`marginRight`**: number

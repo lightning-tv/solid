@@ -21,18 +21,19 @@ export default function (node: ElementNode): boolean {
 
   // padding order: Top, Right, Bottom, Left
   const nodePadding = node.padding;
-  const paddingStart = isRow
-    ? getArrayValue(nodePadding, 3)
-    : getArrayValue(nodePadding, 0);
-  const paddingEnd = isRow
-    ? getArrayValue(nodePadding, 1)
-    : getArrayValue(nodePadding, 2);
-  const paddingCrossStart = isRow
-    ? getArrayValue(nodePadding, 0)
-    : getArrayValue(nodePadding, 3);
-  const paddingCrossEnd = isRow
-    ? getArrayValue(nodePadding, 2)
-    : getArrayValue(nodePadding, 1);
+  const paddingTop = (node.paddingTop ??
+    getArrayValue(nodePadding, 0)) as number;
+  const paddingRight = (node.paddingRight ??
+    getArrayValue(nodePadding, 1)) as number;
+  const paddingBottom = (node.paddingBottom ??
+    getArrayValue(nodePadding, 2)) as number;
+  const paddingLeft = (node.paddingLeft ??
+    getArrayValue(nodePadding, 3)) as number;
+
+  const paddingStart = isRow ? paddingLeft : paddingTop;
+  const paddingEnd = isRow ? paddingRight : paddingBottom;
+  const paddingCrossStart = isRow ? paddingTop : paddingLeft;
+  const paddingCrossEnd = isRow ? paddingBottom : paddingRight;
   const nodePaddingTotal = paddingStart + paddingEnd;
 
   const minDimension = isRow ? 'minWidth' : 'minHeight';
