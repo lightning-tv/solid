@@ -2,13 +2,23 @@ import { type ElementNode } from './elementNode.js';
 import { isTextNode, isElementText } from './utils.js';
 
 function getArrayValue(
-  val: number | [number, number, number, number] | undefined,
+  val: number | number[] | undefined,
   index: number,
   defaultValue: number = 0,
 ): number {
   if (val === undefined) return defaultValue;
   if (typeof val === 'number') return val;
-  return val[index] || defaultValue;
+
+  const len = val.length;
+  let result;
+  if (len === 2) {
+    result = index % 2 === 0 ? val[0] : val[1];
+  } else if (len === 3) {
+    result = index === 0 ? val[0] : index === 2 ? val[2] : val[1];
+  } else {
+    result = val[index];
+  }
+  return result ?? defaultValue;
 }
 
 export default function (node: ElementNode): boolean {
