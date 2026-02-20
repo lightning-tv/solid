@@ -17,6 +17,18 @@ The `<Text>` component does not require any of these properties, as it will use 
 
 A fundamental tool for layout is the Flex container. Currently, there is a minimal implementation of flex (`display: flex`) that supports the following properties: `flexDirection`, `justifyContent`, `alignItems`, `flexOrder`, `flexGrow` and `gap`. This is useful for laying out elements in rows and columns.
 
+### New Flex Engine Toggle
+
+The framework now includes a modern, high-performance, CSS-aligned flex engine alongside the legacy engine. To opt into the new flex engine, define the following environment variable during your Vite build process:
+
+```bash
+VITE_USE_NEW_FLEX=true
+```
+
+This will add `flexShrink`, `flexBasis` support and padding / margin full support with array syntax.
+
+Because the engines are conditionally evaluated at build time via `import.meta.env`, your bundler (e.g., Rollup) will automatically perform **Dead-Code Elimination (tree-shaking)**. This means whichever layout engine isn't selected will be completely omitted from your application's final production bundle.
+
 ### Example
 
 ```jsx
@@ -46,12 +58,14 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 - **`alignItems`**: 'flexStart' | 'flexEnd' | 'center'
 - **`display`**: 'flex' | 'block' (to disable flex on Row & Column)
 - **`direction`**: 'ltr' | 'rtl' display items from left to right or right to left. ltr is the default.
-- **`flexDirection`**: 'row' | 'column'
+- **`flexDirection`**: 'row' | 'column' | 'row-reverse' | 'column-reverse'
 - **`flexBoundary`**: 'contain' | 'fixed' (Default updates container size based on children size with `justifyContent: flexStart | flexEnd`. Set to `fixed` to use parent width when width isn't set.)
 - **`flexItem`**: boolean (Set to `false` on a child to exclude it from flex calculations.)
 - **`flexOrder`**: number (Set the order on children to change the layout order.)
 - **`flexGrow`**: number (Set to number on children to specify how much room elements should take up.)
-- **`flexWrap`**: 'nowrap' | 'wrap' (Set to `wrap` to have elements flow to next line on overflow.)
+- **`flexShrink`**: number (Set to number on children to specify how much an element should shrink proportionally if the container overflows. Defaults to 0.) Only in new flex engine.
+- **`flexBasis`**: number | 'auto' (Set the default size of an item before the remaining space is distributed. Overrides width/height.) Only in new flex engine.
+- **`flexWrap`**: 'nowrap' | 'wrap' | 'wrap-reverse' (Set to `wrap` or `wrap-reverse` to have elements flow to the next line on overflow.)
 - **`gap`**: number
 - **`justifyContent`**: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
 
@@ -87,6 +101,10 @@ Produces:
 
 To control the layout further, you can use the following properties on individual items:
 
+- **`padding`**: number (Specifies padding on the element itself on main axis. Only in current flex engine.)
+
+- **`padding`**: number | [number, number, number, number] (Specifies padding on the element itself. Using an array aligns with the CSS `[Top, Right, Bottom, Left]` specification.) Only in new flex engine.
+- **`margin`**: [number, number, number, number] (Specifies margins on the element using the `[Top, Right, Bottom, Left]` CSS array syntax.) Only in new flex engine.
 - **`marginBottom`**: number
 - **`marginLeft`**: number
 - **`marginRight`**: number
