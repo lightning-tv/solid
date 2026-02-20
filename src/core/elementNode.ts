@@ -23,7 +23,12 @@ import {
   NewOmit,
 } from './intrinsicTypes.js';
 import States, { type NodeStates } from './states.js';
-import calculateFlex from './flex.js';
+import calculateFlexOld from './flex.js';
+import calculateFlexNew from './flexLayout.js';
+
+const calculateFlex = (import.meta as any).env?.VITE_USE_NEW_FLEX
+  ? calculateFlexNew
+  : calculateFlexOld;
 import {
   log,
   isArray,
@@ -483,11 +488,17 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   marginTop?: number;
   /**
-   * The padding on all sides of the flex element.
+   * The padding on all sides of the flex element, or an array defining [Top, Right, Bottom, Left] padding.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
-  padding?: number;
+  padding?: number | [number, number, number, number];
+  /**
+   * The margin on all sides of the flex element, or an array defining [Top, Right, Bottom, Left] margins.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
+  margin?: number | [number, number, number, number];
   /**
    * The x-coordinate of the element's position.
    *

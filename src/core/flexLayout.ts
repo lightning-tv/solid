@@ -1,15 +1,38 @@
 import { type ElementNode } from './elementNode.js';
 import { isTextNode, isElementText } from './utils.js';
 
+function getArrayValue(
+  val: number | [number, number, number, number] | undefined,
+  index: number,
+  defaultValue: number = 0,
+): number {
+  if (val === undefined) return defaultValue;
+  if (typeof val === 'number') return val;
+  return val[index] || defaultValue;
+}
+
 export default function (node: ElementNode): boolean {
   const direction = node.flexDirection || 'row';
   const isRow = direction === 'row';
   const dimension = isRow ? 'width' : 'height';
   const crossDimension = isRow ? 'height' : 'width';
-  const marginOne = isRow ? 'marginLeft' : 'marginTop';
-  const crossMarginOne = isRow ? 'marginTop' : 'marginLeft';
-  const marginTwo = isRow ? 'marginRight' : 'marginBottom';
-  const crossMarginTwo = isRow ? 'marginBottom' : 'marginRight';
+
+  // padding order: Top, Right, Bottom, Left
+  const nodePadding = node.padding;
+  const paddingStart = isRow
+    ? getArrayValue(nodePadding, 3)
+    : getArrayValue(nodePadding, 0);
+  const paddingEnd = isRow
+    ? getArrayValue(nodePadding, 1)
+    : getArrayValue(nodePadding, 2);
+  const paddingCrossStart = isRow
+    ? getArrayValue(nodePadding, 0)
+    : getArrayValue(nodePadding, 3);
+  const paddingCrossEnd = isRow
+    ? getArrayValue(nodePadding, 2)
+    : getArrayValue(nodePadding, 1);
+  const nodePaddingTotal = paddingStart + paddingEnd;
+
   const minDimension = isRow ? 'minWidth' : 'minHeight';
   const crossMinDimension = isRow ? 'minHeight' : 'minWidth';
 
@@ -20,6 +43,7 @@ export default function (node: ElementNode): boolean {
     return false;
   }
 
+  // Optimize arrays caching
   let processableChildrenIndices: number[] = [];
   let hasOrder = false;
   let totalFlexGrow = 0;
@@ -28,7 +52,7 @@ export default function (node: ElementNode): boolean {
     const c = children[i]!;
 
     if (isElementText(c) && c.text && !(c.width || c.height)) {
-      return false;
+      return false; // specific text layout constraint
     }
 
     if (isTextNode(c) || c.flexItem === false) {
@@ -40,7 +64,7 @@ export default function (node: ElementNode): boolean {
     }
 
     const flexGrow = c.flexGrow;
-    if (flexGrow !== undefined && flexGrow >= 0) {
+    if (flexGrow !== undefined && flexGrow > 0) {
       totalFlexGrow += flexGrow;
     }
 
@@ -70,7 +94,7 @@ export default function (node: ElementNode): boolean {
 
   const numProcessedChildren = processableChildrenIndices.length;
   if (numProcessedChildren === 0) {
-    return false; // No layout changes if no processable children
+    return false;
   }
 
   const prop = isRow ? 'x' : 'y';
@@ -87,9 +111,10 @@ export default function (node: ElementNode): boolean {
   );
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
-  const nodePadding = (node.padding as number) || 0;
+  const align = node.alignItems || (node.flexWrap ? 'flexStart' : undefined);
   let containerUpdated = false;
 
+  // Resolve sizes matching old processed calculation
   const childMainSizes = new Float32Array(numProcessedChildren);
   const childMarginStarts = new Float32Array(numProcessedChildren);
   const childMarginEnds = new Float32Array(numProcessedChildren);
@@ -102,41 +127,48 @@ export default function (node: ElementNode): boolean {
 
   for (let idx = 0; idx < numProcessedChildren; idx++) {
     const c = children[processableChildrenIndices[idx]!] as ElementNode;
+    const marginArray = c.margin;
+    // index mappings for margins: Top: 0, Right: 1, Bottom: 2, Left: 3
+    // if row: main = left/right (3/1), cross = top/bottom (0/2)
+    const marginStart = isRow
+      ? c.marginLeft || getArrayValue(marginArray, 3)
+      : c.marginTop || getArrayValue(marginArray, 0);
+    const marginEnd = isRow
+      ? c.marginRight || getArrayValue(marginArray, 1)
+      : c.marginBottom || getArrayValue(marginArray, 2);
+    const marginCrossStart = isRow
+      ? c.marginTop || getArrayValue(marginArray, 0)
+      : c.marginLeft || getArrayValue(marginArray, 3);
+    const marginCrossEnd = isRow
+      ? c.marginBottom || getArrayValue(marginArray, 2)
+      : c.marginRight || getArrayValue(marginArray, 1);
 
     const baseMainSize = c[dimension] || 0;
-    const marginStart = (c[marginOne] as number) || 0;
-    const marginEnd = (c[marginTwo] as number) || 0;
 
     childMainSizes[idx] = baseMainSize;
     childMarginStarts[idx] = marginStart;
     childMarginEnds[idx] = marginEnd;
     childTotalMainSizes[idx] = baseMainSize + marginStart + marginEnd;
-
     childCrossSizes[idx] = c[crossDimension] || 0;
-    childMarginCrossStarts[idx] = (c[crossMarginOne] as number) || 0;
-    childMarginCrossEnds[idx] = (c[crossMarginTwo] as number) || 0;
+    childMarginCrossStarts[idx] = marginCrossStart;
+    childMarginCrossEnds[idx] = marginCrossEnd;
 
     sumOfFlexBaseSizesWithMargins += childTotalMainSizes[idx]!;
   }
 
   if (totalFlexGrow > 0 && numProcessedChildren > 1) {
-    // When flex-grow is used, the container's size is considered fixed for this calculation pass,
-    // unless flexBoundary is explicitly set to allow container resizing based on content.
     node.flexBoundary = node.flexBoundary || 'fixed';
 
-    // Calculate the total space occupied by gaps between items.
     const totalGapSpace =
       numProcessedChildren > 0 ? gap * (numProcessedChildren - 1) : 0;
-
-    // Calculate the available space for flex items to grow into.
     const availableSpace =
       containerSize - sumOfFlexBaseSizesWithMargins - totalGapSpace;
 
     if (availableSpace > 0) {
       for (let idx = 0; idx < numProcessedChildren; idx++) {
         const c = children[processableChildrenIndices[idx]!] as ElementNode;
-        const flexGrowValue = c.flexGrow;
-        if (flexGrowValue !== undefined && flexGrowValue > 0) {
+        const flexGrowValue = c.flexGrow || 0;
+        if (flexGrowValue > 0) {
           const shareOfSpace = (flexGrowValue / totalFlexGrow) * availableSpace;
           const newMainSize = childMainSizes[idx]! + shareOfSpace;
           c[dimension] = newMainSize;
@@ -145,16 +177,9 @@ export default function (node: ElementNode): boolean {
             newMainSize + childMarginStarts[idx]! + childMarginEnds[idx]!;
         }
       }
-      // prevent infinite loops by only doing this once
       node._containsFlexGrow = node._containsFlexGrow ? null : true;
     } else if (node._containsFlexGrow) {
       node._containsFlexGrow = null;
-    } else {
-      // No positive space available for items to grow, or items overflow.
-      // flex-grow has no effect in this case.
-      console.warn(
-        'No available space for flex-grow items to expand, or items overflow.',
-      );
     }
   }
 
@@ -170,7 +195,6 @@ export default function (node: ElementNode): boolean {
     }
   }
 
-  const align = node.alignItems || (node.flexWrap ? 'flexStart' : undefined);
   const doCrossAlign = containerCrossSize
     ? (c: ElementNode, idx: number, crossCurrentPos: number = 0) => {
         const alignSelf = c.alignSelf || align;
@@ -208,11 +232,10 @@ export default function (node: ElementNode): boolean {
     }
   }
 
-  let currentPos = nodePadding;
+  let currentPos = paddingStart;
   if (justify === 'flexStart') {
     if (node.flexWrap === 'wrap') {
-      let crossCurrentPos = 0;
-      // use the child size to do wrap, not the container
+      let crossCurrentPos = paddingCrossStart;
       const childCrossSize =
         numProcessedChildren > 0 ? childCrossSizes[0]! : containerCrossSize;
       const crossGap = isRow ? (node.columnGap ?? gap) : (node.rowGap ?? gap);
@@ -221,16 +244,17 @@ export default function (node: ElementNode): boolean {
         const c = children[processableChildrenIndices[idx]!] as ElementNode;
         if (
           currentPos + childTotalMainSizes[idx]! > containerSize &&
-          currentPos > nodePadding
+          currentPos > paddingStart
         ) {
-          currentPos = nodePadding;
+          currentPos = paddingStart;
           crossCurrentPos += childCrossSize + crossGap;
         }
         c[prop] = currentPos + childMarginStarts[idx]!;
         currentPos += childTotalMainSizes[idx]! + gap;
         doCrossAlign(c, idx, crossCurrentPos);
       }
-      const finalCrossSize = crossCurrentPos + childCrossSize;
+
+      const finalCrossSize = crossCurrentPos + childCrossSize + paddingCrossEnd;
       if (node[crossDimension] !== finalCrossSize) {
         node[`preFlex${crossDimension}`] = node[crossDimension];
         node[crossDimension] = finalCrossSize;
@@ -241,77 +265,77 @@ export default function (node: ElementNode): boolean {
         const c = children[processableChildrenIndices[idx]!] as ElementNode;
         c[prop] = currentPos + childMarginStarts[idx]!;
         currentPos += childTotalMainSizes[idx]! + gap;
-        doCrossAlign(c, idx);
+        doCrossAlign(c, idx, paddingCrossStart);
       }
     }
+
     // Update container size
     if (node.flexBoundary !== 'fixed' && node.flexWrap !== 'wrap') {
-      let calculatedSize = currentPos - gap + nodePadding;
+      let calculatedSize = currentPos - gap + paddingEnd;
       const minSize = node[minDimension] || 0;
       if (calculatedSize < minSize) {
         calculatedSize = minSize;
       }
       if (calculatedSize !== (node[dimension] || 0)) {
-        // store the original size for Row & Column
         node[`preFlex${dimension}`] = containerSize;
         node[dimension] = calculatedSize;
         return true;
       }
     }
   } else if (justify === 'flexEnd') {
-    currentPos = containerSize - nodePadding;
+    currentPos = containerSize - paddingEnd;
     for (let idx = numProcessedChildren - 1; idx >= 0; idx--) {
       const c = children[processableChildrenIndices[idx]!] as ElementNode;
       c[prop] = currentPos - childMainSizes[idx]! - childMarginEnds[idx]!;
       currentPos -= childTotalMainSizes[idx]! + gap;
-      doCrossAlign(c, idx);
+      doCrossAlign(c, idx, paddingCrossStart);
     }
   } else if (justify === 'center') {
     currentPos =
       (containerSize - (totalItemSize + gap * (numProcessedChildren - 1))) / 2 +
-      nodePadding;
+      paddingStart;
     for (let idx = 0; idx < numProcessedChildren; idx++) {
       const c = children[processableChildrenIndices[idx]!] as ElementNode;
       c[prop] = currentPos + childMarginStarts[idx]!;
       currentPos += childTotalMainSizes[idx]! + gap;
-      doCrossAlign(c, idx);
+      doCrossAlign(c, idx, paddingCrossStart);
     }
   } else if (justify === 'spaceBetween') {
     const spaceBetween =
       numProcessedChildren > 1
-        ? (containerSize - totalItemSize - nodePadding * 2) /
+        ? (containerSize - totalItemSize - nodePaddingTotal) /
           (numProcessedChildren - 1)
         : 0;
-    currentPos = nodePadding;
+    currentPos = paddingStart;
     for (let idx = 0; idx < numProcessedChildren; idx++) {
       const c = children[processableChildrenIndices[idx]!] as ElementNode;
       c[prop] = currentPos + childMarginStarts[idx]!;
       currentPos += childTotalMainSizes[idx]! + spaceBetween;
-      doCrossAlign(c, idx);
+      doCrossAlign(c, idx, paddingCrossStart);
     }
   } else if (justify === 'spaceAround') {
     const spaceAround =
       numProcessedChildren > 0
-        ? (containerSize - totalItemSize - nodePadding * 2) /
+        ? (containerSize - totalItemSize - nodePaddingTotal) /
           numProcessedChildren
         : 0;
-    currentPos = nodePadding + spaceAround / 2;
+    currentPos = paddingStart + spaceAround / 2;
     for (let idx = 0; idx < numProcessedChildren; idx++) {
       const c = children[processableChildrenIndices[idx]!] as ElementNode;
       c[prop] = currentPos + childMarginStarts[idx]!;
       currentPos += childTotalMainSizes[idx]! + spaceAround;
-      doCrossAlign(c, idx);
+      doCrossAlign(c, idx, paddingCrossStart);
     }
   } else if (justify === 'spaceEvenly') {
     const spaceEvenly =
-      (containerSize - totalItemSize - nodePadding * 2) /
+      (containerSize - totalItemSize - nodePaddingTotal) /
       (numProcessedChildren + 1);
-    currentPos = spaceEvenly + nodePadding;
+    currentPos = spaceEvenly + paddingStart;
     for (let idx = 0; idx < numProcessedChildren; idx++) {
       const c = children[processableChildrenIndices[idx]!] as ElementNode;
       c[prop] = currentPos + childMarginStarts[idx]!;
       currentPos += childTotalMainSizes[idx]! + spaceEvenly;
-      doCrossAlign(c, idx);
+      doCrossAlign(c, idx, paddingCrossStart);
     }
   }
 
