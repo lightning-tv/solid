@@ -13,7 +13,9 @@ function getArrayValue(
 
 export default function (node: ElementNode): boolean {
   const direction = node.flexDirection || 'row';
-  const isRow = direction === 'row';
+  const isRow = direction === 'row' || direction === 'row-reverse';
+  const isReverse =
+    direction === 'row-reverse' || direction === 'column-reverse';
   const dimension = isRow ? 'width' : 'height';
   const crossDimension = isRow ? 'height' : 'width';
 
@@ -47,6 +49,7 @@ export default function (node: ElementNode): boolean {
   let processableChildrenIndices: number[] = [];
   let hasOrder = false;
   let totalFlexGrow = 0;
+  let totalFlexShrink = 0;
 
   for (let i = 0; i < numChildren; i++) {
     const c = children[i]!;
@@ -66,6 +69,11 @@ export default function (node: ElementNode): boolean {
     const flexGrow = c.flexGrow;
     if (flexGrow !== undefined && flexGrow > 0) {
       totalFlexGrow += flexGrow;
+    }
+
+    const flexShrink = c.flexShrink;
+    if (flexShrink !== undefined && flexShrink > 0) {
+      totalFlexShrink += flexShrink;
     }
 
     if (c[minDimension] && (c[dimension] || 0) < c[minDimension]!) {
@@ -88,7 +96,10 @@ export default function (node: ElementNode): boolean {
       const b = children[bIdx] as ElementNode;
       return (a.flexOrder || 0) - (b.flexOrder || 0);
     });
-  } else if (node.direction === 'rtl') {
+  }
+
+  // Apply reverse layout ordering
+  if (isReverse || node.direction === 'rtl') {
     processableChildrenIndices.reverse();
   }
 
@@ -109,6 +120,7 @@ export default function (node: ElementNode): boolean {
     node[crossMinDimension] || 0,
     0,
   );
+  const isWrapReverse = node.flexWrap === 'wrap-reverse';
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
   const align = node.alignItems || (node.flexWrap ? 'flexStart' : undefined);
@@ -129,7 +141,16 @@ export default function (node: ElementNode): boolean {
     const c = children[processableChildrenIndices[idx]!] as ElementNode;
     const marginArray = c.margin;
     // index mappings for margins: Top: 0, Right: 1, Bottom: 2, Left: 3
-    // if row: main = left/right (3/1), cross = top/bottom (0/2)
+    // if row: main = left/right (3/1),
+    const flexBasis = c.flexBasis;
+    const isBasisAuto = flexBasis === undefined || flexBasis === 'auto';
+    const computedBasis = isBasisAuto
+      ? c[dimension] || 0
+      : (flexBasis as number);
+    const baseMainSize = isBasisAuto
+      ? computedBasis
+      : Math.max(computedBasis, c[minDimension] || 0);
+
     const marginStart = isRow
       ? c.marginLeft || getArrayValue(marginArray, 3)
       : c.marginTop || getArrayValue(marginArray, 0);
@@ -143,8 +164,6 @@ export default function (node: ElementNode): boolean {
       ? c.marginBottom || getArrayValue(marginArray, 2)
       : c.marginRight || getArrayValue(marginArray, 1);
 
-    const baseMainSize = c[dimension] || 0;
-
     childMainSizes[idx] = baseMainSize;
     childMarginStarts[idx] = marginStart;
     childMarginEnds[idx] = marginEnd;
@@ -156,7 +175,7 @@ export default function (node: ElementNode): boolean {
     sumOfFlexBaseSizesWithMargins += childTotalMainSizes[idx]!;
   }
 
-  if (totalFlexGrow > 0 && numProcessedChildren > 1) {
+  if ((totalFlexGrow > 0 || totalFlexShrink > 0) && numProcessedChildren > 1) {
     node.flexBoundary = node.flexBoundary || 'fixed';
 
     const totalGapSpace =
@@ -164,7 +183,7 @@ export default function (node: ElementNode): boolean {
     const availableSpace =
       containerSize - sumOfFlexBaseSizesWithMargins - totalGapSpace;
 
-    if (availableSpace > 0) {
+    if (availableSpace > 0 && totalFlexGrow > 0) {
       for (let idx = 0; idx < numProcessedChildren; idx++) {
         const c = children[processableChildrenIndices[idx]!] as ElementNode;
         const flexGrowValue = c.flexGrow || 0;
@@ -175,6 +194,40 @@ export default function (node: ElementNode): boolean {
           childMainSizes[idx] = newMainSize;
           childTotalMainSizes[idx] =
             newMainSize + childMarginStarts[idx]! + childMarginEnds[idx]!;
+        }
+      }
+      node._containsFlexGrow = node._containsFlexGrow ? null : true;
+    } else if (availableSpace < 0 && totalFlexShrink > 0) {
+      // Flex Shrink Phase
+      let totalScaledShrinkFactor = 0;
+      for (let idx = 0; idx < numProcessedChildren; idx++) {
+        const c = children[processableChildrenIndices[idx]!] as ElementNode;
+        const flexShrinkValue = c.flexShrink || 0;
+        totalScaledShrinkFactor += flexShrinkValue * childMainSizes[idx]!;
+      }
+
+      if (totalScaledShrinkFactor > 0) {
+        for (let idx = 0; idx < numProcessedChildren; idx++) {
+          const c = children[processableChildrenIndices[idx]!] as ElementNode;
+          const flexShrinkValue = c.flexShrink || 0;
+          if (flexShrinkValue > 0) {
+            const shrinkRatio =
+              (flexShrinkValue * childMainSizes[idx]!) /
+              totalScaledShrinkFactor;
+            const sizeReduction = shrinkRatio * Math.abs(availableSpace);
+            let newMainSize = childMainSizes[idx]! - sizeReduction;
+
+            // Constrain by min width/height
+            const minBound = c[minDimension] || 0;
+            if (newMainSize < minBound) {
+              newMainSize = minBound;
+            }
+
+            c[dimension] = newMainSize;
+            childMainSizes[idx] = newMainSize;
+            childTotalMainSizes[idx] =
+              newMainSize + childMarginStarts[idx]! + childMarginEnds[idx]!;
+          }
         }
       }
       node._containsFlexGrow = node._containsFlexGrow ? null : true;
@@ -235,9 +288,11 @@ export default function (node: ElementNode): boolean {
   let currentPos = paddingStart;
   if (justify === 'flexStart') {
     if (node.flexWrap === 'wrap') {
-      let crossCurrentPos = paddingCrossStart;
-      const childCrossSize =
+      const childCrossSizeVar =
         numProcessedChildren > 0 ? childCrossSizes[0]! : containerCrossSize;
+      let crossCurrentPos = isWrapReverse
+        ? containerCrossSize - paddingCrossEnd - childCrossSizeVar
+        : paddingCrossStart;
       const crossGap = isRow ? (node.columnGap ?? gap) : (node.rowGap ?? gap);
 
       for (let idx = 0; idx < numProcessedChildren; idx++) {
@@ -247,14 +302,19 @@ export default function (node: ElementNode): boolean {
           currentPos > paddingStart
         ) {
           currentPos = paddingStart;
-          crossCurrentPos += childCrossSize + crossGap;
+          crossCurrentPos += isWrapReverse
+            ? -(childCrossSizeVar + crossGap)
+            : childCrossSizeVar + crossGap;
         }
         c[prop] = currentPos + childMarginStarts[idx]!;
         currentPos += childTotalMainSizes[idx]! + gap;
         doCrossAlign(c, idx, crossCurrentPos);
       }
 
-      const finalCrossSize = crossCurrentPos + childCrossSize + paddingCrossEnd;
+      const finalCrossSize = isWrapReverse
+        ? containerCrossSize - crossCurrentPos + paddingCrossStart
+        : crossCurrentPos + childCrossSizeVar + paddingCrossEnd;
+
       if (node[crossDimension] !== finalCrossSize) {
         node[`preFlex${crossDimension}`] = node[crossDimension];
         node[crossDimension] = finalCrossSize;

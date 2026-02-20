@@ -3,7 +3,9 @@ import { isTextNode, isElementText } from './utils.js';
 
 export default function (node: ElementNode): boolean {
   const direction = node.flexDirection || 'row';
-  const isRow = direction === 'row';
+  const isRow = direction === 'row' || direction === 'row-reverse';
+  const isReverse =
+    direction === 'row-reverse' || direction === 'column-reverse';
   const dimension = isRow ? 'width' : 'height';
   const crossDimension = isRow ? 'height' : 'width';
   const marginOne = isRow ? 'marginLeft' : 'marginTop';
@@ -64,7 +66,9 @@ export default function (node: ElementNode): boolean {
       const b = children[bIdx] as ElementNode;
       return (a.flexOrder || 0) - (b.flexOrder || 0);
     });
-  } else if (node.direction === 'rtl') {
+  }
+
+  if (isReverse || node.direction === 'rtl') {
     processableChildrenIndices.reverse();
   }
 
@@ -85,6 +89,7 @@ export default function (node: ElementNode): boolean {
     node[crossMinDimension] || 0,
     0,
   );
+  const isWrapReverse = node.flexWrap === 'wrap-reverse';
   const gap = node.gap || 0;
   const justify = node.justifyContent || 'flexStart';
   const nodePadding = (node.padding as number) || 0;
@@ -210,11 +215,12 @@ export default function (node: ElementNode): boolean {
 
   let currentPos = nodePadding;
   if (justify === 'flexStart') {
-    if (node.flexWrap === 'wrap') {
-      let crossCurrentPos = 0;
-      // use the child size to do wrap, not the container
-      const childCrossSize =
+    if (node.flexWrap === 'wrap' || isWrapReverse) {
+      const childCrossSizeVar =
         numProcessedChildren > 0 ? childCrossSizes[0]! : containerCrossSize;
+      let crossCurrentPos = isWrapReverse
+        ? containerCrossSize - childCrossSizeVar
+        : 0;
       const crossGap = isRow ? (node.columnGap ?? gap) : (node.rowGap ?? gap);
 
       for (let idx = 0; idx < numProcessedChildren; idx++) {
@@ -224,13 +230,19 @@ export default function (node: ElementNode): boolean {
           currentPos > nodePadding
         ) {
           currentPos = nodePadding;
-          crossCurrentPos += childCrossSize + crossGap;
+          crossCurrentPos += isWrapReverse
+            ? -(childCrossSizeVar + crossGap)
+            : childCrossSizeVar + crossGap;
         }
         c[prop] = currentPos + childMarginStarts[idx]!;
         currentPos += childTotalMainSizes[idx]! + gap;
         doCrossAlign(c, idx, crossCurrentPos);
       }
-      const finalCrossSize = crossCurrentPos + childCrossSize;
+
+      const finalCrossSize = isWrapReverse
+        ? containerCrossSize - crossCurrentPos
+        : crossCurrentPos + childCrossSizeVar;
+
       if (node[crossDimension] !== finalCrossSize) {
         node[`preFlex${crossDimension}`] = node[crossDimension];
         node[crossDimension] = finalCrossSize;

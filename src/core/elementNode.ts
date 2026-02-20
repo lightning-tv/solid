@@ -258,7 +258,7 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
-  flexWrap?: 'nowrap' | 'wrap';
+  flexWrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
   /**
    * Determines if an element is a flex item. If set to `false`, the element will be ignored by the flexbox layout.
    * @default false
@@ -270,6 +270,17 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
   flexOrder?: number;
+  /**
+   * Defines the ability for a flex item to shrink if necessary.
+   * Defaults to 0 since existing legacy implementations did not shrink layout boxes.
+   * Only available in NEW flex layout.
+   */
+  flexShrink?: number;
+  /**
+   * Defines the default size of an element before the remaining space is distributed.
+   * Only available in NEW flex layout.
+   */
+  flexBasis?: number | string;
   /**
    * Forwards focus to a child element. It can be a numeric index of the child or a handler function.
    *
@@ -420,7 +431,7 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
-  flexDirection?: 'row' | 'column';
+  flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   /**
    * The gap between flex items.
    *
