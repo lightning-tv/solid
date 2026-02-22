@@ -173,11 +173,13 @@ const propagateKeyPress = (
     }
     lastGlobalKeyPressTime = currentTime;
   }
-  let finalFocusElm: ElementNode | undefined;
-  let handlerAvailable: ElementNode | undefined;
   const numItems = focusPath.length;
-  const captureEvent =
-    `onCapture${mappedEvent || e.key}` + isUp ? 'Release' : '';
+  if (numItems === 0) return false;
+
+  let handlerAvailable: ElementNode | undefined;
+  const finalFocusElm = focusPath[0]!;
+  const keyBase = mappedEvent || (e.key as string);
+  const captureEvent = `onCapture${keyBase}${isUp ? 'Release' : ''}`;
   const captureKey = isUp ? 'onCaptureKeyRelease' : 'onCaptureKey';
 
   for (let i = numItems - 1; i >= 0; i--) {
@@ -205,12 +207,10 @@ const propagateKeyPress = (
   }
 
   let eventHandlerKey: string | undefined;
-  let releaseEventHandlerKey: string | undefined;
   let fallbackHandlerKey: 'onKeyHold' | 'onKeyPress' | undefined;
 
   if (mappedEvent) {
-    eventHandlerKey = `on${mappedEvent}`;
-    releaseEventHandlerKey = `on${mappedEvent}Release`;
+    eventHandlerKey = isUp ? `on${mappedEvent}Release` : `on${mappedEvent}`;
   }
 
   if (!isUp) {
@@ -219,9 +219,6 @@ const propagateKeyPress = (
 
   for (let i = 0; i < numItems; i++) {
     const elm = focusPath[i]!;
-    if (!finalFocusElm) {
-      finalFocusElm = elm;
-    }
 
     // Check throttle for bubbling phase
     if (elm.throttleInput) {
@@ -236,21 +233,13 @@ const propagateKeyPress = (
 
     let handled = false;
 
-    // Check for the release event handler if isUp is true and the key is defined
-    if (isUp && releaseEventHandlerKey) {
-      const eventHandler = elm[releaseEventHandlerKey];
-      if (isFunction(eventHandler)) {
-        handlerAvailable = elm;
-        if (eventHandler.call(elm, e, elm, finalFocusElm) === true)
-          handled = true;
-      }
-    } else if (!isUp && eventHandlerKey) {
-      // Check for the regular event handler if isUp is false and the key is defined
+    if (eventHandlerKey) {
       const eventHandler = elm[eventHandlerKey];
       if (isFunction(eventHandler)) {
         handlerAvailable = elm;
-        if (eventHandler.call(elm, e, elm, finalFocusElm) === true)
+        if (eventHandler.call(elm, e, elm, finalFocusElm) === true) {
           handled = true;
+        }
       }
     }
 
@@ -261,8 +250,9 @@ const propagateKeyPress = (
         handlerAvailable = elm;
         if (
           fallbackHandler.call(elm, e, mappedEvent, elm, finalFocusElm) === true
-        )
+        ) {
           handled = true;
+        }
       }
     }
 
