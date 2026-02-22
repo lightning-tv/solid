@@ -72,6 +72,10 @@ Config.animationSettings = {
 
 You can disable all transitions with `Config.animationsEnabled = false`. This will not disable calls directly to `.animate`.
 
+## Simple CSS-like Transitions (simpleAnimationsEnabled)
+
+For performance on targeted devices, you can bypass the full animation engine and use a simpler layout transition system by setting `Config.simpleAnimationsEnabled = true`. This will manage transitions with less overhead.
+
 ## Bypassing Transitions
 
 In the event you want to bypass a style transition you can do the following:

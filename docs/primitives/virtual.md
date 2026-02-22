@@ -37,8 +37,13 @@ import { VirtualRow, VirtualColumn } from './primitives/Virtual';
 - **each** (`readonly T[] | undefined | null | false`): The full list of items to be rendered.
 - **displaySize** (`number`): Number of items per row (required).
 - **bufferSize** (`number`): Number of items to pre-render above and below the visible area (default: `2`).
+- **wrap** (`boolean`): If `true`, navigation wraps around the ends of the list and scrolling loops infinitely.
+- **scrollIndex** (`number`): Specifies the index within the visible window where the focus should be anchored during scrolling.
 - **onEndReached** (`() => void`): Callback triggered when selection moves near the end of the list Requires `onEndReachedThreshold` to be set.
 - **onEndReachedThreshold** (`number`): Number from end of items when `onEndReached` will be called (default: `undefined`).
+- **debugInfo** (`boolean`): Logs internal slice recalculations and bounds shifts to console.
+- **factorScale** (`boolean`): If `true`, scrolling calculations will take item focus scale into account.
+- **uniformSize** (`boolean`): If `true` (default), assumes all items are uniform size to calculate scrolling, improving performance.
 - **children** (`(item: Accessor<T>, index: Accessor<number>) => JSX.Element`): Function that renders each item.
 - **selected** (`number`): Initial selected index.
 - **autofocus** (`boolean`): If `true`, the component will auto-focus the first item on mount.

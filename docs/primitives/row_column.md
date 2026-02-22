@@ -12,20 +12,24 @@ This guide will cover the `Row` component in detail. The `Column` component func
 
 The components accept the following props:
 
-| **Prop**            | **Type**                                                                     | **Description**                                             |
-| ------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `children`          | `JSX.Element[]`                                                              | The child elements to render inside the row.                |
-| `selected`          | `number`                                                                     | The index of the currently selected child. Defaults to `0`. |
-| `onLeft`            | `() => void`                                                                 | Callback for when the left navigation key is pressed.       |
-| `onRight`           | `() => void`                                                                 | Callback for when the right navigation key is pressed.      |
-| `onUp`              | `() => void`                                                                 | Callback for when the up navigation key is pressed.         |
-| `onDown`            | `() => void`                                                                 | Callback for when the down navigation key is pressed.       |
-| `onFocus`           | `(event: Event) => void`                                                     | Callback triggered when the row gains focus.                |
-| `onLayout`          | `(layout: Layout) => void`                                                   | Callback triggered during layout updates.                   |
-| `onSelectedChanged` | `(index: number, self: this, active: boolean, lastSelected: number) => void` | Callback triggered when the selected index changes.         |
-| `onScrolled`        | `(elm: this, offset: number, isInitialPos: boolean) => void`                 | Callback triggered before scrolling occurs                  |
-| `style`             | `NodeStyles`                                                                 | Custom styles to apply to the row.                          |
-| `scroll`            | `'auto' \| 'always' \| 'edge' \| 'center' \| 'none'`                         | Defines the scrolling behavior. Default is `'auto'`.        |
+| **Prop**            | **Type**                                                                     | **Description**                                              |
+| ------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `children`          | `JSX.Element[]`                                                              | The child elements to render inside the row.                 |
+| `selected`          | `number`                                                                     | The index of the currently selected child. Defaults to `0`.  |
+| `onLeft`            | `() => void`                                                                 | Callback for when the left navigation key is pressed.        |
+| `onRight`           | `() => void`                                                                 | Callback for when the right navigation key is pressed.       |
+| `onUp`              | `() => void`                                                                 | Callback for when the up navigation key is pressed.          |
+| `onDown`            | `() => void`                                                                 | Callback for when the down navigation key is pressed.        |
+| `onFocus`           | `(event: Event) => void`                                                     | Callback triggered when the row gains focus.                 |
+| `onLayout`          | `(layout: Layout) => void`                                                   | Callback triggered during layout updates.                    |
+| `onSelectedChanged` | `(index: number, self: this, active: boolean, lastSelected: number) => void` | Callback triggered when the selected index changes.          |
+| `onScrolled`        | `(elm: this, offset: number, isInitialPos: boolean) => void`                 | Callback triggered before scrolling occurs                   |
+| `style`             | `NodeStyles`                                                                 | Custom styles to apply to the row.                           |
+| `scroll`            | `'auto' \| 'always' \| 'edge' \| 'center' \| 'none'`                         | Defines the scrolling behavior. Default is `'auto'`.         |
+| `transitionLeft`    | `TransitionSettings`                                                         | (Row) Transition for scrolling left. Default is provided.    |
+| `transitionRight`   | `TransitionSettings`                                                         | (Row) Transition for scrolling right. Default is provided.   |
+| `transitionUp`      | `TransitionSettings`                                                         | (Column) Transition for scrolling up. Default is provided.   |
+| `transitionDown`    | `TransitionSettings`                                                         | (Column) Transition for scrolling down. Default is provided. |
 
 #### Behavior
 

@@ -56,10 +56,12 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 ### Flex Properties
 
 - **`alignItems`**: 'flexStart' | 'flexEnd' | 'center'
+- **`alignSelf`**: 'flexStart' | 'flexEnd' | 'center' (Overrides `alignItems` for an individual flex item)
 - **`display`**: 'flex' | 'block' (to disable flex on Row & Column)
 - **`direction`**: 'ltr' | 'rtl' display items from left to right or right to left. ltr is the default.
 - **`flexDirection`**: 'row' | 'column' | 'row-reverse' | 'column-reverse'
 - **`flexBoundary`**: 'contain' | 'fixed' (Default updates container size based on children size with `justifyContent: flexStart | flexEnd`. Set to `fixed` to use parent width when width isn't set.)
+- **`flexCrossBoundary`**: 'fixed' | 'contain' (Defines how the flex container's cross-axis size is determined. Default is 'contain'.)
 - **`flexItem`**: boolean (Set to `false` on a child to exclude it from flex calculations.)
 - **`flexOrder`**: number (Set the order on children to change the layout order.)
 - **`flexGrow`**: number (Set to number on children to specify how much room elements should take up.)
@@ -67,6 +69,8 @@ When a `View` with `display: flex` contains text nodes as children, it automatic
 - **`flexBasis`**: number | 'auto' (Set the default size of an item before the remaining space is distributed. Overrides width/height.) Only in new flex engine.
 - **`flexWrap`**: 'nowrap' | 'wrap' | 'wrap-reverse' (Set to `wrap` or `wrap-reverse` to have elements flow to the next line on overflow.)
 - **`gap`**: number
+- **`rowGap`**: number
+- **`columnGap`**: number
 - **`justifyContent`**: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
 
 ### Flex Grow
