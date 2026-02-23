@@ -29,6 +29,8 @@ export interface IRendererStage {
     unregisterAnimation: (anim: CoreAnimation) => void;
   };
   loadFont: lng.Stage['loadFont'];
+  reprocessUpdates?: (callback?: () => void) => void;
+  cleanup(full: boolean): void;
 }
 
 /** Based on {@link lng.CoreShaderManager} */

@@ -70,7 +70,10 @@ function addToLayoutQueue(node: ElementNode) {
   layoutQueue.add(node);
   if (!layoutRunQueued) {
     layoutRunQueued = true;
-    if (renderer.stage.reprocessUpdates) {
+    if (
+      'reprocessUpdates' in renderer.stage &&
+      renderer.stage.reprocessUpdates
+    ) {
       renderer.stage.reprocessUpdates(runLayout);
     } else {
       queueMicrotask(runLayout);
@@ -969,7 +972,12 @@ export class ElementNode extends Object {
 
   _layoutOnLoad() {
     (this.lng as IRendererNode).on('loaded', () => {
-      renderer.stage.reprocessUpdates?.();
+      if (
+        'reprocessUpdates' in renderer.stage &&
+        renderer.stage.reprocessUpdates
+      ) {
+        renderer.stage.reprocessUpdates?.();
+      }
       this.parent!.updateLayout();
     });
   }

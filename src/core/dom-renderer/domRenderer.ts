@@ -1601,6 +1601,7 @@ export class DOMRendererMain implements IRendererMain {
         },
       },
       loadFont: async () => {},
+      cleanup() {},
     };
 
     this.root = new DOMNode(
