@@ -1,165 +1,81 @@
-# AI Coding Guidelines for Lightning/Solid Framework
+# Custom TV-UI Framework: Lightning + SolidJS
 
-This document outlines the specific constraints, properties, and layout systems available in the Lightning/Solid framework. AI agents should strictly adhere to these rules to generate correct and functional code.
+**System Role:** You are an expert frontend engineer working with a custom TV-UI framework called **Lightning**, built on **SolidJS**.
 
-## Core Principles
+## 1. Core Architecture & Runtime
 
-1.  **Positioning System**:
+- **Environment:** TV app development over WebGL (not the DOM). No pointer input; interaction is directional (Up/Down/Left/Right).
+- **Reactivity:** Uses SolidJS primitives (`createSignal`, `createEffect`, `createMemo`).
+- **Primitives:** UI is built using custom components like `<View>`, `<Text>`, `<Row>`, `<Column>`.
+- **Patterns:** Always use functional components and modern TypeScript/JSX. Avoid classes.
+- **Assumption:** Always frame answers within the context of Lightning + SolidJS TV environment.
 
-    - All nodes are effectively `position: absolute`.
-    - Positioning is controlled via `x`, `y`, `width`, `height`.
-    - **Right / Bottom**: usage of `right` and `bottom` is supported for pinning elements to the parent's edges.
-      - Setting `right` automatically implies `mountX: 1`.
-      - Setting `bottom` automatically implies `mountY: 1`.
-    - **Mounting**:
-      - Default `mount` is **0, 0** (Top-Left corner).
-      - `mount` (0-1) determines the anchor point of the element itself (0.5 = center).
-      - **Avoid changing `mount` manually** unless specifically needed for centering (0.5) or specific anchor effects.
-    - There is no "flow" layout by default unless `display: 'flex'` is explicitly used.
+## 2. Layout & Positioning
 
-2.  **Dimensions**:
+- **Absolute by Default:** All nodes are naturally `position: absolute`.
+- **Positioning:** Controlled explicitly via `x`, `y`, `width`, `height`.
+- **Pinning:** Use `right` (implies `mountX: 1`) and `bottom` (implies `mountY: 1`) to pin to parent edges.
+- **Mounting:** Default `mount` is `0, 0` (Top-Left). Value `0` to `1` determines anchor point. Avoid manual changes unless centering (`0.5`).
+- **Dimensions:** Explicit `width` and `height` are crucial. Unspecified dimensions will inherit parent size (causing unintended overlays).
 
-    - **Explicit Dimensions**: It is **important** to give elements explicit `width` and `height` whenever possible.
-    - **Default Dimensions**: If `width` and `height` are **not** specified, the element will inherit the **parent's width and height**. This can lead to unexpected full-screen overlays if not managed carefully.
+## 3. Flexbox Engine
 
-3.  **Flexbox Layout**:
+- **Activation:** Set `display: "flex"` on containers to enable flex layout.
+- **Padding:** Supports ONLY a single overall `padding` number. (NO `paddingLeft`, `paddingTop`, etc.).
+- **Margins:** Supported on items (`marginTop`, `marginBottom`, `marginLeft`, `marginRight`).
+- **Gap:** `gap`, `rowGap`, and `columnGap` are supported.
+- **Alignment:** Strictly typed properties: `flexDirection` ('row'|'column'), `justifyContent`, `alignItems`, `alignSelf`.
 
-    - **Must** set `display: 'flex'` on a container to enable flexbox.
-    - **Important**: `padding` is a _single number_ only. There is NO `paddingLeft`, `paddingRight`, `paddingTop`, or `paddingBottom`.
-    - **Margins**: Supported on flex items via `marginTop`, `marginBottom`, `marginLeft`, `marginRight`.
-    - **Gap**: `gap`, `rowGap`, `columnGap` are supported.
-    - **Alignment**: `justifyContent`, `alignItems`, `alignSelf` are strictly typed.
+## 4. Styling Strict Rules
 
-4.  **Styling Restrictions**:
+- **Colors:** MUST use hex strings (e.g., `"#ff0000ff"`). NO named colors (e.g., `'red'`) or CSS variables.
+- **Backgrounds:** DO NOT use `background`. Use `color` instead.
+- **Borders/Shadows:** Use object structures (`border={{ width: 1, color: "#000000ff" }}`). NO CSS `border` or `box-shadow` strings.
+- **Radii:** Use numeric `borderRadius` (single number or array `[tl, tr, br, bl]`).
+- **Classes/Styles:** CSS classes and inline `style={{}}` props are NOT supported. Pass props directly to the component.
 
-    - **No** `background`. Use `color`.
-    - **Color Format**: **Prefer Hex Strings** (e.g., `'#ff0000ff'`). **NO** named colors.
-    - **No** `border-radius`. Use `borderRadius` (number).
-    - **No** `border`. Use `border` object: `{ width: number, color: string }`.
-    - **No** `box-shadow`. Use `shadow` object.
-    - **No** CSS class names.
+## 5. Focus & Interaction
 
-5.  **Props vs Styles**:
-    - **Prefer Props**: Pass properties directly to the component (e.g., `<View x={10} y={10} color="#ff0000ff" />`).
-    - Avoid using the `style` prop when possible.
+- **Navigation:** Navigation is handled via a remote control with arrow keys. Use `onUp`, `onDown`, `onLeft`, and `onRight` to handle directional input on components.
+- **Handling:** Prefer the `onFocusChanged={(hasFocus: boolean) => void}` prop to easily track and react to focus state (e.g. for hover styles).
+- **Events:** `onFocus`, `onBlur`, and `onEnter` are available for direct actions.
+- **Auto-Focus:** Exactly one item should include the `autofocus` prop (`autofocus={true}`) when a page loads.
+- **Forwarding Focus:** Use `forwardFocus` to set focus on a child element. It can take a number (e.g., `forwardFocus={1}`) to focus a specific descendant by index.
+- **Row/Column:** `Row` and `Column` components automatically manage selecting and setting focus on their children.
 
-## Available Properties
+## 6. Property Reference
 
-### Layout & Positioning
+### Positioning & Transformation
 
-| Property                    | Type     | Notes                                                        |
-| :-------------------------- | :------- | :----------------------------------------------------------- |
-| `x`, `y`                    | `number` | Absolute position coordinates.                               |
-| `right`                     | `number` | Distance from parent's right edge. **Implies `mountX: 1`**.  |
-| `bottom`                    | `number` | Distance from parent's bottom edge. **Implies `mountY: 1`**. |
-| `width` / `w`               | `number` | Explicit width. **Defaults to Parent Width** if unset.       |
-| `height` / `h`              | `number` | Explicit height. **Defaults to Parent Height** if unset.     |
-| `minWidth`, `minHeight`     | `number` | Minimum dimensions.                                          |
-| `maxWidth`, `maxHeight`     | `number` | Maximum dimensions.                                          |
-| `mount`, `mountX`, `mountY` | `number` | Anchor point. Default **0** (Top/Left).                      |
-| `pivot`, `pivotX`, `pivotY` | `number` | Pivot point.                                                 |
-| `rotation`                  | `number` | Rotation in radians.                                         |
-| `scale`, `scaleX`, `scaleY` | `number` | Scaling factor.                                              |
-| `alpha`                     | `number` | Opacity.                                                     |
-| `zIndex`, `zIndexLocked`    | `number` | Stacking order.                                              |
+`x`, `y`, `right`, `bottom`, `width` (w), `height` (h), `minWidth`, `minHeight`, `maxWidth`, `maxHeight`, `mount`, `mountX`, `mountY`, `pivot`, `pivotX`, `pivotY`, `rotation`, `scale`, `scaleX`, `scaleY`, `alpha`, `zIndex`, `zIndexLocked`
 
-### Flexbox Container Props
+### Container Flexbox
 
-_Requires `display: 'flex'`_
+`display: "flex"`, `flexDirection`, `flexWrap`, `justifyContent`, `alignItems`, `gap`, `rowGap`, `columnGap`, `padding`
 
-| Property                     | Values / Type                                                                              | Notes                 |
-| :--------------------------- | :----------------------------------------------------------------------------------------- | :-------------------- |
-| `flexDirection`              | `'row' \| 'column'`                                                                        | Defaults to 'row'.    |
-| `flexWrap`                   | `'nowrap' \| 'wrap'`                                                                       |                       |
-| `justifyContent`             | `'flexStart' \| 'flexEnd' \| 'center' \| 'spaceBetween' \| 'spaceAround' \| 'spaceEvenly'` | Main axis alignment.  |
-| `alignItems`                 | `'flexStart' \| 'flexEnd' \| 'center'`                                                     | Cross axis alignment. |
-| `gap`, `rowGap`, `columnGap` | `number`                                                                                   | Space between items.  |
-| `padding`                    | `number`                                                                                   | **Uniform only**.     |
+### Item Flexbox
 
-### Flexbox Item Props
+`flexGrow`, `flexItem`, `alignSelf`, `marginTop`, `marginBottom`, `marginLeft`, `marginRight`
 
-| Property                       | Type                                   | Notes                   |
-| :----------------------------- | :------------------------------------- | :---------------------- |
-| `flexGrow`                     | `number`                               |                         |
-| `flexItem`                     | `boolean`                              | Set `false` to ignore.  |
-| `alignSelf`                    | `'flexStart' \| 'flexEnd' \| 'center'` | Overrides `alignItems`. |
-| `marginTop`, `marginBottom`... | `number`                               |                         |
+### Visual & Text
 
-### Visual Styles
+`color`, `colorTop`, `colorBottom`, `linearGradient`, `radialGradient`, `borderRadius`, `border`, `shadow`, `text`, `fontSize`, `fontFamily`, `fontWeight`, `lineHeight`, `textAlign`, `wordWrap`, `maxLines`, `textOverflow`
 
-| Property                     | Type                 | Notes                                                                    |
-| :--------------------------- | :------------------- | :----------------------------------------------------------------------- |
-| `color`                      | `string`             | **Hex String Preferred** (`'#ff0000ff'`).                                |
-| `colorTop`, `colorBottom`... | `string`             | Gradient-like vertex coloring in hex string.                             |
-| `linearGradient`             | `object`             | `{ angle?: number, colors: string[], stops?: number[] }`                 |
-| `radialGradient`             | `object`             | `{ radius?: number, colors: string[], stops?: number[], ... }`           |
-| `borderRadius`               | `number \| number[]` | Single radius or [tl, tr, br, bl].                                       |
-| `border`                     | `object`             | `{ width: number, color: string }`.                                      |
-| `shadow`                     | `object`             | `{ color: string, x: number, y: number, blur: number, spread: number }`. |
+## 7. DO NOT USE 🚫
 
-### Text Properties
+- Standard DOM Elements (`<div>`, `<span>`, etc.)
+- CSS Class Names (`class`, `className`)
+- The `style={{}}` Prop (Use native node props instead)
+- `display: 'grid'`
+- String literal colors without hex (e.g. `'red'`, `'#F00'`) - Use full hex codes like `'#ff0000ff'`
+- Directional paddings (e.g., `paddingLeft`)
 
-| Property       | Type                             | Notes           |
-| :------------- | :------------------------------- | :-------------- |
-| `text`         | `string`                         | Content string. |
-| `fontSize`     | `number`                         |                 |
-| `fontFamily`   | `string`                         |                 |
-| `fontWeight`   | `number \| string`               |                 |
-| `lineHeight`   | `number`                         |                 |
-| `textAlign`    | `'left' \| 'center' \| 'right'`  |                 |
-| `wordWrap`     | `boolean`                        |                 |
-| `maxLines`     | `number`                         | truncate text.  |
-| `textOverflow` | `'clip' \| 'ellipsis' \| string` |                 |
+## 8. Code Examples
 
-### Interaction & Focus
-
-| Property         | Type       | Notes                                                                    |
-| :--------------- | :--------- | :----------------------------------------------------------------------- |
-| `onFocus`        | `function` | Called when element gains focus.                                         |
-| `onBlur`         | `function` | Called when element loses focus.                                         |
-| `onFocusChanged` | `function` | **Preferred**. `(hasFocus: boolean) => void`. Combines focus/blur logic. |
-| `onEnter`        | `function` | Called on Enter key press.                                               |
-
-#### Focus Handling Best Practice
-
-When tracking focus state (e.g., for styling), prefer `onFocusChanged` over separate `onFocus`/`onBlur` handlers.
-
-**Preferred Pattern:**
+**❌ Incorrect:**
 
 ```tsx
-const [focused, setFocused] = createSignal(false);
-
-return (
-  <View
-    width={180}
-    height={100}
-    color={focused() ? '#ffff00ff' : '#333333ff'}
-    onFocusChanged={setFocused}
-  />
-);
-```
-
-## Strict "Do Not Use" List
-
-| Invalid Property      | Correct Alternative                                    |
-| :-------------------- | :----------------------------------------------------- |
-| `background`          | Use `color`.                                           |
-| Named colors          | Use hex strings (`'#ff0000ff'`).                       |
-| `textColor`           | Use `color` on the Text node itself.                   |
-| `paddingLeft`...      | Use `padding` (uniform) or `margin` props on children. |
-| `border-style` string | Use `border` object.                                   |
-| `display: 'grid'`     | Not supported. Use nested Flexboxes.                   |
-| `className`           | Not supported.                                         |
-| `style={{ ... }}`     | **Avoid**. Pass props directly to the component.       |
-
-## Example Usage
-
-### Incorrect ❌
-
-```tsx
-// 1. Missing dimensions (might default to full screen)
-// 2. Using named colors
-// 3. Using style object
+// Missing dimensions, invalid colors, using styles, directional padding
 <View
   style={{
     backgroundColor: 'red',
@@ -172,20 +88,21 @@ return (
 </View>
 ```
 
-### Correct ✅
+**✅ Correct:**
 
 ```tsx
-// 1. Explicit dimensions
-// 2. Direct Props
-// 3. Hex Strings
+const [focused, setFocused] = createSignal(false);
+
+// Uses direct props, hex colors, clear dimensions, and focus tracking
 <View
-  width={400} // Explicit Width
-  height={200} // Explicit Height
-  color="#ff0000ff" // Hex string
-  padding={20} // Uniform padding
-  borderRadius={10} // Number
-  display="flex" // defaults to flexDirection row
+  width={400}
+  height={200}
+  color={focused() ? '#ffff00ff' : '#ff0000ff'}
+  padding={20}
+  borderRadius={10}
+  display="flex"
+  onFocusChanged={setFocused}
 >
   <Text color="#ffffffff">Hello</Text>
-</View>
+</View>;
 ```
