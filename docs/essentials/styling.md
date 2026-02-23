@@ -205,24 +205,47 @@ Text node properties available from the Renderer
 The following props are aliases to help with layout and ShaderEffects:
 
 - `alignItems`: 'flexStart' | 'flexEnd' | 'center'
+- `alignSelf`: 'flexStart' | 'flexEnd' | 'center'
 - `border`: BorderStyle
 - `borderBottom`: BorderStyle
 - `borderLeft`: BorderStyle
 - `borderRadius`: number | number[]
 - `borderRight`: BorderStyle
 - `borderTop`: BorderStyle
+- `bottom`: number
+- `center`: boolean
+- `centerX`: boolean
+- `centerY`: boolean
+- `columnGap`: number
 - `display`: 'flex' | 'block'
 - `effects`: any
-- `flexDirection`: 'row' | 'column'
+- `flexBoundary`: 'contain' | 'fixed'
+- `flexCrossBoundary`: 'contain' | 'fixed'
+- `flexDirection`: 'row' | 'column' | 'row-reverse' | 'column-reverse'
+- `flexItem`: boolean
+- `flexOrder`: number
+- `flexGrow`: number
+- `flexShrink`: number
+- `flexBasis`: number | string
+- `flexWrap`: 'nowrap' | 'wrap' | 'wrap-reverse'
 - `gap`: number
 - `justifyContent`: 'flexStart' | 'flexEnd' | 'center' | 'spaceBetween' | 'spaceEvenly'
 - `linearGradient`: LinearGradientEffectProps
 - `radialGradient`: RadialGradientEffectProps
 - `radialProgress`: RadialProgressEffectProps
+- `margin`: number | [number, number] | [number, number, number] | [number, number, number, number]
 - `marginBottom`: number
 - `marginLeft`: number
 - `marginRight`: number
 - `marginTop`: number
+- `padding`: number | [number, number] | [number, number, number] | [number, number, number, number]
+- `paddingTop`: number
+- `paddingRight`: number
+- `paddingBottom`: number
+- `paddingLeft`: number
+- `right`: number
+- `rowGap`: number
+- `shadow`: ShadowProps
 - `transition`: Record<string, AnimationSettings> | true
 
 ### Component Defaults

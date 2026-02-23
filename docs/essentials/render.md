@@ -110,3 +110,40 @@ For the latest renderer options read the official [renderer documentation](https
 - **fontEngines**
   Defines font engines for text rendering (CanvasTextRenderer for Canvas, SdfTextRenderer for WebGL). Enables tree shaking for unused engines.
   Default: `[]`. Type: `(typeof SdfTextRenderer | typeof CanvasTextRenderer)[]`.
+
+### Additional Solid-Specific Configurations
+
+Besides `rendererOptions`, the `Config` object exposes several properties specific to `@lightningtv/solid` runtime behavior:
+
+- **debug**: `boolean` (Default: `false`)
+  Enables general debug logging.
+- **focusDebug**: `boolean` (Default: `false`)
+  Logs focus management events to help debug spatial navigation.
+- **keyDebug**: `boolean` (Default: `false`)
+  Logs all key input events.
+- **animationsEnabled**: `boolean` (Default: `true`)
+  Global toggle to enable or disable animations.
+- **animationSettings**: `AnimationSettings`
+  Default configurations for animations.
+  - _Default_: `{ duration: 250, easing: 'ease-in-out' }`
+- **fontSettings**: `Partial<TextProps>`
+  Default settings for all `<Text>` nodes globally.
+  - _Default_: `{ fontFamily: 'Ubuntu', fontSize: 100 }`
+- **fontWeightAlias**: `Record<string, number | string>`
+  Maps font-weight names to specific font files or numeric values (e.g., `{ thin: 100, bold: 700 }`).
+- **taskDelay**: `number`
+  Delay interval in milliseconds for the Task Scheduler.
+  - _Default_: `50`
+- **focusStateKey**: `string`
+  The property key used to identify the focused state styling.
+  - _Default_: `'$focus'`
+- **domRendererEnabled**: `boolean` (Default: `false`)
+  Whether the DOM renderer should be used instead of the Lightning Canvas renderer.
+- **simpleAnimationsEnabled**: `boolean`
+  Allows simple CSS-like transition properties without full engine overhead.
+- **throttleInput**: `number`
+  Rate-limiting for key handling in milliseconds.
+- **lockStyles**: `boolean` (Default: `true`)
+  Enables locking on styles to prevent unintended overrides.
+- **convertToShader**: `(node: ElementNode, v: StyleEffects) => IRendererShader`
+  A customizable function that determines how styling effects translate to shaders on an ElementNode.

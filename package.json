@@ -1,6 +1,6 @@
 {
   "name": "@lightningtv/solid",
-  "version": "3.0.10",
+  "version": "3.1.4",
   "description": "Lightning Renderer for Solid Universal",
   "type": "module",
   "exports": {
@@ -65,7 +65,6 @@
   "author": "Chris Lorenzo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@lightningtv/solid": "link:",
     "@solid-primitives/event-listener": "^2.3.3",
     "@solid-primitives/list": "^0.1.2",
     "@solid-primitives/mouse": "^2.0.20",
@@ -116,7 +115,8 @@
     "jsx-runtime.d.ts",
     "LICENSE",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "docs/AI_CODING_GUIDELINES.md"
   ],
   "packageManager": "pnpm@10.8.0"
 }

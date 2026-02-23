@@ -23,7 +23,7 @@ The Text-tag accepts the following attributes:
 - `lineHeight` - the spacing between lines in pixels
 - `maxLines` - maximum number of lines that will be displayed
 - `overflowSuffix` - the suffix to be added when text is cropped due to bounds limits, defaults to `...`
-- `textAlign` - the alignment of the text, can be `left`, `right`, or `center`, defaults to `left`. Centering text and aligning text to the right requires the `wordwrap` attribute to be set as well.
+- `textAlign` - the alignment of the text, can be `left`, `right`, or `center`, defaults to `left`. Centering text and aligning text to the right requires the `contain` attribute to be set to `width` or `both`.
 - `verticalAlign` - defaults to `middle` - `top` | `middle` | `bottom`
 
 Tags for Canvas Text Rendering (Not Recommended)

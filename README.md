@@ -22,6 +22,8 @@ Join the [SolidJS Discord](https://discord.com/invite/solidjs) - #Lightning TV c
 
 [SolidJS Lightning Docs](https://lightning-tv.github.io/solid/)
 
+[AI Coding Guidelines](docs/AI_CODING_GUIDELINES.md)
+
 ## Demo App
 
 [Solid TMDB Demo App](https://github.com/lightning-tv/solid-demo-app)

@@ -15,7 +15,12 @@ import {
   NewOmit,
 } from './intrinsicTypes.js';
 import States, { type NodeStates } from './states.js';
-import calculateFlex from './flex.js';
+import calculateFlexOld from './flex.js';
+import calculateFlexNew from './flexLayout.js';
+
+const calculateFlex = (import.meta as any).env?.VITE_USE_NEW_FLEX
+  ? calculateFlexNew
+  : calculateFlexOld;
 import {
   log,
   isArray,
@@ -65,7 +70,11 @@ function addToLayoutQueue(node: ElementNode) {
   layoutQueue.add(node);
   if (!layoutRunQueued) {
     layoutRunQueued = true;
-    queueMicrotask(runLayout);
+    if (renderer.stage.reprocessUpdates) {
+      renderer.stage.reprocessUpdates(runLayout);
+    } else {
+      queueMicrotask(runLayout);
+    }
   }
 }
 
@@ -251,7 +260,7 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
-  flexWrap?: 'nowrap' | 'wrap';
+  flexWrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
   /**
    * Determines if an element is a flex item. If set to `false`, the element will be ignored by the flexbox layout.
    * @default false
@@ -263,6 +272,17 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
   flexOrder?: number;
+  /**
+   * Defines the ability for a flex item to shrink if necessary.
+   * Defaults to 0 since existing legacy implementations did not shrink layout boxes.
+   * Only available in NEW flex layout.
+   */
+  flexShrink?: number;
+  /**
+   * Defines the default size of an element before the remaining space is distributed.
+   * Only available in NEW flex layout.
+   */
+  flexBasis?: number | string;
   /**
    * Forwards focus to a child element. It can be a numeric index of the child or a handler function.
    *
@@ -414,7 +434,7 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
    */
-  flexDirection?: 'row' | 'column';
+  flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
   /**
    * The gap between flex items.
    *
@@ -482,11 +502,25 @@ export interface ElementNode extends RendererNode, FocusNode {
    */
   marginTop?: number;
   /**
-   * The padding on all sides of the flex element.
+   * The padding on all sides of the flex element, or an array defining [Top, Right, Bottom, Left] padding.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
-  padding?: number;
+  padding?:
+    | number
+    | [number, number]
+    | [number, number, number]
+    | [number, number, number, number];
+  /**
+   * The margin on all sides of the flex element, or an array defining [Top, Right, Bottom, Left] margins.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout
+   */
+  margin?:
+    | number
+    | [number, number]
+    | [number, number, number]
+    | [number, number, number, number];
   /**
    * The x-coordinate of the element's position.
    *
@@ -619,6 +653,18 @@ export interface ElementNode extends RendererNode, FocusNode {
    * @see https://lightning-tv.github.io/solid/#/flow/layout
    */
   onLayout?: (this: ElementNode, target: ElementNode) => void;
+
+  /**
+   * The individual padding on each side of an element, acting as an override to the `padding` array property.
+   * `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`.
+   * Only in the new flex engine.
+   *
+   * @see https://lightning-tv.github.io/solid/#/flow/layout?id=flex
+   */
+  paddingTop?: number;
+  paddingRight?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
 }
 
 export class ElementNode extends Object {
@@ -923,6 +969,7 @@ export class ElementNode extends Object {
 
   _layoutOnLoad() {
     (this.lng as IRendererNode).on('loaded', () => {
+      renderer.stage.reprocessUpdates?.();
       this.parent!.updateLayout();
     });
   }
