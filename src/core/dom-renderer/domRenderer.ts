@@ -487,132 +487,110 @@ function updateNodeStyles(node: DOMNode | DOMText) {
 
     if (props.shader?.props != null) {
       let shaderProps = props.shader.props;
-      let effectType = props.shader.shaderType;
-      // console.log('*** shaderProps', shaderProps);
-      // console.log('*** effectType', effectType);
 
-      switch (effectType) {
-        case 'rounded':
-        case 'roundedWithBorder':
-        case 'roundedWithShadow':
-        case 'roundedWithBorder':
-        case 'roundedWithBorderWithShadow':
-        case 'border':
-        case 'borderTop':
-        case 'borderBottom':
-        case 'borderLeft':
-        case 'borderRight': {
-          let borderWidth = shaderProps['border-w'];
-          let borderColor = shaderProps['border-color'];
-          let borderGap = shaderProps['border-gap'] ?? 0;
-          let borderInset = shaderProps['border-inset'] ?? true;
-          let radius = shaderProps['radius'];
+      let borderWidth = shaderProps['border-w'];
+      let borderColor = shaderProps['border-color'];
+      let borderGap = shaderProps['border-gap'] ?? 0;
+      let borderInset = shaderProps['border-inset'] ?? true;
+      let radius = shaderProps['radius'];
 
-          // Border
-          if (
-            typeof borderWidth === 'number' &&
-            borderWidth !== 0 &&
-            typeof borderColor === 'number' &&
-            borderColor !== 0
-          ) {
-            const rgbaColor = colorToRgba(borderColor);
-            // Handle inset borders by making gap negative
-            let gap = borderInset ? -(borderWidth + borderGap) : borderGap;
-            borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
-            borderStyle += `outline-offset: ${gap}px;`;
-          }
-          // Rounded
-          if (typeof radius === 'number' && radius > 0) {
-            radiusStyle += `border-radius: ${radius}px;`;
-          } else if (Array.isArray(radius) && radius.length === 4) {
-            radiusStyle += `border-radius: ${radius[0]}px ${radius[1]}px ${radius[2]}px ${radius[3]}px;`;
-          }
+      // Border
+      if (
+        typeof borderWidth === 'number' &&
+        borderWidth !== 0 &&
+        typeof borderColor === 'number' &&
+        borderColor !== 0
+      ) {
+        const rgbaColor = colorToRgba(borderColor);
+        // Handle inset borders by making gap negative
+        let gap = borderInset ? -(borderWidth + borderGap) : borderGap;
+        borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
+        borderStyle += `outline-offset: ${gap}px;`;
+      }
+      // Rounded
+      if (typeof radius === 'number' && radius > 0) {
+        radiusStyle += `border-radius: ${radius}px;`;
+      } else if (Array.isArray(radius) && radius.length === 4) {
+        radiusStyle += `border-radius: ${radius[0]}px ${radius[1]}px ${radius[2]}px ${radius[3]}px;`;
+      }
 
-          break;
-        }
-        case 'radialGradient':
-        case 'roundedWithRadialGradient': {
-          const rg = shaderProps as
-            | Partial<lng.RadialGradientProps>
-            | undefined;
-          const colors = Array.isArray(rg?.colors) ? rg!.colors! : [];
-          const stops = Array.isArray(rg?.stops) ? rg!.stops! : undefined;
-          const pivot = Array.isArray(rg?.pivot) ? rg!.pivot! : [0.5, 0.5];
-          const width = typeof rg?.w === 'number' ? rg!.w! : props.w || 0;
-          const height = typeof rg?.h === 'number' ? rg!.h! : width;
+      if ('radial' in shaderProps) {
+        const rg = shaderProps.radial as
+          | Partial<lng.RadialGradientProps>
+          | undefined;
+        const colors = Array.isArray(rg?.colors) ? rg!.colors! : [];
+        const stops = Array.isArray(rg?.stops) ? rg!.stops! : undefined;
+        const pivot = Array.isArray(rg?.pivot) ? rg!.pivot! : [0.5, 0.5];
+        const width = typeof rg?.w === 'number' ? rg!.w! : props.w || 0;
+        const height = typeof rg?.h === 'number' ? rg!.h! : width;
 
-          if (colors.length > 0) {
-            const gradientStops = buildGradientStops(colors, stops);
-            if (gradientStops) {
-              if (colors.length === 1) {
-                // Single color -> solid fill
-                if (srcImg || gradient) {
-                  maskStyle += `mask-image: linear-gradient(${gradientStops});`;
+        if (colors.length > 0) {
+          const gradientStops = buildGradientStops(colors, stops);
+          if (gradientStops) {
+            if (colors.length === 1) {
+              // Single color -> solid fill
+              if (srcImg || gradient) {
+                maskStyle += `mask-image: linear-gradient(${gradientStops});`;
+              } else {
+                bgStyle += `background-color: ${colorToRgba(colors[0]!)};`;
+              }
+            } else {
+              const isEllipse = width > 0 && height > 0 && width !== height;
+              const pivotX = (pivot[0] ?? 0.5) * 100;
+              const pivotY = (pivot[1] ?? 0.5) * 100;
+              let sizePart = '';
+              if (width > 0 && height > 0) {
+                if (!isEllipse && width === height) {
+                  sizePart = `${Math.round(width)}px`;
                 } else {
-                  bgStyle += `background-color: ${colorToRgba(colors[0]!)};`;
+                  sizePart = `${Math.round(width)}px ${Math.round(height)}px`;
                 }
               } else {
-                const isEllipse = width > 0 && height > 0 && width !== height;
-                const pivotX = (pivot[0] ?? 0.5) * 100;
-                const pivotY = (pivot[1] ?? 0.5) * 100;
-                let sizePart = '';
-                if (width > 0 && height > 0) {
-                  if (!isEllipse && width === height) {
-                    sizePart = `${Math.round(width)}px`;
-                  } else {
-                    sizePart = `${Math.round(width)}px ${Math.round(height)}px`;
-                  }
-                } else {
-                  sizePart = 'closest-side';
-                }
-                const radialGradient = `radial-gradient(${isEllipse ? 'ellipse' : 'circle'} ${sizePart} at ${pivotX.toFixed(2)}% ${pivotY.toFixed(2)}%, ${gradientStops})`;
-                if (srcImg || gradient) {
-                  maskStyle += `mask-image: ${radialGradient};`;
-                } else {
-                  bgStyle += `background-image: ${radialGradient};`;
-                  bgStyle += `background-repeat: no-repeat;`;
-                  bgStyle += `background-size: 100% 100%;`;
-                }
+                sizePart = 'closest-side';
+              }
+              const radialGradient = `radial-gradient(${isEllipse ? 'ellipse' : 'circle'} ${sizePart} at ${pivotX.toFixed(2)}% ${pivotY.toFixed(2)}%, ${gradientStops})`;
+              if (srcImg || gradient) {
+                maskStyle += `mask-image: ${radialGradient};`;
+              } else {
+                bgStyle += `background-image: ${radialGradient};`;
+                bgStyle += `background-repeat: no-repeat;`;
+                bgStyle += `background-size: 100% 100%;`;
               }
             }
           }
-          break;
         }
-        case 'linearGradient': {
-          const lg = shaderProps as
-            | Partial<lng.LinearGradientProps>
-            | undefined;
-          const colors = Array.isArray(lg?.colors) ? lg!.colors! : [];
-          const stops = Array.isArray(lg?.stops) ? lg!.stops! : undefined;
-          const angleRad = typeof lg?.angle === 'number' ? lg!.angle! : 0; // radians
+      }
 
-          if (colors.length > 0) {
-            const gradientStops = buildGradientStops(colors, stops);
-            if (gradientStops) {
-              if (colors.length === 1) {
-                if (srcImg || gradient) {
-                  maskStyle += `mask-image: linear-gradient(${gradientStops});`;
-                } else {
-                  bgStyle += `background-color: ${colorToRgba(colors[0]!)};`;
-                }
+      if ('linear' in shaderProps) {
+        const lg = shaderProps.linear as
+          | Partial<lng.LinearGradientProps>
+          | undefined;
+        const colors = Array.isArray(lg?.colors) ? lg!.colors! : [];
+        const stops = Array.isArray(lg?.stops) ? lg!.stops! : undefined;
+        const angleRad = typeof lg?.angle === 'number' ? lg!.angle! : 0; // radians
+
+        if (colors.length > 0) {
+          const gradientStops = buildGradientStops(colors, stops);
+          if (gradientStops) {
+            if (colors.length === 1) {
+              if (srcImg || gradient) {
+                maskStyle += `mask-image: linear-gradient(${gradientStops});`;
               } else {
-                const angleDeg = 180 * (angleRad / Math.PI - 1);
-                const linearGradient = `linear-gradient(${angleDeg.toFixed(2)}deg, ${gradientStops})`;
-                if (srcImg || gradient) {
-                  maskStyle += `mask-image: ${linearGradient};`;
-                } else {
-                  bgStyle += `background-image: ${linearGradient};`;
-                  bgStyle += `background-repeat: no-repeat;`;
-                  bgStyle += `background-size: 100% 100%;`;
-                }
+                bgStyle += `background-color: ${colorToRgba(colors[0]!)};`;
+              }
+            } else {
+              const angleDeg = 180 * (angleRad / Math.PI - 1);
+              const linearGradient = `linear-gradient(${angleDeg.toFixed(2)}deg, ${gradientStops})`;
+              if (srcImg || gradient) {
+                maskStyle += `mask-image: ${linearGradient};`;
+              } else {
+                bgStyle += `background-image: ${linearGradient};`;
+                bgStyle += `background-repeat: no-repeat;`;
+                bgStyle += `background-size: 100% 100%;`;
               }
             }
           }
-          break;
         }
-        default:
-          console.warn(`Unknown shader effect type: ${effectType}`);
-          break;
       }
     }
 
