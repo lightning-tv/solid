@@ -707,7 +707,11 @@ export class ElementNode extends Object {
 
   set id(id: string) {
     this._id = id;
-    if (Config.rendererOptions?.inspector) {
+    if (
+      Config.rendererOptions &&
+      'inspector' in Config.rendererOptions &&
+      Config.rendererOptions.inspector
+    ) {
       this.data = { ...this.data, testId: id };
     }
   }

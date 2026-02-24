@@ -14,10 +14,10 @@ import type {
   IRendererNode,
   IRendererNodeProps,
   IRendererShader,
-  IRendererShaderProps,
   IRendererStage,
   IRendererTextNode,
   IRendererTextNodeProps,
+  DomRendererMainSettings,
 } from './domRendererTypes.js';
 import {
   colorToRgba,
@@ -1559,7 +1559,7 @@ export class DOMRendererMain implements IRendererMain {
     new Map();
 
   constructor(
-    public settings: Partial<lng.RendererMainSettings>,
+    public settings: DomRendererMainSettings,
     rawTarget: string | HTMLElement,
   ) {
     let target: HTMLElement;

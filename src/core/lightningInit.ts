@@ -1,11 +1,8 @@
 import * as lng from '@lightningjs/renderer';
-import {
-  DOMRendererMain,
-  isDomRenderer,
-  loadFontToDom,
-} from './dom-renderer/domRenderer.js';
+import { DOMRendererMain, loadFontToDom } from './dom-renderer/domRenderer.js';
 import { Config, DOM_RENDERING } from './config.js';
 import { FontLoadOptions } from './intrinsicTypes.js';
+import { DomRendererMainSettings } from './dom-renderer/domRendererTypes.js';
 
 export type SdfFontType = 'ssdf' | 'msdf';
 // Global renderer instance: can be either the Lightning or DOM implementation
@@ -14,7 +11,7 @@ export let renderer: lng.RendererMain | DOMRendererMain;
 export const getRenderer = () => renderer;
 
 export function startLightningRenderer(
-  options: lng.RendererMainSettings,
+  options: lng.RendererMainSettings | DomRendererMainSettings,
   rootId: string | HTMLElement = 'app',
 ) {
   const enableDomRenderer = DOM_RENDERING && Config.domRendererEnabled;
@@ -26,6 +23,7 @@ export function startLightningRenderer(
 }
 
 export function loadFonts(fonts: FontLoadOptions[]) {
+  const enableDomRenderer = DOM_RENDERING && Config.domRendererEnabled;
   for (const font of fonts) {
     // WebGL — SDF
     if (
@@ -37,7 +35,7 @@ export function loadFonts(fonts: FontLoadOptions[]) {
     }
     // Canvas — Web
     else if ('fontUrl' in font) {
-      if (DOM_RENDERING && isDomRenderer(renderer)) {
+      if (enableDomRenderer) {
         loadFontToDom(font);
       } else {
         renderer.stage.loadFont('canvas', font);

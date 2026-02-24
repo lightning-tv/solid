@@ -125,3 +125,26 @@ export interface IRendererMain extends IEventEmitter {
   createTexture: typeof lng.RendererMain.prototype.createTexture;
   //createEffect: typeof lng.RendererMain.prototype.createEffect;
 }
+
+export interface DomRendererMainSettings {
+  /**
+   * The logical width of the application (default: 1920)
+   */
+  appWidth?: number;
+
+  /**
+   * The logical height of the application (default: 1080)
+   */
+  appHeight?: number;
+
+  /**
+   * Device logical pixel ratio (default: 1)
+   */
+  deviceLogicalPixelRatio?: number;
+
+  /**
+   * Bounds margin for the renderer
+   * Can be a single number (applied to all sides) or an array [top, right, bottom, left]
+   */
+  boundsMargin?: number | [number, number, number, number];
+}
