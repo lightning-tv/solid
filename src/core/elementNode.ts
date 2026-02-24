@@ -835,7 +835,10 @@ export class ElementNode extends Object {
       const animationSettings =
         this.transition === true || this.transition[name] === true
           ? undefined
-          : (this.transition[name] as undefined | AnimationSettings);
+          : this.transition[name] ||
+            (this.transition[getPropertyAlias(name)] as
+              | undefined
+              | AnimationSettings);
 
       if (Config.simpleAnimationsEnabled) {
         simpleAnimation.add(
