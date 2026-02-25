@@ -61,6 +61,8 @@ import {
 } from './focusManager.js';
 import simpleAnimation, { SimpleAnimationSettings } from './animation.js';
 
+let nextActiveElement: ElementNode | null = null;
+let focusQueued: boolean = false;
 let layoutRunQueued = false;
 const layoutQueue = new Set<ElementNode>();
 
@@ -960,7 +962,15 @@ export class ElementNode extends Object {
         }
       }
       // Delay setting focus so children can render (useful for Row + Column)
-      queueMicrotask(() => setActiveElement(this));
+      nextActiveElement = this;
+      if (focusQueued === false) {
+        focusQueued = true;
+        queueMicrotask(() => {
+          if (nextActiveElement) setActiveElement(nextActiveElement);
+          nextActiveElement = null;
+          focusQueued = false;
+        });
+      }
     } else {
       this._autofocus = true;
     }
