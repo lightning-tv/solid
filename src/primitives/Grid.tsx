@@ -100,6 +100,20 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
     }
   })
 
+  function scrollToIndex(this: ElementNode, index: number) {
+    untrack(() => {
+      if (!props.items || props.items.length === 0) return;
+
+      if (!hasFocus(gridRef)) {
+        gridRef.setFocus();
+      }
+
+      const clampedIndex = Math.max(0, Math.min(index, props.items.length - 1));
+      setFocusedIndex(clampedIndex);
+      queueMicrotask(focus);
+    });
+  }
+
   const scrollY = createMemo(() =>
     props.scroll === "none" ? props.y ?? 0 : -Math.floor(focusedIndex() / columns()) * totalHeight() + (props.y || 0)
   );
@@ -116,6 +130,7 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
       onLeft={() => handleHorizontalFocus(-1)}
       onRight={() => handleHorizontalFocus(1)}
       onFocus={() => handleHorizontalFocus(0)}
+      scrollToIndex={/* @once */ scrollToIndex}
       y={scrollY()}
     >
       <Index each={props.items}>
