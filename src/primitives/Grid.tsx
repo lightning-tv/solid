@@ -1,5 +1,5 @@
-import { For, createSignal, createMemo, createEffect, JSX } from "solid-js";
-import { type NodeProps, ElementNode, NewOmit } from "@lightningtv/solid";
+import { For, createSignal, createMemo, createEffect, JSX, untrack, Index } from "solid-js";
+import { type NodeProps, ElementNode, NewOmit, hasFocus } from "@lightningtv/solid";
 import { chainRefs } from "./utils/chainFunctions.js";
 
 export interface GridItemProps<T> {
@@ -20,6 +20,7 @@ export interface GridProps<T> extends NewOmit<NodeProps, 'children'> {
   columns?: number;
   looping?: boolean;
   scroll?: "auto" | "none";
+  selected?: number;
   onSelectedChanged?: (index: number, grid: ElementNode, elm?: ElementNode) => void;
 }
 
@@ -28,16 +29,25 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
   const [focusedIndex, setFocusedIndex] = createSignal(0);
   const baseColumns = 4;
 
+  createEffect(() => {
+    const currentIndex = untrack(focusedIndex);
+    if (props.selected === currentIndex) return;
+    if (props.selected !== undefined && props.items?.length > props.selected) {
+      moveFocus(props.selected! - currentIndex);
+    }
+  });
+
   const itemWidth = () => props.itemWidth ?? 300
   const itemHeight = () => props.itemHeight ?? 300
 
   const columns = createMemo(() => props.columns || baseColumns);
   const totalWidth = createMemo(() => itemWidth() + (props.itemOffset ?? 0));
   const totalHeight = createMemo(() => itemHeight() + (props.itemOffset ?? 0));
+  const rows = createMemo(() => Math.ceil(props.items.length / columns()));
 
   function focus() {
     const focusedElm = gridRef.children[focusedIndex()];
-    if (focusedElm instanceof ElementNode && !focusedElm.states.has('$focus')) {
+    if (focusedElm instanceof ElementNode && !hasFocus(focusedElm)) {
       focusedElm.setFocus();
       props.onSelectedChanged?.call(gridRef, focusedIndex(), gridRef, focusedElm);
       return true;
@@ -99,27 +109,27 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
     <view
       {...props}
       ref={chainRefs(el => gridRef = el, props.ref)}
-      transition={{ y: true }}
+      transition={/* @once */ { y: true }}
+      height={totalHeight() * rows()}
       onUp={() => moveFocus(-columns())}
       onDown={() => moveFocus(columns())}
       onLeft={() => handleHorizontalFocus(-1)}
       onRight={() => handleHorizontalFocus(1)}
       onFocus={() => handleHorizontalFocus(0)}
-      strictBounds={false}
       y={scrollY()}
     >
-      <For each={props.items}>
+      <Index each={props.items}>
         {(item, index) => (
           <props.children
-            item={item}
-            index={index()}
+            item={item()}
+            index={index}
             width={itemWidth()}
             height={itemHeight()}
-            x={(index() % columns()) * totalWidth()}
-            y={Math.floor(index() / columns()) * totalHeight()}
+            x={(index % columns()) * totalWidth()}
+            y={Math.floor(index / columns()) * totalHeight()}
           />
         )}
-      </For>
+      </Index>
     </view>
   );
 };
