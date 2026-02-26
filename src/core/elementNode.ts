@@ -1020,7 +1020,7 @@ export class ElementNode extends Object {
         'reprocessUpdates' in renderer.stage &&
         renderer.stage.reprocessUpdates
       ) {
-        renderer.stage.reprocessUpdates?.();
+        renderer.stage.reprocessUpdates();
       }
       this.parent!.updateLayout();
     });

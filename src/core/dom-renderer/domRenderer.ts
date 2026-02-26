@@ -630,6 +630,7 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         if (!node.imgEl) {
           node.imgEl = document.createElement('img');
           node.imgEl.alt = '';
+          node.imgEl.crossOrigin = 'anonymous';
           node.imgEl.setAttribute('aria-hidden', 'true');
           node.imgEl.setAttribute('loading', 'lazy');
           node.imgEl.removeAttribute('src');
