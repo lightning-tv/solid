@@ -1,6 +1,6 @@
-import { For, createSignal, createMemo, createEffect, JSX, untrack, Index } from "solid-js";
+import { createSignal, createMemo, createEffect, JSX, untrack, Index } from "solid-js";
 import { type NodeProps, ElementNode, NewOmit, hasFocus } from "@lightningtv/solid";
-import { chainRefs } from "./utils/chainFunctions.js";
+import { chainFunctions, chainRefs } from "./utils/chainFunctions.js";
 
 export interface GridItemProps<T> {
   item:   T
@@ -125,12 +125,13 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
       ref={chainRefs(el => gridRef = el, props.ref)}
       transition={/* @once */ { y: true }}
       height={totalHeight() * rows()}
-      onUp={() => moveFocus(-columns())}
-      onDown={() => moveFocus(columns())}
-      onLeft={() => handleHorizontalFocus(-1)}
-      onRight={() => handleHorizontalFocus(1)}
-      onFocus={() => handleHorizontalFocus(0)}
       scrollToIndex={/* @once */ scrollToIndex}
+      onUp={chainFunctions(props.onUp, () => moveFocus(-columns()))}
+      onDown={chainFunctions(props.onDown, () => moveFocus(columns()))}
+      onLeft={chainFunctions(props.onLeft, () => handleHorizontalFocus(-1))}
+      onRight={chainFunctions(props.onRight, () => handleHorizontalFocus(1))}
+      onFocus={chainFunctions(props.onFocus, () => handleHorizontalFocus(0))}
+      strictBounds={false}
       y={scrollY()}
     >
       <Index each={props.items}>
