@@ -13,6 +13,7 @@ import {
   TextNode,
   type OnEvent,
   NewOmit,
+  SingleBorderStyle,
 } from './intrinsicTypes.js';
 import States, { type NodeStates } from './states.js';
 import calculateFlexOld from './flex.js';
@@ -99,10 +100,28 @@ const parseAndAssignShaderProps = (
   props: Record<string, any> = {},
 ) => {
   if (!obj) return;
-  props[prefix] = obj;
+
+  // Handle individual border sides: transform width/w to bottom/left/right/top
+  const borderSideMap: Record<string, string> = {
+    borderBottom: 'bottom',
+    borderLeft: 'left',
+    borderRight: 'right',
+    borderTop: 'top',
+  };
+
+  const side = borderSideMap[prefix];
+  const actualPrefix = side ? 'border' : prefix;
+
+  props[actualPrefix] = obj;
   Object.entries(obj).forEach(([key, value]) => {
     let transformedKey = key === 'width' ? 'w' : key;
-    props[`${prefix}-${transformedKey}`] = value;
+
+    // If border side and key is width/w, transform to side (bottom/left/right/top)
+    if (side && transformedKey === 'w') {
+      transformedKey = side;
+    }
+
+    props[`${actualPrefix}-${transformedKey}`] = value;
   });
 };
 
@@ -364,13 +383,13 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderBottom?: BorderStyle;
+  borderBottom?: SingleBorderStyle;
   /**
    * The border style for the left side of the element.
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderLeft?: BorderStyle;
+  borderLeft?: SingleBorderStyle;
   /**
    * The radius of the element's corners.
    *
@@ -382,13 +401,13 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderRight?: BorderStyle;
+  borderRight?: SingleBorderStyle;
   /**
    * The border style for the top side of the element.
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderTop?: BorderStyle;
+  borderTop?: SingleBorderStyle;
   /**
    * A shorthand to set both `centerX` and `centerY` to true.
    *
@@ -692,6 +711,14 @@ export class ElementNode extends Object {
     if (v.rounded) target.radius = v.rounded.radius;
     if (v.borderRadius) target.radius = v.borderRadius;
     if (v.border) parseAndAssignShaderProps('border', v.border, target);
+    if (v.borderTop)
+      parseAndAssignShaderProps('borderTop', v.borderTop, target);
+    if (v.borderRight)
+      parseAndAssignShaderProps('borderRight', v.borderRight, target);
+    if (v.borderBottom)
+      parseAndAssignShaderProps('borderBottom', v.borderBottom, target);
+    if (v.borderLeft)
+      parseAndAssignShaderProps('borderLeft', v.borderLeft, target);
     if (v.shadow) parseAndAssignShaderProps('shadow', v.shadow, target);
 
     if (this.rendered) {
@@ -1497,7 +1524,14 @@ export function createRawShaderAccessor<T>(key: keyof StyleEffects) {
 }
 
 export function shaderAccessor<T extends Record<string, any> | number>(
-  key: 'border' | 'shadow' | 'rounded',
+  key:
+    | 'border'
+    | 'shadow'
+    | 'rounded'
+    | 'borderBottom'
+    | 'borderLeft'
+    | 'borderRight'
+    | 'borderTop',
 ) {
   return {
     set(this: ElementNode, value: T) {
@@ -1555,6 +1589,10 @@ if (isDev) {
 
 Object.defineProperties(ElementNode.prototype, {
   border: shaderAccessor<BorderStyle>('border'),
+  borderBottom: shaderAccessor<BorderStyle>('borderBottom'),
+  borderTop: shaderAccessor<BorderStyle>('borderTop'),
+  borderLeft: shaderAccessor<BorderStyle>('borderLeft'),
+  borderRight: shaderAccessor<BorderStyle>('borderRight'),
   shadow: shaderAccessor<ShadowProps>('shadow'),
   rounded: shaderAccessor<BorderRadius>('rounded'),
   // Alias for rounded
