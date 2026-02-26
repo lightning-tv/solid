@@ -23,16 +23,18 @@ export type AddColorString<T> = {
   [K in keyof T]: K extends `color${string}` ? string | number : T[K];
 };
 
-export interface BorderStyleObject {
-  width: number;
-  color: number | string;
-  gap?: number;
-  fill?: number | string;
-  align?: number | 'inside' | 'center' | 'outside';
+export interface BorderStyleObject extends Partial<lngr.BorderProps> {
+  width?: number | [number, number, number, number];
+}
+
+export interface SingleBorderStyleObject extends Partial<lngr.BorderProps> {
+  width?: number;
+  w?: number;
 }
 
 export type DollarString = `$${string}`;
 export type BorderStyle = BorderStyleObject;
+export type SingleBorderStyle = SingleBorderStyleObject;
 export type BorderRadius = number | number[];
 
 export interface Effects {
@@ -43,9 +45,23 @@ export interface Effects {
   rounded?: Partial<ShaderRoundedProps>;
   borderRadius?: Partial<BorderRadius>;
   border?: Partial<ShaderBorderProps>;
+  borderTop?: Partial<ShaderBorderProps>;
+  borderBottom?: Partial<ShaderBorderProps>;
+  borderLeft?: Partial<ShaderBorderProps>;
+  borderRight?: Partial<ShaderBorderProps>;
 }
 
 export type StyleEffects = Effects;
+
+export type CoreAnimation = Parameters<
+  lngr.Stage['animationManager']['registerAnimation']
+>[0];
+
+export type FontLoadOptions = Parameters<lngr.Stage['loadFont']>[1] & {
+  type?: 'ssdf' | 'msdf';
+};
+
+export type CoreShaderManager = lngr.Stage['shManager'];
 
 export type NewOmit<T, K extends PropertyKey> = {
   [P in keyof T as Exclude<P, K>]: T[P];

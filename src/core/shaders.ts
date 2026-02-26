@@ -2,25 +2,25 @@ import * as lngr from '@lightningjs/renderer';
 import * as lngr_shaders from '@lightningjs/renderer/webgl/shaders';
 
 import type {
+  HolePunchProps as ShaderHolePunchProps,
+  LinearGradientProps as ShaderLinearGradientProps,
+  RadialGradientProps as ShaderRadialGradientProps,
   RoundedProps as ShaderRoundedProps,
   ShadowProps as ShaderShadowProps,
-  HolePunchProps as ShaderHolePunchProps,
-  RadialGradientProps as ShaderRadialGradientProps,
-  LinearGradientProps as ShaderLinearGradientProps,
 } from '@lightningjs/renderer';
+import { type WebGlShaderType as WebGlShader } from '@lightningjs/renderer/webgl';
 export {
+  ShaderHolePunchProps,
+  ShaderLinearGradientProps,
+  ShaderRadialGradientProps,
   ShaderRoundedProps,
   ShaderShadowProps,
-  ShaderHolePunchProps,
-  ShaderRadialGradientProps,
-  ShaderLinearGradientProps,
 };
-
-import { type WebGlShaderType as WebGlShader } from '@lightningjs/renderer/webgl';
 export { WebGlShader };
 
-import { type IRendererShaderManager } from './lightningInit.js';
 import { DOM_RENDERING, SHADERS_ENABLED } from './config.js';
+import type { CoreShaderManager } from './intrinsicTypes.js';
+import { IRendererShaderManager } from './dom-renderer/domRendererTypes.js';
 
 export type Vec4 = [x: number, y: number, z: number, w: number];
 
@@ -119,109 +119,18 @@ function toValidVec4(value: unknown): Vec4 {
   return [0, 0, 0, 0];
 }
 
-const roundedWithBorderProps: lngr.ShaderProps<ShaderRoundedWithBorderProps> = {
-  radius: {
-    default: [0, 0, 0, 0],
-    resolve(value) {
-      return toValidVec4(value);
-    },
-  },
-  'border-align': 0,
-  'top-left': {
-    default: 0,
-    set(value, props) {
-      (props.radius as Vec4)[0] = value;
-    },
-    get(props) {
-      return (props.radius as Vec4)[0];
-    },
-  },
-  'top-right': {
-    default: 0,
-    set(value, props) {
-      (props.radius as Vec4)[1] = value;
-    },
-    get(props) {
-      return (props.radius as Vec4)[1];
-    },
-  },
-  'bottom-right': {
-    default: 0,
-    set(value, props) {
-      (props.radius as Vec4)[2] = value;
-    },
-    get(props) {
-      return (props.radius as Vec4)[2];
-    },
-  },
-  'bottom-left': {
-    default: 0,
-    set(value, props) {
-      (props.radius as Vec4)[3] = value;
-    },
-    get(props) {
-      return (props.radius as Vec4)[3];
-    },
-  },
-  'border-w': {
-    default: [0, 0, 0, 0],
-    resolve(value) {
-      return toValidVec4(value);
-    },
-  },
-  'border-color': 0xffffffff,
-  'border-gap': 0,
-  'border-top': {
-    default: 0,
-    set(value, props) {
-      (props['border-w'] as Vec4)[0] = value;
-    },
-    get(props) {
-      return (props['border-w'] as Vec4)[0];
-    },
-  },
-  'border-right': {
-    default: 0,
-    set(value, props) {
-      (props['border-w'] as Vec4)[1] = value;
-    },
-    get(props) {
-      return (props['border-w'] as Vec4)[1];
-    },
-  },
-  'border-bottom': {
-    default: 0,
-    set(value, props) {
-      (props['border-w'] as Vec4)[2] = value;
-    },
-    get(props) {
-      return (props['border-w'] as Vec4)[2];
-    },
-  },
-  'border-left': {
-    default: 0,
-    set(value, props) {
-      (props['border-w'] as Vec4)[3] = value;
-    },
-    get(props) {
-      return (props['border-w'] as Vec4)[3];
-    },
-  },
-  'border-inset': true,
-};
-
 export function registerDefaultShaderRounded(
   shManager: IRendererShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('rounded', defaultShaderRounded);
 }
-export function registerDefaultShaderShadow(shManager: IRendererShaderManager) {
+export function registerDefaultShaderShadow(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('shadow', defaultShaderShadow);
 }
 export function registerDefaultShaderRoundedWithBorder(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -230,7 +139,7 @@ export function registerDefaultShaderRoundedWithBorder(
     );
 }
 export function registerDefaultShaderRoundedWithShadow(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -239,7 +148,7 @@ export function registerDefaultShaderRoundedWithShadow(
     );
 }
 export function registerDefaultShaderRoundedWithBorderAndShadow(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType(
@@ -247,26 +156,24 @@ export function registerDefaultShaderRoundedWithBorderAndShadow(
       defaultShaderRoundedWithBorderAndShadow,
     );
 }
-export function registerDefaultShaderHolePunch(
-  shManager: IRendererShaderManager,
-) {
+export function registerDefaultShaderHolePunch(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('holePunch', defaultShaderHolePunch);
 }
 export function registerDefaultShaderRadialGradient(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('radialGradient', defaultShaderRadialGradient);
 }
 export function registerDefaultShaderLinearGradient(
-  shManager: IRendererShaderManager,
+  shManager: CoreShaderManager,
 ) {
   if (SHADERS_ENABLED && !DOM_RENDERING)
     shManager.registerShaderType('linearGradient', defaultShaderLinearGradient);
 }
 
-export function registerDefaultShaders(shManager: IRendererShaderManager) {
+export function registerDefaultShaders(shManager: CoreShaderManager) {
   if (SHADERS_ENABLED && !DOM_RENDERING) {
     registerDefaultShaderRounded(shManager);
     registerDefaultShaderShadow(shManager);

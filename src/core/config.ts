@@ -9,7 +9,10 @@ import {
   type ElementNode,
   convertToShader as defaultConvertToShader,
 } from './elementNode.js';
-import { IRendererShader } from './lightningInit.js';
+import {
+  DomRendererMainSettings,
+  IRendererShader,
+} from './dom-renderer/domRendererTypes.js';
 
 /**
   STATIC LIGHTNING CONFIGURATION \
@@ -56,7 +59,7 @@ export interface Config {
   animationSettings?: AnimationSettings;
   animationsEnabled: boolean;
   fontSettings: Partial<TextProps>;
-  rendererOptions?: Partial<RendererMainSettings>;
+  rendererOptions?: Partial<RendererMainSettings> | DomRendererMainSettings;
   setActiveElement: (elm: ElementNode) => void;
   focusStateKey: DollarString;
   lockStyles?: boolean;

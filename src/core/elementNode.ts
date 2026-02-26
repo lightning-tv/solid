@@ -1,12 +1,4 @@
-import {
-  IRendererNode,
-  IRendererNodeProps,
-  IRendererShader,
-  IRendererShaderProps,
-  IRendererTextNode,
-  IRendererTextNodeProps,
-  renderer,
-} from './lightningInit.js';
+import { renderer } from './lightningInit.js';
 import {
   type BorderRadius,
   type BorderStyle,
@@ -21,6 +13,7 @@ import {
   TextNode,
   type OnEvent,
   NewOmit,
+  SingleBorderStyle,
 } from './intrinsicTypes.js';
 import States, { type NodeStates } from './states.js';
 import calculateFlexOld from './flex.js';
@@ -51,6 +44,8 @@ import type {
   RadialGradientProps,
   ShadowProps,
   CoreShaderNode,
+  ITextNodeProps,
+  INodeProps,
 } from '@lightningjs/renderer';
 import { assertTruthy } from '@lightningjs/renderer/utils';
 import { NodeType } from './nodeTypes.js';
@@ -60,6 +55,14 @@ import {
   FocusNode,
 } from './focusManager.js';
 import simpleAnimation, { SimpleAnimationSettings } from './animation.js';
+import {
+  IRendererNode,
+  IRendererNodeProps,
+  IRendererShader,
+  IRendererShaderProps,
+  IRendererTextNode,
+  IRendererTextNodeProps,
+} from './dom-renderer/domRendererTypes.js';
 
 let nextActiveElement: ElementNode | null = null;
 let focusQueued: boolean = false;
@@ -70,7 +73,10 @@ function addToLayoutQueue(node: ElementNode) {
   layoutQueue.add(node);
   if (!layoutRunQueued) {
     layoutRunQueued = true;
-    if (renderer.stage.reprocessUpdates) {
+    if (
+      'reprocessUpdates' in renderer.stage &&
+      renderer.stage.reprocessUpdates
+    ) {
       renderer.stage.reprocessUpdates(runLayout);
     } else {
       queueMicrotask(runLayout);
@@ -96,10 +102,28 @@ const parseAndAssignShaderProps = (
   props: Record<string, any> = {},
 ) => {
   if (!obj) return;
-  props[prefix] = obj;
+
+  // Handle individual border sides: transform width/w to bottom/left/right/top
+  const borderSideMap: Record<string, string> = {
+    borderBottom: 'bottom',
+    borderLeft: 'left',
+    borderRight: 'right',
+    borderTop: 'top',
+  };
+
+  const side = borderSideMap[prefix];
+  const actualPrefix = side ? 'border' : prefix;
+
+  props[actualPrefix] = obj;
   Object.entries(obj).forEach(([key, value]) => {
     let transformedKey = key === 'width' ? 'w' : key;
-    props[`${prefix}-${transformedKey}`] = value;
+
+    // If border side and key is width/w, transform to side (bottom/left/right/top)
+    if (side && transformedKey === 'w') {
+      transformedKey = side;
+    }
+
+    props[`${actualPrefix}-${transformedKey}`] = value;
   });
 };
 
@@ -110,8 +134,7 @@ export function convertToShader(
   let type = 'rounded';
   if (v.border) type += 'WithBorder';
   if (v.shadow) type += 'WithShadow';
-
-  return renderer.createShader(type, v as IRendererShaderProps);
+  return renderer.createShader(type, v);
 }
 
 function getPropertyAlias(name: string) {
@@ -186,6 +209,7 @@ const LightningRendererNonAnimatingProps = [
   'texture',
   'textureOptions',
   'verticalAlign',
+  'wordBreak',
   'wordWrap',
 ];
 
@@ -299,8 +323,9 @@ export interface ElementNode extends RendererNode, FocusNode {
    * The underlying Lightning Renderer node object. This is where the properties are ultimately set for rendering.
    */
   lng:
-    | Partial<ElementNode>
+    | INode
     | IRendererNode
+    | Partial<ElementNode>
     | (IRendererTextNode & { shader?: any });
   /**
    * A reference to the `ElementNode` instance. Can be an object or a callback function.
@@ -360,13 +385,13 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderBottom?: BorderStyle;
+  borderBottom?: SingleBorderStyle;
   /**
    * The border style for the left side of the element.
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderLeft?: BorderStyle;
+  borderLeft?: SingleBorderStyle;
   /**
    * The radius of the element's corners.
    *
@@ -378,13 +403,13 @@ export interface ElementNode extends RendererNode, FocusNode {
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderRight?: BorderStyle;
+  borderRight?: SingleBorderStyle;
   /**
    * The border style for the top side of the element.
    *
    * @see https://lightning-tv.github.io/solid/#/essentials/effects?id=border-and-borderradius
    */
-  borderTop?: BorderStyle;
+  borderTop?: SingleBorderStyle;
   /**
    * A shorthand to set both `centerX` and `centerY` to true.
    *
@@ -682,12 +707,20 @@ export class ElementNode extends Object {
   set effects(v: StyleEffects) {
     if (!SHADERS_ENABLED) return;
     let target = this.lng.shader || {};
-    if (this.lng.shader?.program) {
+    if (this.lng.shader?.props) {
       target = this.lng.shader.props;
     }
     if (v.rounded) target.radius = v.rounded.radius;
     if (v.borderRadius) target.radius = v.borderRadius;
     if (v.border) parseAndAssignShaderProps('border', v.border, target);
+    if (v.borderTop)
+      parseAndAssignShaderProps('borderTop', v.borderTop, target);
+    if (v.borderRight)
+      parseAndAssignShaderProps('borderRight', v.borderRight, target);
+    if (v.borderBottom)
+      parseAndAssignShaderProps('borderBottom', v.borderBottom, target);
+    if (v.borderLeft)
+      parseAndAssignShaderProps('borderLeft', v.borderLeft, target);
     if (v.shadow) parseAndAssignShaderProps('shadow', v.shadow, target);
 
     if (this.rendered) {
@@ -703,7 +736,11 @@ export class ElementNode extends Object {
 
   set id(id: string) {
     this._id = id;
-    if (Config.rendererOptions?.inspector) {
+    if (
+      Config.rendererOptions &&
+      'inspector' in Config.rendererOptions &&
+      Config.rendererOptions.inspector
+    ) {
       this.data = { ...this.data, testId: id };
     }
   }
@@ -877,7 +914,8 @@ export class ElementNode extends Object {
       }
     }
 
-    (this.lng[name as keyof IRendererNode] as number | string) = value;
+    (this.lng[name as keyof (IRendererNode | INode)] as number | string) =
+      value;
   }
 
   animate(
@@ -978,7 +1016,12 @@ export class ElementNode extends Object {
 
   _layoutOnLoad() {
     (this.lng as IRendererNode).on('loaded', () => {
-      renderer.stage.reprocessUpdates?.();
+      if (
+        'reprocessUpdates' in renderer.stage &&
+        renderer.stage.reprocessUpdates
+      ) {
+        renderer.stage.reprocessUpdates?.();
+      }
       this.parent!.updateLayout();
     });
   }
@@ -1306,7 +1349,11 @@ export class ElementNode extends Object {
       if (Config.fontSettings) {
         for (const key in Config.fontSettings) {
           if (textProps[key] === undefined) {
-            textProps[key] = Config.fontSettings[key];
+            let value = Config.fontSettings[key];
+            if (key === 'fontFamily' && textProps['fontWeight'] === undefined) {
+              value = `${value}${Config.fontSettings.fontWeight || ''}`;
+            }
+            textProps[key] = value;
           }
         }
       }
@@ -1342,8 +1389,7 @@ export class ElementNode extends Object {
             textProps.lineHeight ||
             textProps.fontSize) as number;
         }
-
-        textProps.w = textProps.h = undefined;
+        // textProps.w = textProps.h = 0;
       }
 
       // Can you put effects on Text nodes? Need to confirm...
@@ -1352,9 +1398,11 @@ export class ElementNode extends Object {
       }
 
       isDev && log('Rendering: ', this, props);
+
       node.lng = renderer.createTextNode(
-        props as unknown as IRendererTextNodeProps,
-      );
+        props as Partial<ITextNodeProps> & Partial<IRendererTextNodeProps>,
+      ) as IRendererTextNode;
+
       if (parent.requiresLayout()) {
         if (!textProps.maxWidth || !textProps.maxHeight) {
           node._layoutOnLoad();
@@ -1390,7 +1438,10 @@ export class ElementNode extends Object {
       }
 
       isDev && log('Rendering: ', this, props);
-      node.lng = renderer.createNode(props as IRendererNodeProps);
+
+      node.lng = renderer.createNode(
+        props as Partial<INodeProps<any>> & Partial<IRendererNodeProps>,
+      );
 
       if (node._hasRenderedChildren) {
         node._hasRenderedChildren = false;
@@ -1418,14 +1469,15 @@ export class ElementNode extends Object {
 
     if (node.onEvent) {
       for (const [name, handler] of Object.entries(node.onEvent)) {
-        node.lng.on(name, (_inode, data) => handler.call(node, node, data));
+        if (typeof node.lng.on === 'function') {
+          node.lng.on(name, (_inode, data) => handler.call(node, node, data));
+        }
       }
     }
 
     // L3 Inspector adds div to the lng object
-    if (node.lng?.div) {
-      node.lng.div.element = node;
-    }
+    const div: HTMLElement | undefined = (node.lng as any)?.div;
+    if (div) div.element = node;
 
     if (node._type === NodeType.Element) {
       // only element nodes will have children that need rendering
@@ -1485,7 +1537,14 @@ export function createRawShaderAccessor<T>(key: keyof StyleEffects) {
 }
 
 export function shaderAccessor<T extends Record<string, any> | number>(
-  key: 'border' | 'shadow' | 'rounded',
+  key:
+    | 'border'
+    | 'shadow'
+    | 'rounded'
+    | 'borderBottom'
+    | 'borderLeft'
+    | 'borderRight'
+    | 'borderTop',
 ) {
   return {
     set(this: ElementNode, value: T) {
@@ -1494,7 +1553,7 @@ export function shaderAccessor<T extends Record<string, any> | number>(
       this._effects[key] = value;
 
       let animationSettings: AnimationSettings | undefined;
-      if (this.lng.shader?.program) {
+      if (this.lng.shader?.props) {
         target = this.lng.shader.props;
         const transitionKey = key === 'rounded' ? 'borderRadius' : key;
         if (
@@ -1543,6 +1602,10 @@ if (isDev) {
 
 Object.defineProperties(ElementNode.prototype, {
   border: shaderAccessor<BorderStyle>('border'),
+  borderBottom: shaderAccessor<BorderStyle>('borderBottom'),
+  borderTop: shaderAccessor<BorderStyle>('borderTop'),
+  borderLeft: shaderAccessor<BorderStyle>('borderLeft'),
+  borderRight: shaderAccessor<BorderStyle>('borderRight'),
   shadow: shaderAccessor<ShadowProps>('shadow'),
   rounded: shaderAccessor<BorderRadius>('rounded'),
   // Alias for rounded

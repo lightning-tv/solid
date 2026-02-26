@@ -5,6 +5,7 @@ import {
   type TextProps,
   startLightningRenderer,
   type RendererMainSettings,
+  DomRendererMainSettings,
 } from './core/index.js';
 import nodeOpts from './solidOpts.js';
 import {
@@ -30,7 +31,7 @@ const render = function (code: () => JSXElement) {
 };
 
 export function createRenderer(
-  rendererOptions?: RendererMainSettings,
+  rendererOptions?: RendererMainSettings | DomRendererMainSettings,
   node?: HTMLElement | string,
 ) {
   const options =
