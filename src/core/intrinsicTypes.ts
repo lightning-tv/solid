@@ -26,12 +26,16 @@ export type AddColorString<T> = {
 export interface BorderStyleObject
   extends AddColorString<Partial<lngr.BorderProps>> {
   width?: number | [number, number, number, number];
+  gap?: number;
+  align?: 'inside' | 'outside' | 'center';
 }
 
 export interface SingleBorderStyleObject
   extends AddColorString<Partial<lngr.BorderProps>> {
   width?: number;
   w?: number;
+  gap?: number;
+  align?: 'inside' | 'outside' | 'center';
 }
 
 export type DollarString = `$${string}`;

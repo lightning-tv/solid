@@ -235,9 +235,7 @@ function updateNodeParent(node: DOMNode | DOMText) {
 function updateNodeStyles(node: DOMNode | DOMText) {
   let { props } = node;
 
-  let style = `position: absolute; z-index: ${props.zIndex};`;
-
-  if (props.alpha !== 1) style += `opacity: ${props.alpha};`;
+  let style = `position: absolute; z-index: ${props.zIndex}; opacity: ${props.alpha ?? 1};`;
 
   if (props.clipping) {
     style += `overflow: hidden;`;
@@ -273,6 +271,12 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     if (transform.length > 0) {
       style += `transform: ${transform};`;
     }
+
+    let pivotX = props.pivotX ?? props.pivot ?? 0.5;
+    let pivotY = props.pivotY ?? props.pivot ?? 0.5;
+    if (pivotX !== 0.5 || pivotY !== 0.5) {
+      style += `transform-origin: ${pivotX * 100}% ${pivotY * 100}%;`;
+    }
   }
 
   // <Text>
@@ -297,7 +301,7 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     if (textProps.fontStretch && textProps.fontStretch !== 'normal') {
       style += `font-stretch: ${textProps.fontStretch};`;
     }
-    if (textProps.lineHeight != null) {
+    if (textProps.lineHeight) {
       style += `line-height: ${textProps.lineHeight}px;`;
     }
     if (textProps.letterSpacing) {
@@ -356,6 +360,25 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         -webkit-line-clamp: ${maxLines};
         line-clamp: ${maxLines};
         -webkit-box-orient: vertical;`;
+    }
+
+    if (textProps.offsetY != null && textProps.offsetY !== 0) {
+      style += `margin-top: ${textProps.offsetY}px;`;
+    }
+
+    if (textProps.wordBreak) {
+      const wb = textProps.wordBreak as string;
+      if (wb !== 'normal') {
+        if (wb === 'break-all') {
+          style += `word-break: break-all;`;
+        } else if (wb === 'keep-all') {
+          style += `word-break: keep-all;`;
+        } else if (wb === 'break-word') {
+          style += `word-wrap: break-word; overflow-wrap: break-word;`;
+        } else {
+          style += `overflow-wrap: break-word;`;
+        }
+      }
     }
 
     // if (node.overflowSuffix) style += `overflow-suffix: ${node.overflowSuffix};`
@@ -491,7 +514,7 @@ function updateNodeStyles(node: DOMNode | DOMText) {
       let borderWidth = shaderProps['border-w'];
       let borderColor = shaderProps['border-color'];
       let borderGap = shaderProps['border-gap'] ?? 0;
-      let borderInset = shaderProps['border-inset'] ?? true;
+      let borderAlign = shaderProps['border-align'] ?? 'outside';
       let radius = shaderProps['radius'];
 
       // Border
@@ -502,8 +525,14 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         borderColor !== 0
       ) {
         const rgbaColor = colorToRgba(borderColor);
-        // Handle inset borders by making gap negative
-        let gap = borderInset ? -(borderWidth + borderGap) : borderGap;
+
+        let gap = borderGap;
+        if (borderAlign === 'inside') {
+          gap = -(borderWidth + borderGap);
+        } else if (borderAlign === 'center') {
+          gap = -(borderWidth / 2) + borderGap;
+        }
+
         borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
         borderStyle += `outline-offset: ${gap}px;`;
       }
@@ -832,16 +861,14 @@ function updateDOMTextSize(node: DOMText): void {
     case 'width':
       size = getElSize(node);
       if (node.props.h !== size.height) {
-        node.props.h = size.height;
-        updateNodeStyles(node);
+        node.h = size.height;
       }
       break;
     case 'none':
       size = getElSize(node);
       if (node.props.h !== size.height || node.props.w !== size.width) {
-        node.props.w = size.width;
-        node.props.h = size.height;
-        updateNodeStyles(node);
+        node.w = size.width;
+        node.h = size.height;
       }
       break;
   }
@@ -1291,69 +1318,98 @@ export class DOMNode extends EventEmitter implements IRendererNode {
   set scale(v) {
     if (this.props.scale === v) return;
     this.props.scale = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get scaleX() {
     return this.props.scaleX;
   }
   set scaleX(v) {
+    if (this.props.scaleX === v) return;
     this.props.scaleX = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get scaleY() {
     return this.props.scaleY;
   }
   set scaleY(v) {
+    if (this.props.scaleY === v) return;
     this.props.scaleY = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get mount() {
     return this.props.mount;
   }
   set mount(v) {
+    if (this.props.mount === v) return;
     this.props.mount = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get mountX() {
     return this.props.mountX;
   }
   set mountX(v) {
+    if (this.props.mountX === v) return;
     this.props.mountX = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get mountY() {
     return this.props.mountY;
   }
   set mountY(v) {
+    if (this.props.mountY === v) return;
     this.props.mountY = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get pivot() {
     return this.props.pivot;
   }
   set pivot(v) {
+    if (this.props.pivot === v) return;
     this.props.pivot = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get pivotX() {
     return this.props.pivotX;
   }
   set pivotX(v) {
+    if (this.props.pivotX === v) return;
     this.props.pivotX = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get pivotY() {
     return this.props.pivotY;
   }
   set pivotY(v) {
+    if (this.props.pivotY === v) return;
     this.props.pivotY = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get rotation() {
     return this.props.rotation;
   }
   set rotation(v) {
+    if (this.props.rotation === v) return;
     this.props.rotation = v;
+    this.boundsDirty = true;
+    this.markChildrenBoundsDirty();
     updateNodeStyles(this);
   }
   get rtt() {

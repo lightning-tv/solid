@@ -43,7 +43,7 @@ export function getNodeLineHeight(props: {
   fontSize: number;
 }): number {
   return (
-    props.lineHeight ?? Config.fontSettings.lineHeight ?? 1.2 * props.fontSize
+    props.lineHeight || Config.fontSettings.lineHeight || 1.2 * props.fontSize
   );
 }
 
@@ -184,10 +184,11 @@ function interpolate(start: number, end: number, t: number): number {
 
 function interpolateColor(start: number, end: number, t: number): number {
   return (
-    (interpolate((start >> 24) & 0xff, (end >> 24) & 0xff, t) << 24) |
-    (interpolate((start >> 16) & 0xff, (end >> 16) & 0xff, t) << 16) |
-    (interpolate((start >> 8) & 0xff, (end >> 8) & 0xff, t) << 8) |
-    interpolate(start & 0xff, end & 0xff, t)
+    ((interpolate((start >> 24) & 0xff, (end >> 24) & 0xff, t) << 24) |
+      (interpolate((start >> 16) & 0xff, (end >> 16) & 0xff, t) << 16) |
+      (interpolate((start >> 8) & 0xff, (end >> 8) & 0xff, t) << 8) |
+      interpolate(start & 0xff, end & 0xff, t)) >>>
+    0
   );
 }
 
