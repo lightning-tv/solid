@@ -39,10 +39,13 @@ function createVirtual<T>(
   const scrollType = s.createMemo(() => props.scroll || 'auto');
 
   const selected = () => {
+    if (itemCount() <= props.displaySize) {
+      return utils.clamp(props.selected || 0, 0, Math.max(0, itemCount() - 1));
+    }
     if (props.wrap) {
       return Math.max(bufferSize(), scrollIndex());
     }
-    return props.selected || 0;
+    return utils.clamp(props.selected || 0, 0, Math.max(0, itemCount() - 1));
   };
 
   let cachedScaledSize: number | undefined;
@@ -115,6 +118,18 @@ function createVirtual<T>(
         atStart: true,
         cursor: 0,
       };
+
+    if (total <= props.displaySize) {
+      return {
+        start: 0,
+        slice: items() as T[],
+        selected: utils.clamp(c, 0, total - 1),
+        delta,
+        shiftBy: 0,
+        atStart: c <= 0,
+        cursor: utils.clamp(c, 0, total - 1),
+      };
+    }
 
     const length = props.displaySize + bufferSize();
     let start = prev.start;
@@ -457,9 +472,10 @@ function createVirtual<T>(
 
   const updateSelected = ([sel, _items]: [number?, any?]) => {
     if (!viewRef || sel === undefined || itemCount() === 0) return;
-    const item = items()[sel];
-    setCursor(sel);
-    const newState = computeSlice(cursor(), 0, slice());
+    const safeSel = utils.clamp(sel, 0, itemCount() - 1);
+    const item = items()[safeSel];
+    setCursor(safeSel);
+    const newState = computeSlice(safeSel, 0, slice());
     setSlice(newState);
 
     queueMicrotask(() => {
@@ -487,6 +503,13 @@ function createVirtual<T>(
     s.on([() => props.wrap, items], () => {
       if (!viewRef || itemCount() === 0 || !props.wrap || doOnce) return;
       doOnce = true;
+      if (itemCount() <= props.displaySize) {
+        queueMicrotask(() => {
+          originalPosition = viewRef.lng[axis];
+          targetPosition = viewRef.lng[axis];
+        });
+        return;
+      }
       // offset just for wrap so we keep one item before
       queueMicrotask(() => {
         const childSize = computeSize(slice().selected);
@@ -503,10 +526,12 @@ function createVirtual<T>(
   s.createEffect(
     s.on(items, () => {
       if (!viewRef) return;
-      if (cursor() >= itemCount()) {
-        setCursor(Math.max(0, itemCount() - 1));
+      let c = cursor();
+      if (c >= itemCount()) {
+        c = Math.max(0, itemCount() - 1);
+        setCursor(c);
       }
-      const newState = computeSlice(cursor(), 0, slice());
+      const newState = computeSlice(c, 0, slice());
       setSlice(newState);
       viewRef.selected = newState.selected;
     }),
