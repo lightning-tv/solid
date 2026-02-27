@@ -786,7 +786,8 @@ export class ElementNode extends Object {
       (Config.fontWeightAlias &&
         (Config.fontWeightAlias[v as string] as number | string)) ??
       v;
-    (this.lng as any).fontFamily = `${this.fontFamily}${weight}`;
+    (this.lng as any).fontFamily =
+      `${this.fontFamily || Config.fontSettings?.fontFamily}${weight}`;
   }
 
   get fontWeight() {
@@ -799,7 +800,7 @@ export class ElementNode extends Object {
   }
 
   get fontFamily() {
-    return this._fontFamily || Config.fontSettings?.fontFamily;
+    return this._fontFamily;
   }
 
   insertChild(
@@ -1077,10 +1078,7 @@ export class ElementNode extends Object {
     // Keys set in JSX are more important
     for (const key in this._style) {
       // be careful of 0 values
-      if (
-        this[key as keyof Styles] === undefined ||
-        (key === 'fontFamily' && this._fontFamily === undefined)
-      ) {
+      if (this[key as keyof Styles] === undefined) {
         this[key as keyof Styles] = this._style[key as keyof Styles];
       }
     }
