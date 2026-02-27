@@ -50,6 +50,7 @@
   - [Real World Performance](/articles/realworldperformance.md)
   - [Boosting LightningJS Performance by 50%](/articles/boostingperf.md)
   - [Solid / Blits Framework Comparison](/articles/solidvsblits.md)
+  - [DOM Renderer](/articles/domrenderer.md)
 - Build & Deploy
   - [RDK Firebolt Integration](/deploy/firebolt.md)
   - [Tizen/Samsung](/deploy/tizen.md)
