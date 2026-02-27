@@ -23,11 +23,13 @@ export type AddColorString<T> = {
   [K in keyof T]: K extends `color${string}` ? string | number : T[K];
 };
 
-export interface BorderStyleObject extends Partial<lngr.BorderProps> {
+export interface BorderStyleObject
+  extends AddColorString<Partial<lngr.BorderProps>> {
   width?: number | [number, number, number, number];
 }
 
-export interface SingleBorderStyleObject extends Partial<lngr.BorderProps> {
+export interface SingleBorderStyleObject
+  extends AddColorString<Partial<lngr.BorderProps>> {
   width?: number;
   w?: number;
 }
