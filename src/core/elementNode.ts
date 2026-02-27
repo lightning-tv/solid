@@ -1077,7 +1077,10 @@ export class ElementNode extends Object {
     // Keys set in JSX are more important
     for (const key in this._style) {
       // be careful of 0 values
-      if (this[key as keyof Styles] === undefined) {
+      if (
+        this[key as keyof Styles] === undefined ||
+        (key === 'fontFamily' && this._fontFamily === undefined)
+      ) {
         this[key as keyof Styles] = this._style[key as keyof Styles];
       }
     }
