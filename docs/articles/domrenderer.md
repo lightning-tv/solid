@@ -1,6 +1,6 @@
 # DOM Renderer
 
-Lightning JS relies on WebGL or Canvas to deliver high-performance rendering across a wide range of devices. However, for certain devices where HTML rendering might be better suited or more performant—such as the PlayStation 5, or environments with specific WebGL constraints, we offer a standalone **DOM Renderer**.
+Lightning JS relies on WebGL or Canvas to deliver high-performance rendering across a wide range of devices. However, for certain devices where HTML rendering might be better suited or more performant, such as the PlayStation 5, or environments with specific WebGL constraints, we offer a standalone **DOM Renderer**.
 
 When enabled, the DOM Renderer outputs standard HTML DOM elements instead of drawing to a canvas. This can offer advantages for particular target platforms that are highly optimized for HTML/CSS rendering.
 
