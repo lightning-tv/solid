@@ -116,7 +116,7 @@ const parseAndAssignShaderProps = (
 
   props[actualPrefix] = obj;
   Object.entries(obj).forEach(([key, value]) => {
-    let transformedKey = key === 'width' ? 'w' : key;
+    let transformedKey = getPropertyAlias(key);
 
     // If border side and key is width/w, transform to side (bottom/left/right/top)
     if (side && transformedKey === 'w') {
@@ -138,8 +138,8 @@ export function convertToShader(
 }
 
 function getPropertyAlias(name: string) {
-  if (name === 'w') return 'width';
-  if (name === 'h') return 'height';
+  if (name === 'width') return 'w';
+  if (name === 'height') return 'h';
   return name;
 }
 
@@ -1001,6 +1001,7 @@ export class ElementNode extends Object {
         }
       }
       // Delay setting focus so children can render (useful for Row + Column)
+
       nextActiveElement = this;
       if (focusQueued === false) {
         focusQueued = true;
@@ -1010,6 +1011,9 @@ export class ElementNode extends Object {
           focusQueued = false;
         });
       }
+      // queueMicrotask(() => {
+      //   setActiveElement(this);
+      // });
     } else {
       this._autofocus = true;
     }
