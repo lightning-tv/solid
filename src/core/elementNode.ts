@@ -1006,8 +1006,11 @@ export class ElementNode extends Object {
         focusQueued = true;
         queueMicrotask(() => {
           focusQueued = false;
-          if (nextActiveElement) setActiveElement(nextActiveElement);
-          nextActiveElement = null;
+          if (nextActiveElement) {
+            const element = nextActiveElement;
+            nextActiveElement = null;
+            setActiveElement(element);
+          }
         });
       }
     } else {
