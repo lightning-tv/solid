@@ -1001,19 +1001,18 @@ export class ElementNode extends Object {
         }
       }
       // Delay setting focus so children can render (useful for Row + Column)
-
       nextActiveElement = this;
       if (focusQueued === false) {
         focusQueued = true;
         queueMicrotask(() => {
-          if (nextActiveElement) setActiveElement(nextActiveElement);
-          nextActiveElement = null;
           focusQueued = false;
+          if (nextActiveElement) {
+            const element = nextActiveElement;
+            nextActiveElement = null;
+            setActiveElement(element);
+          }
         });
       }
-      // queueMicrotask(() => {
-      //   setActiveElement(this);
-      // });
     } else {
       this._autofocus = true;
     }
