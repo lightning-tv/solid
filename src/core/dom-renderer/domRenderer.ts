@@ -514,27 +514,59 @@ function updateNodeStyles(node: DOMNode | DOMText) {
       let borderWidth = shaderProps['border-w'];
       let borderColor = shaderProps['border-color'];
       let borderGap = shaderProps['border-gap'] ?? 0;
-      let borderAlign = shaderProps['border-align'] ?? 'outside';
+      let borderAlign = shaderProps['border-align'] ?? 'inside';
       let radius = shaderProps['radius'];
 
       // Border
+      const borderWidthIsNumber = typeof borderWidth === 'number';
+      const borderWidthIsArray = Array.isArray(borderWidth);
+      const borderWidthHasValue =
+        (borderWidthIsNumber && borderWidth !== 0) ||
+        (borderWidthIsArray &&
+          (borderWidth as number[]).some(
+            (w) => typeof w === 'number' && w !== 0,
+          ));
+
       if (
-        typeof borderWidth === 'number' &&
-        borderWidth !== 0 &&
+        borderWidthHasValue &&
         typeof borderColor === 'number' &&
         borderColor !== 0
       ) {
         const rgbaColor = colorToRgba(borderColor);
 
-        let gap = borderGap;
-        if (borderAlign === 'inside') {
-          gap = -(borderWidth + borderGap);
-        } else if (borderAlign === 'center') {
-          gap = -(borderWidth / 2) + borderGap;
-        }
+        if (borderWidthIsNumber) {
+          // Single uniform border
+          let gap = borderGap;
+          if (borderAlign === 'inside') {
+            gap = -(borderWidth + borderGap);
+          } else if (borderAlign === 'center') {
+            gap = -(borderWidth / 2) + borderGap;
+          }
 
-        borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
-        borderStyle += `outline-offset: ${gap}px;`;
+          borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
+          borderStyle += `outline-offset: ${gap}px;`;
+        } else if (borderWidthIsArray) {
+          // Individual borders per side [top, right, bottom, left]
+          // Allow individual properties to override array values
+          const topWidth =
+            shaderProps['border-top'] ?? (borderWidth as number[])[0];
+          const rightWidth =
+            shaderProps['border-right'] ?? (borderWidth as number[])[1];
+          const bottomWidth =
+            shaderProps['border-bottom'] ?? (borderWidth as number[])[2];
+          const leftWidth =
+            shaderProps['border-left'] ?? (borderWidth as number[])[3];
+
+          const widths = [topWidth, rightWidth, bottomWidth, leftWidth];
+          const sides = ['top', 'right', 'bottom', 'left'] as const;
+
+          for (let i = 0; i < sides.length; i++) {
+            const width = widths[i];
+            if (typeof width === 'number' && width !== 0) {
+              borderStyle += `border-${sides[i]}: ${width}px solid ${rgbaColor};`;
+            }
+          }
+        }
       }
       // Rounded
       if (typeof radius === 'number' && radius > 0) {
