@@ -315,11 +315,15 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     switch (textProps.contain) {
       case 'width':
         if (textProps.maxWidth && textProps.maxWidth > 0) {
-          style += `width: ${textProps.maxWidth}px;`;
+          if (node.textAlign === 'center') {
+            style += `width: ${textProps.maxWidth}px;`;
+          } else {
+            style += `max-width: ${textProps.maxWidth}px;`;
+          }
+          style += `overflow: hidden;`;
         } else {
           style += `width: 100%;`;
         }
-        style += `overflow: hidden;`;
         break;
       case 'both': {
         let lineHeight = getNodeLineHeight(textProps);
@@ -858,7 +862,6 @@ type Size = { width: number; height: number };
 
 function getElSize(node: DOMNode): Size {
   const rawRect = node.div.getBoundingClientRect();
-
   const dpr = Config.rendererOptions?.deviceLogicalPixelRatio ?? 1;
   let width = rawRect.width / dpr;
   let height = rawRect.height / dpr;
@@ -889,11 +892,17 @@ function getElSize(node: DOMNode): Size {
 */
 function updateDOMTextSize(node: DOMText): void {
   let size: Size;
+  let dimensionsChanged = false;
   switch (node.contain) {
     case 'width':
       size = getElSize(node);
+      if (node.props.w !== size.width) {
+        node.w = size.width;
+        dimensionsChanged = true;
+      }
       if (node.props.h !== size.height) {
         node.h = size.height;
+        dimensionsChanged = true;
       }
       break;
     case 'none':
@@ -901,16 +910,17 @@ function updateDOMTextSize(node: DOMText): void {
       if (node.props.h !== size.height || node.props.w !== size.width) {
         node.w = size.width;
         node.h = size.height;
+        dimensionsChanged = true;
       }
       break;
   }
 
-  if (!node.loaded) {
+  if (!node.loaded || dimensionsChanged) {
     const payload: lng.NodeTextLoadedPayload = {
       type: 'text',
       dimensions: {
-        w: node.props.w,
-        h: node.props.h,
+        w: node.w,
+        h: node.h,
       },
     };
     node.emit('loaded', payload);
@@ -1126,6 +1136,7 @@ export class DOMNode extends EventEmitter implements IRendererNode {
       if (child !== child.stage.root) {
         if (nodeHasTextureSource(child)) {
           const nextState = computeRenderStateForNode(child);
+
           if (nextState != null) {
             child.updateRenderState(nextState);
           }
