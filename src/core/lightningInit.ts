@@ -1,8 +1,8 @@
 import * as lng from '@lightningjs/renderer';
+import { Config, DOM_RENDERING } from './config.js';
 import { DOMRendererMain, loadFontToDom } from './dom-renderer/domRenderer.js';
-import { DOM_RENDERING, Config } from './config.js';
-import { FontLoadOptions } from './intrinsicTypes.js';
 import { DomRendererMainSettings } from './dom-renderer/domRendererTypes.js';
+import { FontLoadOptions } from './intrinsicTypes.js';
 
 export type SdfFontType = 'ssdf' | 'msdf';
 // Global renderer instance: can be either the Lightning or DOM implementation

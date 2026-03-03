@@ -8,7 +8,9 @@ import * as lng from '@lightningjs/renderer';
 
 import { EventEmitter } from '@lightningjs/renderer/utils';
 import { Config } from '../config.js';
+import { FontLoadOptions } from '../intrinsicTypes.js';
 import type {
+  DomRendererMainSettings,
   ExtractProps,
   IRendererMain,
   IRendererNode,
@@ -17,22 +19,20 @@ import type {
   IRendererStage,
   IRendererTextNode,
   IRendererTextNodeProps,
-  DomRendererMainSettings,
 } from './domRendererTypes.js';
 import {
-  colorToRgba,
-  buildGradientStops,
-  computeLegacyObjectFit,
-  applySubTextureScaling,
-  getNodeLineHeight,
   applyEasing,
+  applySubTextureScaling,
+  buildGradientStops,
+  colorToRgba,
+  compactString,
+  computeLegacyObjectFit,
+  computeRenderStateForNode,
+  getNodeLineHeight,
   interpolateProp,
   isRenderStateInBounds,
   nodeHasTextureSource,
-  computeRenderStateForNode,
-  compactString,
 } from './domRendererUtils.js';
-import { FontLoadOptions } from '../intrinsicTypes.js';
 
 // Feature detection for legacy brousers
 const _styleRef: any =
