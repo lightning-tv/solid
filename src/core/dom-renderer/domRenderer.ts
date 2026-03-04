@@ -539,16 +539,41 @@ function updateNodeStyles(node: DOMNode | DOMText) {
         const rgbaColor = colorToRgba(borderColor);
 
         if (borderWidthIsNumber) {
-          // Single uniform border
-          let gap = borderGap;
+          let insideWidth = 0;
+          let outsideWidth = 0;
+
           if (borderAlign === 'inside') {
-            gap = -(borderWidth + borderGap);
+            insideWidth = borderWidth;
           } else if (borderAlign === 'center') {
-            gap = -(borderWidth / 2) + borderGap;
+            insideWidth = borderWidth / 2;
+            outsideWidth = borderWidth / 2;
+          } else {
+            outsideWidth = borderWidth;
           }
 
-          borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
-          borderStyle += `outline-offset: ${gap}px;`;
+          outsideWidth += borderGap;
+          insideWidth -= borderGap;
+
+          if (insideWidth < 0) {
+            outsideWidth += insideWidth;
+            insideWidth = 0;
+          }
+          if (outsideWidth < 0) {
+            insideWidth += outsideWidth;
+            outsideWidth = 0;
+          }
+
+          const shadows: string[] = [];
+          if (outsideWidth > 0) {
+            shadows.push(`0 0 0 ${outsideWidth}px ${rgbaColor}`);
+          }
+          if (insideWidth > 0) {
+            shadows.push(`inset 0 0 0 ${insideWidth}px ${rgbaColor}`);
+          }
+
+          if (shadows.length > 0) {
+            borderStyle += `box-shadow: ${shadows.join(', ')};`;
+          }
         } else if (borderWidthIsArray) {
           // Individual borders per side [top, right, bottom, left]
           // Allow individual properties to override array values
