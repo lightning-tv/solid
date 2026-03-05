@@ -18,7 +18,7 @@ export {
 };
 export { WebGlShader };
 
-import { DOM_RENDERING, SHADERS_ENABLED } from './config.js';
+import { Config, DOM_RENDERING, SHADERS_ENABLED } from './config.js';
 import type { CoreShaderManager } from './intrinsicTypes.js';
 import { IRendererShaderManager } from './dom-renderer/domRendererTypes.js';
 
@@ -122,17 +122,17 @@ function toValidVec4(value: unknown): Vec4 {
 export function registerDefaultShaderRounded(
   shManager: IRendererShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType('rounded', defaultShaderRounded);
 }
 export function registerDefaultShaderShadow(shManager: CoreShaderManager) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType('shadow', defaultShaderShadow);
 }
 export function registerDefaultShaderRoundedWithBorder(
   shManager: CoreShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType(
       'roundedWithBorder',
       defaultShaderRoundedWithBorder,
@@ -141,7 +141,7 @@ export function registerDefaultShaderRoundedWithBorder(
 export function registerDefaultShaderRoundedWithShadow(
   shManager: CoreShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType(
       'roundedWithShadow',
       defaultShaderRoundedWithShadow,
@@ -150,31 +150,31 @@ export function registerDefaultShaderRoundedWithShadow(
 export function registerDefaultShaderRoundedWithBorderAndShadow(
   shManager: CoreShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType(
       'roundedWithBorderWithShadow',
       defaultShaderRoundedWithBorderAndShadow,
     );
 }
 export function registerDefaultShaderHolePunch(shManager: CoreShaderManager) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType('holePunch', defaultShaderHolePunch);
 }
 export function registerDefaultShaderRadialGradient(
   shManager: CoreShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType('radialGradient', defaultShaderRadialGradient);
 }
 export function registerDefaultShaderLinearGradient(
   shManager: CoreShaderManager,
 ) {
-  if (SHADERS_ENABLED && !DOM_RENDERING)
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled))
     shManager.registerShaderType('linearGradient', defaultShaderLinearGradient);
 }
 
 export function registerDefaultShaders(shManager: CoreShaderManager) {
-  if (SHADERS_ENABLED && !DOM_RENDERING) {
+  if (SHADERS_ENABLED && !(DOM_RENDERING && Config.domRendererEnabled)) {
     registerDefaultShaderRounded(shManager);
     registerDefaultShaderShadow(shManager);
     registerDefaultShaderRoundedWithBorder(shManager);
