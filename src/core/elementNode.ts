@@ -700,6 +700,40 @@ export class ElementNode extends Object {
     this.children = [];
   }
 
+  get effects(): StyleEffects | undefined {
+    return this.lng.shader;
+  }
+
+  set effects(v: StyleEffects) {
+    if (!SHADERS_ENABLED) return;
+    let target = this.lng.shader || {};
+    if (this.lng.shader?.props) {
+      target = this.lng.shader.props;
+    }
+    if (v.rounded) target.radius = v.rounded.radius;
+    if (v.borderRadius) target.radius = v.borderRadius;
+    if (v.border) parseAndAssignShaderProps('border', v.border, target);
+    if (v.borderTop)
+      parseAndAssignShaderProps('borderTop', v.borderTop, target);
+    if (v.borderRight)
+      parseAndAssignShaderProps('borderRight', v.borderRight, target);
+    if (v.borderBottom)
+      parseAndAssignShaderProps('borderBottom', v.borderBottom, target);
+    if (v.borderLeft)
+      parseAndAssignShaderProps('borderLeft', v.borderLeft, target);
+    if (v.shadow) parseAndAssignShaderProps('shadow', v.shadow, target);
+
+    if (this.rendered) {
+      if (!this.lng.shader) {
+        this.lng.shader = Config.convertToShader(this, target);
+      } else if (DOM_RENDERING && Config.domRendererEnabled) {
+        this.lng.shader = this.lng.shader; // lng.shader is a setter, force style update
+      }
+    } else {
+      this.lng.shader = target;
+    }
+  }
+
   set id(id: string) {
     this._id = id;
     if (
@@ -1519,6 +1553,9 @@ export function shaderAccessor<T extends Record<string, any> | number>(
   return {
     set(this: ElementNode, value: T) {
       let target = this.lng.shader || {};
+      this._effects = this._effects || {};
+      this._effects[key] = value;
+
       let animationSettings: AnimationSettings | undefined;
 
       if (this.lng.shader?.props) {
