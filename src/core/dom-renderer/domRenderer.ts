@@ -8,7 +8,9 @@ import * as lng from '@lightningjs/renderer';
 
 import { EventEmitter } from '@lightningjs/renderer/utils';
 import { Config } from '../config.js';
+import { FontLoadOptions } from '../intrinsicTypes.js';
 import type {
+  DomRendererMainSettings,
   ExtractProps,
   IRendererMain,
   IRendererNode,
@@ -17,22 +19,20 @@ import type {
   IRendererStage,
   IRendererTextNode,
   IRendererTextNodeProps,
-  DomRendererMainSettings,
 } from './domRendererTypes.js';
 import {
-  colorToRgba,
-  buildGradientStops,
-  computeLegacyObjectFit,
-  applySubTextureScaling,
-  getNodeLineHeight,
   applyEasing,
+  applySubTextureScaling,
+  buildGradientStops,
+  colorToRgba,
+  compactString,
+  computeLegacyObjectFit,
+  computeRenderStateForNode,
+  getNodeLineHeight,
   interpolateProp,
   isRenderStateInBounds,
   nodeHasTextureSource,
-  computeRenderStateForNode,
-  compactString,
 } from './domRendererUtils.js';
-import { FontLoadOptions } from '../intrinsicTypes.js';
 
 // Feature detection for legacy brousers
 const _styleRef: any =
@@ -315,11 +315,15 @@ function updateNodeStyles(node: DOMNode | DOMText) {
     switch (textProps.contain) {
       case 'width':
         if (textProps.maxWidth && textProps.maxWidth > 0) {
-          style += `width: ${textProps.maxWidth}px;`;
+          if (node.textAlign === 'center') {
+            style += `width: ${textProps.maxWidth}px;`;
+          } else {
+            style += `max-width: ${textProps.maxWidth}px;`;
+          }
+          style += `overflow: hidden;`;
         } else {
           style += `width: 100%;`;
         }
-        style += `overflow: hidden;`;
         break;
       case 'both': {
         let lineHeight = getNodeLineHeight(textProps);
@@ -514,27 +518,84 @@ function updateNodeStyles(node: DOMNode | DOMText) {
       let borderWidth = shaderProps['border-w'];
       let borderColor = shaderProps['border-color'];
       let borderGap = shaderProps['border-gap'] ?? 0;
-      let borderAlign = shaderProps['border-align'] ?? 'outside';
+      let borderAlign = shaderProps['border-align'] ?? 'inside';
       let radius = shaderProps['radius'];
 
       // Border
+      const borderWidthIsNumber = typeof borderWidth === 'number';
+      const borderWidthIsArray = Array.isArray(borderWidth);
+      const borderWidthHasValue =
+        (borderWidthIsNumber && borderWidth !== 0) ||
+        (borderWidthIsArray &&
+          (borderWidth as number[]).some(
+            (w) => typeof w === 'number' && w !== 0,
+          ));
+
       if (
-        typeof borderWidth === 'number' &&
-        borderWidth !== 0 &&
+        borderWidthHasValue &&
         typeof borderColor === 'number' &&
         borderColor !== 0
       ) {
         const rgbaColor = colorToRgba(borderColor);
 
-        let gap = borderGap;
-        if (borderAlign === 'inside') {
-          gap = -(borderWidth + borderGap);
-        } else if (borderAlign === 'center') {
-          gap = -(borderWidth / 2) + borderGap;
-        }
+        if (borderWidthIsNumber) {
+          let insideWidth = 0;
+          let outsideWidth = 0;
 
-        borderStyle += `outline: ${borderWidth}px solid ${rgbaColor};`;
-        borderStyle += `outline-offset: ${gap}px;`;
+          if (borderAlign === 'inside') {
+            insideWidth = borderWidth;
+          } else if (borderAlign === 'center') {
+            insideWidth = borderWidth / 2;
+            outsideWidth = borderWidth / 2;
+          } else {
+            outsideWidth = borderWidth;
+          }
+
+          outsideWidth += borderGap;
+          insideWidth -= borderGap;
+
+          if (insideWidth < 0) {
+            outsideWidth += insideWidth;
+            insideWidth = 0;
+          }
+          if (outsideWidth < 0) {
+            insideWidth += outsideWidth;
+            outsideWidth = 0;
+          }
+
+          const shadows: string[] = [];
+          if (outsideWidth > 0) {
+            shadows.push(`0 0 0 ${outsideWidth}px ${rgbaColor}`);
+          }
+          if (insideWidth > 0) {
+            shadows.push(`inset 0 0 0 ${insideWidth}px ${rgbaColor}`);
+          }
+
+          if (shadows.length > 0) {
+            borderStyle += `box-shadow: ${shadows.join(', ')};`;
+          }
+        } else if (borderWidthIsArray) {
+          // Individual borders per side [top, right, bottom, left]
+          // Allow individual properties to override array values
+          const topWidth =
+            shaderProps['border-top'] ?? (borderWidth as number[])[0];
+          const rightWidth =
+            shaderProps['border-right'] ?? (borderWidth as number[])[1];
+          const bottomWidth =
+            shaderProps['border-bottom'] ?? (borderWidth as number[])[2];
+          const leftWidth =
+            shaderProps['border-left'] ?? (borderWidth as number[])[3];
+
+          const widths = [topWidth, rightWidth, bottomWidth, leftWidth];
+          const sides = ['top', 'right', 'bottom', 'left'] as const;
+
+          for (let i = 0; i < sides.length; i++) {
+            const width = widths[i];
+            if (typeof width === 'number' && width !== 0) {
+              borderStyle += `border-${sides[i]}: ${width}px solid ${rgbaColor};`;
+            }
+          }
+        }
       }
       // Rounded
       if (typeof radius === 'number' && radius > 0) {
@@ -826,7 +887,6 @@ type Size = { width: number; height: number };
 
 function getElSize(node: DOMNode): Size {
   const rawRect = node.div.getBoundingClientRect();
-
   const dpr = Config.rendererOptions?.deviceLogicalPixelRatio ?? 1;
   let width = rawRect.width / dpr;
   let height = rawRect.height / dpr;
@@ -857,11 +917,17 @@ function getElSize(node: DOMNode): Size {
 */
 function updateDOMTextSize(node: DOMText): void {
   let size: Size;
+  let dimensionsChanged = false;
   switch (node.contain) {
     case 'width':
       size = getElSize(node);
+      if (node.props.w !== size.width) {
+        node.w = size.width;
+        dimensionsChanged = true;
+      }
       if (node.props.h !== size.height) {
         node.h = size.height;
+        dimensionsChanged = true;
       }
       break;
     case 'none':
@@ -869,16 +935,17 @@ function updateDOMTextSize(node: DOMText): void {
       if (node.props.h !== size.height || node.props.w !== size.width) {
         node.w = size.width;
         node.h = size.height;
+        dimensionsChanged = true;
       }
       break;
   }
 
-  if (!node.loaded) {
+  if (!node.loaded || dimensionsChanged) {
     const payload: lng.NodeTextLoadedPayload = {
       type: 'text',
       dimensions: {
-        w: node.props.w,
-        h: node.props.h,
+        w: node.w,
+        h: node.h,
       },
     };
     node.emit('loaded', payload);
@@ -1094,6 +1161,7 @@ export class DOMNode extends EventEmitter implements IRendererNode {
       if (child !== child.stage.root) {
         if (nodeHasTextureSource(child)) {
           const nextState = computeRenderStateForNode(child);
+
           if (nextState != null) {
             child.updateRenderState(nextState);
           }

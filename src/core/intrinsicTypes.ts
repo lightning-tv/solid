@@ -28,6 +28,7 @@ export interface BorderStyleObject
   width?: number | [number, number, number, number];
   gap?: number;
   align?: 'inside' | 'outside' | 'center';
+  fill?: number | string;
 }
 
 export interface SingleBorderStyleObject
@@ -36,6 +37,7 @@ export interface SingleBorderStyleObject
   w?: number;
   gap?: number;
   align?: 'inside' | 'outside' | 'center';
+  fill?: number | string;
 }
 
 export type DollarString = `$${string}`;
