@@ -123,7 +123,6 @@ export interface IRendererMain extends IEventEmitter {
   createNode(props: Partial<IRendererNodeProps>): IRendererNode;
   createShader: typeof lng.RendererMain.prototype.createShader;
   createTexture: typeof lng.RendererMain.prototype.createTexture;
-  //createEffect: typeof lng.RendererMain.prototype.createEffect;
 }
 
 export interface DomRendererMainSettings {

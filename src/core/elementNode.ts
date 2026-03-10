@@ -726,7 +726,7 @@ export class ElementNode extends Object {
     if (this.rendered) {
       if (!this.lng.shader) {
         this.lng.shader = Config.convertToShader(this, target);
-      } else if (DOM_RENDERING) {
+      } else if (DOM_RENDERING && Config.domRendererEnabled) {
         this.lng.shader = this.lng.shader; // lng.shader is a setter, force style update
       }
     } else {
@@ -1557,6 +1557,7 @@ export function shaderAccessor<T extends Record<string, any> | number>(
       this._effects[key] = value;
 
       let animationSettings: AnimationSettings | undefined;
+
       if (this.lng.shader?.props) {
         target = this.lng.shader.props;
         const transitionKey = key === 'rounded' ? 'borderRadius' : key;
@@ -1583,6 +1584,8 @@ export function shaderAccessor<T extends Record<string, any> | number>(
       if (this.rendered) {
         if (!this.lng.shader) {
           this.lng.shader = Config.convertToShader(this, target);
+        } else if (DOM_RENDERING && Config.domRendererEnabled) {
+          this.lng.shader = this.lng.shader; // lng.shader is a setter, force style update
         }
       } else {
         this.lng.shader = target;
