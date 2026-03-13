@@ -95,7 +95,7 @@ export function Grid<T>(props: GridProps<T>): JSX.Element {
 
   // Handle focus when items change - important for autofocus
   createEffect(() => {
-    if (props.items && props.items.length > 0 && gridRef && gridRef.states.has('$focus')) {
+    if (props.items && props.items.length > 0 && gridRef && hasFocus(gridRef)) {
       queueMicrotask(focus)
     }
   })

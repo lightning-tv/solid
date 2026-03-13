@@ -59,6 +59,26 @@ createEffect(() => {
 
 Note: states always use the values in the style object. If you have a button with a base color, and a disabled and focus state which both change the color, the value applied to the button will be determined from the style object. You won't be able to set the color of the button on the JSX `<Button color={???}>` because as the states change, we need to determine which color to apply. If you need this functionality, you should pass in the color to the style object.
 
+## stateOrder
+
+When multiple states are active on an element, the order in which they are applied is determined by the `Config.stateOrder` property. This allows you to control which state has higher specificity and overrides styles from other active states.
+
+States defined in the `stateOrder` array have higher specificity than states not in the array. Within the `stateOrder` array, states at the end have higher specificity than those at the beginning.
+
+```javascript
+import { Config } from '@lightningtv/solid';
+
+Config.stateOrder = ['$disabled', '$active', '$focus'];
+```
+
+In the example above:
+
+1. `$focus` has higher specificity than `$active`.
+2. `$active` has higher specificity than `$disabled`.
+3. All three have higher specificity than any state NOT in the `stateOrder` list (like `$hover`).
+
+If an element is both focused and active, the `$focus` styles will take precedence over `$active` styles for any overlapping properties. Similarly, if `$hover` is also active, both `$focus` and `$active` will override its styles.
+
 ## forwardStates
 
 When you want the state to also be applied to children elements, you can add the `forwardStates` attribute to the parent element. Any states set on the parent will be added/removed from the children as well. This is useful for functional components where you need to change styles of children as well.

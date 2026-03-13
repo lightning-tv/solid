@@ -67,6 +67,7 @@ export interface Config {
   throttleInput?: number;
   taskDelay?: number;
   convertToShader: (_node: ElementNode, v: StyleEffects) => IRendererShader;
+  stateOrder?: DollarString[];
 }
 
 export const Config: Config = {
@@ -97,4 +98,5 @@ export const Config: Config = {
   focusStateKey: '$focus',
   lockStyles: true,
   rendererOptions: {},
+  stateOrder: [],
 };

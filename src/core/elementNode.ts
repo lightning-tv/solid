@@ -14,6 +14,7 @@ import {
   type OnEvent,
   NewOmit,
   SingleBorderStyle,
+  type DollarString,
 } from './intrinsicTypes.js';
 import States, { type NodeStates } from './states.js';
 import calculateFlexOld from './flex.js';
@@ -1264,7 +1265,22 @@ export class ElementNode extends Object {
           ? { ...stylesToUndo, ...newStyles }
           : newStyles;
       } else {
-        newStyles = states.reduce((acc, state) => {
+        let sortedStates = states as DollarString[];
+        if (Config.stateOrder && Config.stateOrder.length > 0) {
+          sortedStates = states.slice().sort((a, b) => {
+            const aIdx = Config.stateOrder!.indexOf(a);
+            const bIdx = Config.stateOrder!.indexOf(b);
+
+            // If a state is in the stateOrder, it should have higher specificity
+            // than states not in the stateOrder.
+            if (aIdx !== -1 && bIdx === -1) return 1;
+            if (aIdx === -1 && bIdx !== -1) return -1;
+
+            return aIdx - bIdx;
+          });
+        }
+
+        newStyles = sortedStates.reduce((acc, state) => {
           const styles = this[state];
           return styles ? { ...acc, ...styles } : acc;
         }, stylesToUndo || {});
