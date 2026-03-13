@@ -80,4 +80,36 @@ v.describe('State Specificity', () => {
     dispose();
     lng.Config.stateOrder = originalOrder;
   });
+
+  v.test('Element-level stateOrder overrides global Config.stateOrder', async () => {
+    const originalOrder = lng.Config.stateOrder;
+
+    // Global order: $focus > $active
+    lng.Config.stateOrder = ['$active', '$focus'];
+
+    let node!: lng.ElementNode;
+
+    const dispose = renderer.render(() => (
+      <view
+        ref={node}
+        color={0xff0000ff}
+        states={['$focus', '$active']}
+        stateOrder={['$focus', '$active']} // Override: $active > $focus
+        $active={{
+          color: 0x00ff00ff, // green
+        }}
+        $focus={{
+          color: 0x0000ffff, // blue
+        }}
+      />
+    ));
+
+    await waitForUpdate();
+
+    // Local override says $active is higher specificity, so color should be green
+    v.assert.equal(node.color, 0x00ff00ff);
+
+    dispose();
+    lng.Config.stateOrder = originalOrder;
+  });
 });

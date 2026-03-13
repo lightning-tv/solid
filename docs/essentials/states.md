@@ -79,6 +79,14 @@ In the example above:
 
 If an element is both focused and active, the `$focus` styles will take precedence over `$active` styles for any overlapping properties. Similarly, if `$hover` is also active, both `$focus` and `$active` will override its styles.
 
+You can also override the global `stateOrder` on a per-element basis by using the `stateOrder` attribute:
+
+```jsx
+<View stateOrder={['$active', '$focus']}>...</View>
+```
+
+This is useful if you have a specific component that needs a different specificity than the rest of the application.
+
 ## forwardStates
 
 When you want the state to also be applied to children elements, you can add the `forwardStates` attribute to the parent element. Any states set on the parent will be added/removed from the children as well. This is useful for functional components where you need to change styles of children as well.

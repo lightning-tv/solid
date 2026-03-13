@@ -690,6 +690,11 @@ export interface ElementNode extends RendererNode, FocusNode {
   paddingRight?: number;
   paddingBottom?: number;
   paddingLeft?: number;
+  /**
+   * Defines the order in which state styles are applied for this element.
+   * Overrides the global `Config.stateOrder`.
+   */
+  stateOrder?: DollarString[];
 }
 
 export class ElementNode extends Object {
@@ -1266,10 +1271,11 @@ export class ElementNode extends Object {
           : newStyles;
       } else {
         let sortedStates = states as DollarString[];
-        if (Config.stateOrder && Config.stateOrder.length > 0) {
+        const stateOrder = this.stateOrder || Config.stateOrder;
+        if (stateOrder && stateOrder.length > 0) {
           sortedStates = states.slice().sort((a, b) => {
-            const aIdx = Config.stateOrder!.indexOf(a);
-            const bIdx = Config.stateOrder!.indexOf(b);
+            const aIdx = stateOrder.indexOf(a);
+            const bIdx = stateOrder.indexOf(b);
 
             // If a state is in the stateOrder, it should have higher specificity
             // than states not in the stateOrder.
