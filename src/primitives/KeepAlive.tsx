@@ -1,6 +1,7 @@
 import { Route, RoutePreloadFuncArgs, RouteProps } from "@solidjs/router";
 import * as s from 'solid-js';
-import { ElementNode } from "@lightningtv/solid";
+import { ElementNode, activeElement } from "@lightningtv/solid";
+import { chainFunctions } from "./utils/chainFunctions.js";
 
 export interface KeepAliveElement {
   id: string;
@@ -11,25 +12,41 @@ export interface KeepAliveElement {
 }
 
 const keepAliveElements = new Map<string, KeepAliveElement>();
+export const keepAliveRouteElements = new Map<string, KeepAliveElement>();
 
-export const storeKeepAlive = (
+const _storeKeepAlive = (
+  map: Map<string, KeepAliveElement>,
   element: KeepAliveElement
 ): KeepAliveElement | undefined => {
-  if (keepAliveElements.has(element.id)) {
-    console.warn(`[KeepAlive] Element with id "${element.id}" already in cache. Recreating.`);
+  if (map.has(element.id)) {
+    console.warn(`[KeepAlive] Element with id "${element.id}" already in cache.`);
     return element;
   }
-  keepAliveElements.set(element.id, element);
+  map.set(element.id, element);
   return element;
 };
 
-export const removeKeepAlive = (id: string): void => {
-  const element = keepAliveElements.get(id);
+export const storeKeepAlive = (element: KeepAliveElement) => _storeKeepAlive(keepAliveElements, element);
+export const storeKeepAliveRoute = (element: KeepAliveElement) => _storeKeepAlive(keepAliveRouteElements, element);
+
+const _removeKeepAlive = (map: Map<string, KeepAliveElement>, id: string): void => {
+  const element = map.get(id);
   if (element) {
     element.dispose();
-    keepAliveElements.delete(id);
+    map.delete(id);
   }
 };
+
+export const removeKeepAlive = (id: string): void => _removeKeepAlive(keepAliveElements, id);
+export const removeKeepAliveRoute = (id: string): void => _removeKeepAlive(keepAliveRouteElements, id);
+
+const _clearKeepAlive = (map: Map<string, KeepAliveElement>): void => {
+  map.forEach((element) => element.dispose());
+  map.clear();
+};
+
+export const clearKeepAlive = (): void => _clearKeepAlive(keepAliveElements);
+export const clearKeepAliveRoute = (): void => _clearKeepAlive(keepAliveRouteElements);
 
 interface KeepAliveProps {
   id: string;
@@ -55,31 +72,36 @@ function wrapChildren(props: s.ParentProps<KeepAliveProps>) {
     />)
 }
 
-export const KeepAlive = (props: s.ParentProps<KeepAliveProps>) => {
-  let existing = keepAliveElements.get(props.id)
+const createKeepAliveComponent = (map: Map<string, KeepAliveElement>, storeFn: (element: KeepAliveElement) => KeepAliveElement | undefined) => {
+  return (props: s.ParentProps<KeepAliveProps>) => {
+    let existing = map.get(props.id)
 
-  if (existing && props.shouldDispose?.(props.id)) {
-    existing.dispose();
-    keepAliveElements.delete(props.id);
-    existing = undefined;
-  }
+    if (existing && props.shouldDispose?.(props.id)) {
+      existing.dispose();
+      map.delete(props.id);
+      existing = undefined;
+    }
 
-  if (!existing) {
-    return s.createRoot((dispose) => {
-      const children = wrapChildren(props);
-      storeKeepAlive({
-        id: props.id,
-        owner: s.getOwner(),
-        children,
-        dispose,
+    if (!existing) {
+      return s.createRoot((dispose) => {
+        const children = wrapChildren(props);
+        storeFn({
+          id: props.id,
+          owner: s.getOwner(),
+          children,
+          dispose,
+        });
+        return children;
       });
-      return children;
-    });
-  } else if (existing && !existing.children) {
-    existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
-  }
-  return existing.children;
-};
+    } else if (existing && !existing.children) {
+      existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
+    }
+    return existing.children;
+  };
+}
+
+export const KeepAlive = createKeepAliveComponent(keepAliveElements, storeKeepAlive);
+const KeepAliveRouteInternal = createKeepAliveComponent(keepAliveRouteElements, storeKeepAliveRoute);
 
 export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
   id?: string,
@@ -91,19 +113,44 @@ export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
   transition?: ElementNode['transition'];
 }) => {
   const key = props.id || props.path;
+  let savedFocusedElement: ElementNode | undefined;
+
+  const onRemove = chainFunctions(props.onRemove, (elm: ElementNode) => {
+    savedFocusedElement = activeElement() as ElementNode;
+    elm.alpha = 0;
+  });
+
+  const onRender = chainFunctions(props.onRender, (elm: ElementNode) => {
+    let isChild = false;
+    let current = savedFocusedElement;
+    while (current) {
+      if (current === elm) {
+        isChild = true;
+        break;
+      }
+      current = current.parent as ElementNode | undefined;
+    }
+
+    if (isChild && savedFocusedElement) {
+      savedFocusedElement.setFocus();
+    } else {
+      elm.setFocus();
+    }
+    elm.alpha = 1;
+  });
 
   const preload = props.preload ? (preloadProps: RoutePreloadFuncArgs) => {
-    let existing = keepAliveElements.get(key)
+    let existing = keepAliveRouteElements.get(key)
 
     if (existing && props.shouldDispose?.(key)) {
       existing.dispose();
-      keepAliveElements.delete(key);
+      keepAliveRouteElements.delete(key);
       existing = undefined;
     }
 
     if (!existing) {
       return s.createRoot((dispose) => {
-        storeKeepAlive({
+        storeKeepAliveRoute({
           id: key,
           owner: s.getOwner(),
           dispose,
@@ -117,8 +164,8 @@ export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
   } : undefined;
 
   return (<Route {...props} preload={preload} component={(childProps) =>
-            <KeepAlive id={key} onRemove={props.onRemove} onRender={props.onRender} transition={props.transition}>
+            <KeepAliveRouteInternal id={key} onRemove={onRemove} onRender={onRender} transition={props.transition}>
               {props.component(childProps)}
-            </KeepAlive>
+            </KeepAliveRouteInternal>
         }/>);
 };
