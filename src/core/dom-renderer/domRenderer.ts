@@ -882,6 +882,8 @@ function updateNodeStyles(node: DOMNode | DOMText) {
 }
 
 const textNodesToMeasure = new Set<DOMText>();
+const containTextNodes = new Set<DOMText>();
+let fontLoadingListenerSetup = false;
 
 type Size = { width: number; height: number };
 
@@ -958,21 +960,68 @@ function updateDOMTextMeasurements() {
   textNodesToMeasure.clear();
 }
 
+function shouldTrackContainTextNode(node: DOMText): boolean {
+  return node.contain === 'width' || node.contain === 'none';
+}
+
+function syncContainTextNodeTracking(node: DOMText): void {
+  if (shouldTrackContainTextNode(node)) {
+    containTextNodes.add(node);
+  } else {
+    containTextNodes.delete(node);
+  }
+}
+
+function scheduleContainTextNodesMeasurement(): void {
+  if (containTextNodes.size === 0) return;
+
+  containTextNodes.forEach((node) => {
+    if (node.div.isConnected) {
+      textNodesToMeasure.add(node);
+    }
+  });
+
+  if (textNodesToMeasure.size > 0) {
+    setTimeout(updateDOMTextMeasurements);
+  }
+}
+
+function setupFontLoadingListeners(): void {
+  if (fontLoadingListenerSetup) return;
+  if (
+    typeof document === 'undefined' ||
+    !(document.fonts as FontFaceSet | undefined)
+  ) {
+    return;
+  }
+
+  const fonts = document.fonts;
+  if (typeof fonts.addEventListener === 'function') {
+    fonts.addEventListener('loadingdone', scheduleContainTextNodesMeasurement);
+  }
+
+  fontLoadingListenerSetup = true;
+}
+
 function scheduleUpdateDOMTextMeasurement(node: DOMText) {
   /*
     Make sure the font is loaded before measuring
   */
 
+  setupFontLoadingListeners();
+
   if (textNodesToMeasure.size === 0) {
-    const fonts = document.fonts;
-    if (document.fonts.status === 'loaded') {
-      setTimeout(updateDOMTextMeasurements);
-    } else {
-      if (fonts && fonts.ready && typeof fonts.ready.then === 'function') {
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      const fonts = document.fonts;
+      if (fonts.status === 'loaded') {
+        setTimeout(updateDOMTextMeasurements);
+      } else if (fonts.ready && typeof fonts.ready.then === 'function') {
         fonts.ready.then(updateDOMTextMeasurements);
       } else {
         setTimeout(updateDOMTextMeasurements, 500);
       }
+    } else {
+      setTimeout(updateDOMTextMeasurements, 500);
     }
   }
 
@@ -1570,7 +1619,14 @@ class DOMText extends DOMNode {
   ) {
     super(stage, props);
     this.div.innerText = props.text;
+    syncContainTextNodeTracking(this);
     scheduleUpdateDOMTextMeasurement(this);
+  }
+
+  override destroy(): void {
+    textNodesToMeasure.delete(this);
+    containTextNodes.delete(this);
+    super.destroy();
   }
 
   get text() {
@@ -1700,6 +1756,7 @@ class DOMText extends DOMNode {
   set contain(v) {
     if (this.props.contain === v) return;
     this.props.contain = v;
+    syncContainTextNodeTracking(this);
     updateNodeStyles(this);
     scheduleUpdateDOMTextMeasurement(this);
   }
@@ -1982,14 +2039,25 @@ export function loadFontToDom(font: FontLoadOptions): void {
   // atlasUrl?: string;
   // atlasDataUrl?: string;
 
-  const fontFace = new FontFace(font.fontFamily, `url(${font.fontUrl})`);
-
-  if (typeof document !== 'undefined' && 'fonts' in document) {
-    const fontSet = document.fonts as FontFaceSet & {
-      add?: (font: FontFace) => FontFaceSet;
-    };
-    fontSet.add?.(fontFace);
+  if (
+    typeof document === 'undefined' ||
+    !('fonts' in document) ||
+    typeof FontFace === 'undefined' ||
+    !font.fontUrl
+  ) {
+    return;
   }
+
+  const fontFace = new FontFace(font.fontFamily, `url(${font.fontUrl})`);
+  const fontSet = document.fonts as FontFaceSet & {
+    add?: (font: FontFace) => FontFaceSet;
+  };
+  fontSet.add?.(fontFace);
+
+  fontFace
+    .load()
+    .then(scheduleContainTextNodesMeasurement)
+    .catch(() => {});
 }
 
 export function isDomRenderer(
