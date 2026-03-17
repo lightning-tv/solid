@@ -39,6 +39,7 @@ const _removeKeepAlive = (
 ): void => {
   const element = map.get(id);
   if (element) {
+    (element.children as unknown as ElementNode).destroy();
     element.dispose();
     map.delete(id);
   }
@@ -50,7 +51,10 @@ export const removeKeepAliveRoute = (id: string): void =>
   _removeKeepAlive(keepAliveRouteElements, id);
 
 const _clearKeepAlive = (map: Map<string, KeepAliveElement>): void => {
-  map.forEach((element) => element.dispose());
+  map.forEach((element) => {
+    (element.children as unknown as ElementNode).destroy();
+    element.dispose();
+  });
   map.clear();
 };
 
@@ -103,6 +107,7 @@ const createKeepAliveComponent = (
       (props.shouldDispose?.(props.id) ||
         (existing.children as unknown as ElementNode)?.destroyed)
     ) {
+      (existing.children as unknown as ElementNode).destroy();
       existing.dispose();
       map.delete(props.id);
       existing = undefined;
@@ -184,6 +189,7 @@ export const KeepAliveRoute = <S extends string>(
           (props.shouldDispose?.(key) ||
             (existing.children as unknown as ElementNode)?.destroyed)
         ) {
+          (existing.children as unknown as ElementNode).destroy();
           existing.dispose();
           keepAliveRouteElements.delete(key);
           existing = undefined;
