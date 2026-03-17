@@ -1,7 +1,7 @@
-import { Route, RoutePreloadFuncArgs, RouteProps } from "@solidjs/router";
+import { Route, RoutePreloadFuncArgs, RouteProps } from '@solidjs/router';
 import * as s from 'solid-js';
-import { ElementNode, activeElement } from "@lightningtv/solid";
-import { chainFunctions } from "./utils/chainFunctions.js";
+import { ElementNode, activeElement } from '@lightningtv/solid';
+import { chainFunctions } from './utils/chainFunctions.js';
 
 export interface KeepAliveElement {
   id: string;
@@ -16,20 +16,27 @@ export const keepAliveRouteElements = new Map<string, KeepAliveElement>();
 
 const _storeKeepAlive = (
   map: Map<string, KeepAliveElement>,
-  element: KeepAliveElement
+  element: KeepAliveElement,
 ): KeepAliveElement | undefined => {
   if (map.has(element.id)) {
-    console.warn(`[KeepAlive] Element with id "${element.id}" already in cache.`);
+    console.warn(
+      `[KeepAlive] Element with id "${element.id}" already in cache.`,
+    );
     return element;
   }
   map.set(element.id, element);
   return element;
 };
 
-export const storeKeepAlive = (element: KeepAliveElement) => _storeKeepAlive(keepAliveElements, element);
-export const storeKeepAliveRoute = (element: KeepAliveElement) => _storeKeepAlive(keepAliveRouteElements, element);
+export const storeKeepAlive = (element: KeepAliveElement) =>
+  _storeKeepAlive(keepAliveElements, element);
+export const storeKeepAliveRoute = (element: KeepAliveElement) =>
+  _storeKeepAlive(keepAliveRouteElements, element);
 
-const _removeKeepAlive = (map: Map<string, KeepAliveElement>, id: string): void => {
+const _removeKeepAlive = (
+  map: Map<string, KeepAliveElement>,
+  id: string,
+): void => {
   const element = map.get(id);
   if (element) {
     element.dispose();
@@ -37,8 +44,10 @@ const _removeKeepAlive = (map: Map<string, KeepAliveElement>, id: string): void 
   }
 };
 
-export const removeKeepAlive = (id: string): void => _removeKeepAlive(keepAliveElements, id);
-export const removeKeepAliveRoute = (id: string): void => _removeKeepAlive(keepAliveRouteElements, id);
+export const removeKeepAlive = (id: string): void =>
+  _removeKeepAlive(keepAliveElements, id);
+export const removeKeepAliveRoute = (id: string): void =>
+  _removeKeepAlive(keepAliveRouteElements, id);
 
 const _clearKeepAlive = (map: Map<string, KeepAliveElement>): void => {
   map.forEach((element) => element.dispose());
@@ -46,7 +55,8 @@ const _clearKeepAlive = (map: Map<string, KeepAliveElement>): void => {
 };
 
 export const clearKeepAlive = (): void => _clearKeepAlive(keepAliveElements);
-export const clearKeepAliveRoute = (): void => _clearKeepAlive(keepAliveRouteElements);
+export const clearKeepAliveRoute = (): void =>
+  _clearKeepAlive(keepAliveRouteElements);
 
 interface KeepAliveProps {
   id: string;
@@ -57,8 +67,16 @@ interface KeepAliveProps {
 }
 
 function wrapChildren(props: s.ParentProps<KeepAliveProps>) {
-  const onRemove = props.onRemove || ((elm: ElementNode) => { elm.alpha = 0; });
-  const onRender = props.onRender || ((elm: ElementNode) => { elm.alpha = 1; });
+  const onRemove =
+    props.onRemove ||
+    ((elm: ElementNode) => {
+      elm.alpha = 0;
+    });
+  const onRender =
+    props.onRender ||
+    ((elm: ElementNode) => {
+      elm.alpha = 1;
+    });
   const transition = props.transition || { alpha: true };
 
   return (
@@ -69,14 +87,22 @@ function wrapChildren(props: s.ParentProps<KeepAliveProps>) {
       forwardFocus={0}
       transition={transition}
       {...props}
-    />)
+    />
+  );
 }
 
-const createKeepAliveComponent = (map: Map<string, KeepAliveElement>, storeFn: (element: KeepAliveElement) => KeepAliveElement | undefined) => {
+const createKeepAliveComponent = (
+  map: Map<string, KeepAliveElement>,
+  storeFn: (element: KeepAliveElement) => KeepAliveElement | undefined,
+) => {
   return (props: s.ParentProps<KeepAliveProps>) => {
-    let existing = map.get(props.id)
+    let existing = map.get(props.id);
 
-    if (existing && props.shouldDispose?.(props.id)) {
+    if (
+      existing &&
+      (props.shouldDispose?.(props.id) ||
+        (existing.children as unknown as ElementNode)?.destroyed)
+    ) {
       existing.dispose();
       map.delete(props.id);
       existing = undefined;
@@ -94,24 +120,34 @@ const createKeepAliveComponent = (map: Map<string, KeepAliveElement>, storeFn: (
         return children;
       });
     } else if (existing && !existing.children) {
-      existing.children = s.runWithOwner(existing.owner, () => wrapChildren(props));
+      existing.children = s.runWithOwner(existing.owner, () =>
+        wrapChildren(props),
+      );
     }
     return existing.children;
   };
-}
+};
 
-export const KeepAlive = createKeepAliveComponent(keepAliveElements, storeKeepAlive);
-const KeepAliveRouteInternal = createKeepAliveComponent(keepAliveRouteElements, storeKeepAliveRoute);
+export const KeepAlive = createKeepAliveComponent(
+  keepAliveElements,
+  storeKeepAlive,
+);
+const KeepAliveRouteInternal = createKeepAliveComponent(
+  keepAliveRouteElements,
+  storeKeepAliveRoute,
+);
 
-export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
-  id?: string,
-  path: string,
-  component: s.Component<RouteProps<S>>,
-  shouldDispose?: (key: string) => boolean,
-  onRemove?: ElementNode['onRemove'];
-  onRender?: ElementNode['onRender'];
-  transition?: ElementNode['transition'];
-}) => {
+export const KeepAliveRoute = <S extends string>(
+  props: RouteProps<S> & {
+    id?: string;
+    path: string;
+    component: s.Component<RouteProps<S>>;
+    shouldDispose?: (key: string) => boolean;
+    onRemove?: ElementNode['onRemove'];
+    onRender?: ElementNode['onRender'];
+    transition?: ElementNode['transition'];
+  },
+) => {
   const key = props.id || props.path;
   let savedFocusedElement: ElementNode | undefined;
 
@@ -139,33 +175,50 @@ export const KeepAliveRoute = <S extends string>(props: RouteProps<S> & {
     elm.alpha = 1;
   });
 
-  const preload = props.preload ? (preloadProps: RoutePreloadFuncArgs) => {
-    let existing = keepAliveRouteElements.get(key)
+  const preload = props.preload
+    ? (preloadProps: RoutePreloadFuncArgs) => {
+        let existing = keepAliveRouteElements.get(key);
 
-    if (existing && props.shouldDispose?.(key)) {
-      existing.dispose();
-      keepAliveRouteElements.delete(key);
-      existing = undefined;
-    }
+        if (
+          existing &&
+          (props.shouldDispose?.(key) ||
+            (existing.children as unknown as ElementNode)?.destroyed)
+        ) {
+          existing.dispose();
+          keepAliveRouteElements.delete(key);
+          existing = undefined;
+        }
 
-    if (!existing) {
-      return s.createRoot((dispose) => {
-        storeKeepAliveRoute({
-          id: key,
-          owner: s.getOwner(),
-          dispose,
-          children: null,
-        });
-        return props.preload!(preloadProps);
-      });
-    } else if (existing.children) {
-      (existing.children as unknown as ElementNode)?.setFocus();
-    }
-  } : undefined;
+        if (!existing) {
+          return s.createRoot((dispose) => {
+            storeKeepAliveRoute({
+              id: key,
+              owner: s.getOwner(),
+              dispose,
+              children: null,
+            });
+            return props.preload!(preloadProps);
+          });
+        } else if (existing.children) {
+          (existing.children as unknown as ElementNode)?.setFocus();
+        }
+      }
+    : undefined;
 
-  return (<Route {...props} preload={preload} component={(childProps) =>
-            <KeepAliveRouteInternal id={key} onRemove={onRemove} onRender={onRender} transition={props.transition}>
-              {props.component(childProps)}
-            </KeepAliveRouteInternal>
-        }/>);
+  return (
+    <Route
+      {...props}
+      preload={preload}
+      component={(childProps) => (
+        <KeepAliveRouteInternal
+          id={key}
+          onRemove={onRemove}
+          onRender={onRender}
+          transition={props.transition}
+        >
+          {props.component(childProps)}
+        </KeepAliveRouteInternal>
+      )}
+    />
+  );
 };
