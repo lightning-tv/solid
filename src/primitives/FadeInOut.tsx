@@ -27,16 +27,27 @@ export function fadeOut(el: ElementNode): Promise<void> {
   return el.animate(ALPHA_NONE).start().waitUntilStopped();
 }
 
-export default function FadeInOut(props: Props & NodeProps) {
+export function FadeInOut(props: Props & NodeProps) {
   const config = Object.assign({}, DEFAULT_PROPS, props.transition);
   function onCreate(elm: ElementNode) {
     elm.alpha = 0;
-    elm.animate({ alpha: 1 }, { duration: config.duration, easing: config.easing }).start();
+    elm
+      .animate(
+        { alpha: 1 },
+        { duration: config.duration, easing: config.easing },
+      )
+      .start();
   }
 
   function onDestroy(elm: ElementNode) {
     elm.rtt = true;
-    return elm.animate({ alpha: 0 }, { duration: config.duration, easing: config.easing }).start().waitUntilStopped();
+    return elm
+      .animate(
+        { alpha: 0 },
+        { duration: config.duration, easing: config.easing },
+      )
+      .start()
+      .waitUntilStopped();
   }
 
   return (
