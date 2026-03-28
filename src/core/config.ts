@@ -55,7 +55,6 @@ export interface Config {
   focusDebug: boolean;
   domRendererEnabled: boolean;
   keyDebug: boolean;
-  simpleAnimationsEnabled?: boolean;
   animationSettings?: AnimationSettings;
   animationsEnabled: boolean;
   fontSettings: Partial<TextProps>;

@@ -1,5 +1,4 @@
 import * as lng from '@lightningjs/renderer';
-import { CoreAnimation } from '../intrinsicTypes.js';
 import { EventEmitter } from '@lightningjs/renderer/utils';
 import {
   ShaderBorderPrefixedProps,
@@ -25,8 +24,8 @@ export interface IRendererStage {
   renderer: IRendererCoreRenderer;
   shManager: IRendererShaderManager;
   animationManager: {
-    registerAnimation: (anim: CoreAnimation) => void;
-    unregisterAnimation: (anim: CoreAnimation) => void;
+    registerAnimation: (anim: any) => void;
+    unregisterAnimation: (anim: any) => void;
   };
   loadFont: lng.Stage['loadFont'];
   reprocessUpdates?: (callback?: () => void) => void;

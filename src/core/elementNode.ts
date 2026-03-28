@@ -6,8 +6,6 @@ import {
   type AnimationSettings,
   type ElementText,
   type Styles,
-  type AnimationEvents,
-  type AnimationEventHandler,
   AddColorString,
   TextProps,
   TextNode,
@@ -55,7 +53,7 @@ import {
   setActiveElement,
   FocusNode,
 } from './focusManager.js';
-import simpleAnimation, { SimpleAnimationSettings } from './animation.js';
+
 import {
   IRendererNode,
   IRendererNodeProps,
@@ -607,25 +605,7 @@ export interface ElementNode extends RendererNode, FocusNode {
     | Record<string, AnimationSettings | undefined | true | false>
     | true
     | false;
-  /**
-   * Optional handlers for animation events.
-   *
-   * Available animation events:
-   * - 'animating': Fired when the animation is in progress.
-   * - 'tick': Fired at each tick or frame update of the animation.
-   * - 'stopped': Fired when the animation stops.
-   *
-   * Each event handler is optional and maps to a corresponding event.
-   *
-   * @type {Partial<Record<AnimationEvents, AnimationEventHandler>>}
-   *
-   * @property {AnimationEventHandler} [animating] - Handler for the 'animating' event.
-   * @property {AnimationEventHandler} [tick] - Handler for the 'tick' event.
-   * @property {AnimationEventHandler} [stopped] - Handler for the 'stopped' event.
-   *
-   * @see https://lightning-tv.github.io/solid/#/essentials/transitions?id=animation-callbacks
-   */
-  onAnimation?: Partial<Record<AnimationEvents, AnimationEventHandler>>;
+
   /** Optional handler for when the element is created and rendered.
    *
    * @see https://lightning-tv.github.io/solid/#/flow/ondestroy
@@ -886,39 +866,12 @@ export class ElementNode extends Object {
               | undefined
               | AnimationSettings);
 
-      if (Config.simpleAnimationsEnabled) {
-        simpleAnimation.add(
-          this,
-          name,
-          value,
-          animationSettings ||
-            (this.animationSettings as SimpleAnimationSettings),
-        );
-        simpleAnimation.register(renderer.stage);
-        return;
-      } else {
-        const animationController = this.animate(
-          { [name]: value },
-          animationSettings,
-        );
+      const animationController = this.animate(
+        { [name]: value },
+        animationSettings,
+      );
 
-        if (this.onAnimation) {
-          const animationEvents = Object.keys(
-            this.onAnimation,
-          ) as AnimationEvents[];
-          for (const event of animationEvents) {
-            const handler = this.onAnimation[event];
-            animationController.on(
-              event,
-              (controller: IAnimationController, props?: any) => {
-                handler!.call(this, controller, name, value, props);
-              },
-            );
-          }
-        }
-
-        return animationController.start();
-      }
+      return animationController.start();
     }
 
     (this.lng[name as keyof (IRendererNode | INode)] as number | string) =

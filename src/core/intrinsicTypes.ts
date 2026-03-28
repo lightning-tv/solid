@@ -61,10 +61,6 @@ export interface Effects {
 
 export type StyleEffects = Effects;
 
-export type CoreAnimation = Parameters<
-  lngr.Stage['animationManager']['registerAnimation']
->[0];
-
 export type FontLoadOptions = Parameters<lngr.Stage['loadFont']>[1] & {
   type?: 'ssdf' | 'msdf';
 };
@@ -141,7 +137,9 @@ export interface NodeProps
         | 'renderer'
         | 'emit'
         | 'preFlexwidth'
-        | 'preFlexHeight'
+        | 'preFlexheight'
+        | 'width'
+        | 'height'
       >
     > {
   states?: NodeStates;
@@ -195,14 +193,6 @@ export type Styles = NodeStyles | TextStyles;
 export interface IntrinsicNodeProps extends NodeProps {}
 export interface IntrinsicNodeStyleProps extends NodeStyles {}
 export interface IntrinsicTextNodeStyleProps extends TextStyles {}
-
-export type AnimationEvents = 'animating' | 'tick' | 'stopped';
-export type AnimationEventHandler = (
-  controller: lngr.IAnimationController,
-  name: string,
-  endValue: number,
-  props?: any,
-) => void;
 
 type EventPayloadMap = {
   loaded: lngr.NodeLoadedPayload;
