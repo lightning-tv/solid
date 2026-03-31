@@ -185,6 +185,7 @@ const LightningRendererNonAnimatingProps = [
   'destroyed',
   'fontStretch',
   'fontStyle',
+  'group',
   'imageType',
   'letterSpacing',
   'maxHeight',
@@ -866,12 +867,11 @@ export class ElementNode extends Object {
               | undefined
               | AnimationSettings);
 
-      const animationController = this.animate(
-        { [name]: value },
-        animationSettings,
+      return (this.lng as any).animateProp(
+        name,
+        value,
+        animationSettings || this.animationSettings || {},
       );
-
-      return animationController.start();
     }
 
     (this.lng[name as keyof (IRendererNode | INode)] as number | string) =
