@@ -3,7 +3,7 @@ import { createSignal } from 'solid-js';
 
 const fpsStyle = {
   color: 0x000000ff,
-  height: 192,
+  height: 216,
   width: 330,
   x: 1900,
   y: 6,
@@ -34,6 +34,12 @@ const [renderableMemUsedSignal, setRenderableMemUsedSignal] = createSignal('');
 const [memUsedSignal, setMemUsedSignal] = createSignal('');
 const [renderableTexturesLoadedSignal, setRenderableTexturesLoadedSignal] = createSignal(0);
 const [loadedTexturesSignal, setLoadedTexturesSignal] = createSignal(0);
+const [renderOps, setRenderOps] = createSignal(0);
+
+interface RenderUpdatePayload {
+  quads: number;
+  renderOps: number;
+}
 
 let count = 0;
 let totalFps = 0;
@@ -88,8 +94,9 @@ export function setupFPS(root: any) {
     }
   });
 
-  root.renderer.on('quadsUpdate', (target: RendererMain, quadsData: any) => {
+  root.renderer.on('renderUpdate', (target: RendererMain, quadsData: RenderUpdatePayload) => {
     setQuads(quadsData.quads);
+    setRenderOps(quadsData.renderOps);
   });
 }
 
@@ -163,16 +170,7 @@ export const FPSCounter = (props: NodeProps) => {
 
         <view height={infoFontSize}>
           <text fontSize={infoFontSize} style={fpsLabel}>
-            renderableTexturesLoaded:
-          </text>
-          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
-            {renderableTexturesLoadedSignal().toString()}
-          </text>
-        </view>
-
-        <view height={infoFontSize}>
-          <text fontSize={infoFontSize} style={fpsLabel}>
-            loadedTextures:
+            Textures In Memory:
           </text>
           <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {loadedTexturesSignal().toString()}
@@ -181,10 +179,28 @@ export const FPSCounter = (props: NodeProps) => {
 
         <view height={infoFontSize}>
           <text fontSize={infoFontSize} style={fpsLabel}>
-            quads:
+            Textures On Screen:
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
+            {renderableTexturesLoadedSignal().toString()}
+          </text>
+        </view>
+
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
+            Quads:
           </text>
           <text fontSize={infoFontSize} style={fpsLabel} x={230}>
             {quads().toString()}
+          </text>
+        </view>
+
+        <view height={infoFontSize}>
+          <text fontSize={infoFontSize} style={fpsLabel}>
+            Draws:
+          </text>
+          <text fontSize={infoFontSize} style={fpsLabel} x={230}>
+            {renderOps().toString()}
           </text>
         </view>
       </view>
