@@ -40,8 +40,8 @@ const _removeKeepAlive = (
 ): void => {
   const element = map.get(id);
   if (element) {
-    (element.children as unknown as ElementNode).destroy();
-    element.dispose();
+    (element.children as unknown as ElementNode)?.destroy();
+    element.dispose?.();
     map.delete(id);
   }
 };
@@ -53,8 +53,8 @@ export const removeKeepAliveRoute = (id: string): void =>
 
 const _clearKeepAlive = (map: Map<string, KeepAliveElement>): void => {
   map.forEach((element) => {
-    (element.children as unknown as ElementNode).destroy();
-    element.dispose();
+    (element.children as unknown as ElementNode)?.destroy();
+    element.dispose?.();
   });
   map.clear();
 };
