@@ -175,16 +175,19 @@ export const KeepAliveRoute = <S extends string>(
   const key = props.id || props.path;
   let savedFocusedElement: ElementNode | undefined;
 
-  let existing = keepAliveRouteElements.get(key);
-  if (!existing) {
-    const [isAlive, setIsAlive] = s.createSignal(true);
-    keepAliveRouteElements.set(key, {
-      id: key,
-      isAlive,
-      setIsAlive,
-    } as any);
-    existing = keepAliveRouteElements.get(key);
-  }
+  const getExisting = () => {
+    let existing = keepAliveRouteElements.get(key);
+    if (!existing) {
+      const [isAlive, setIsAlive] = s.createSignal(true);
+      existing = {
+        id: key,
+        isAlive,
+        setIsAlive,
+      } as any;
+      keepAliveRouteElements.set(key, existing!);
+    }
+    return existing!;
+  };
 
   const onRemove = chainFunctions(props.onRemove, (elm: ElementNode) => {
     savedFocusedElement = activeElement() as ElementNode;
@@ -212,10 +215,9 @@ export const KeepAliveRoute = <S extends string>(
 
   const preload = props.preload
     ? (preloadProps: RoutePreloadFuncArgs) => {
-        let existing = keepAliveRouteElements.get(key);
+        let existing = getExisting();
 
         if (
-          existing &&
           existing.children &&
           (props.shouldDispose?.(key) ||
             (existing.children as unknown as ElementNode)?.destroyed)
@@ -223,24 +225,14 @@ export const KeepAliveRoute = <S extends string>(
           (existing.children as unknown as ElementNode).destroy();
           existing.dispose?.();
           keepAliveRouteElements.delete(key);
-          existing = undefined;
+          existing = getExisting();
         }
 
-        if (!existing || !existing.dispose) {
+        if (!existing.dispose) {
           return s.createRoot((dispose) => {
-            const [isAlive, setIsAlive] =
-              existing?.isAlive && existing?.setIsAlive
-                ? [existing.isAlive, existing.setIsAlive]
-                : s.createSignal(true);
-            storeKeepAliveRoute({
-              id: key,
-              owner: s.getOwner(),
-              dispose,
-              children: null,
-              isAlive,
-              setIsAlive,
-            });
-            return props.preload!({ ...preloadProps, isAlive });
+            existing.owner = s.getOwner();
+            existing.dispose = dispose;
+            return props.preload!({ ...preloadProps, isAlive: existing.isAlive! });
           });
         } else if (existing.children) {
           (existing.children as unknown as ElementNode)?.setFocus();
@@ -259,7 +251,7 @@ export const KeepAliveRoute = <S extends string>(
       {...props}
       preload={preload}
       component={(childProps) => {
-        const existing = keepAliveRouteElements.get(key)!;
+        const existing = getExisting();
         return (
           <KeepAliveRouteInternal
             id={key}

@@ -32,6 +32,27 @@ const AppRoutes = () => {
 
 In the example above, the `Browse` component's state will be preserved. When you navigate away and then back to a `/browse/...` URL, the page will render instantly from the cache, showing exactly what was there before.
 
+### Suspending Effects for Cached Routes
+
+When a route is cached and hidden (unmounted from view but kept in memory), its reactive SolidJS context remains active. This means any `createEffect` blocks that depend on global signals or stores will continue to run in the background.
+
+To prevent background effects from running when the page is inactive, `KeepAliveRoute` injects an `isAlive` accessor into your component's props. You should use `isAlive()` to halt effects early.
+
+```jsx
+import { createEffect } from 'solid-js';
+
+const Browse = (props) => {
+  createEffect(() => {
+    // Return early to prevent the effect from running in the background when cached
+    if (!props.isAlive()) return;
+
+    console.log('Page is active and visible!');
+  });
+
+  return <view>...</view>;
+};
+```
+
 ### IMPORTANT PRELOAD TIPS
 
 If using preload functions with props
