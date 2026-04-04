@@ -86,6 +86,7 @@ const addFocusDebug = (
 
 let activeElement: ElementNode | undefined;
 export const setActiveElement = (elm: ElementNode) => {
+  if (elm === activeElement) return;
   updateFocusPath(elm, activeElement);
   activeElement = elm;
   // Callback for libraries to use signals / refs
@@ -97,8 +98,9 @@ const updateFocusPath = (
   currentFocusedElm: ElementNode,
   prevFocusedElm: ElementNode | undefined,
 ) => {
-  let current = currentFocusedElm;
+  let current: ElementNode | undefined = currentFocusedElm;
   const fp: ElementNode[] = [];
+  const fpSet = new Set<ElementNode>();
   while (current) {
     if (
       !current.states.has(Config.focusStateKey) ||
@@ -120,11 +122,12 @@ const updateFocusPath = (
       );
     }
     fp.push(current);
-    current = current.parent!;
+    fpSet.add(current);
+    current = current.parent;
   }
 
   focusPath.forEach((elm) => {
-    if (!fp.includes(elm)) {
+    if (!fpSet.has(elm)) {
       elm.states.remove(Config.focusStateKey);
       elm.onBlur?.call(elm, currentFocusedElm, prevFocusedElm!, elm);
       elm.onFocusChanged?.call(
