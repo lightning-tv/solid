@@ -59,6 +59,16 @@ createEffect(() => {
 
 Note: states always use the values in the style object. If you have a button with a base color, and a disabled and focus state which both change the color, the value applied to the button will be determined from the style object. You won't be able to set the color of the button on the JSX `<Button color={???}>` because as the states change, we need to determine which color to apply. If you need this functionality, you should pass in the color to the style object.
 
+## The `theme` Property
+
+To solve the issue mentioned above where setting a custom dynamic property on the JSX is immediately overridden when component states are removed or cleared, you can use the `theme` property:
+
+```jsx
+<Button theme={{ color: 0xff0000ff }} states={{ $focus: true }} />
+```
+
+Properties defined in the `theme` object act as the baseline values for your component. When rendering initially, those properties are automatically applied to the element. Later, when an active state (e.g. `$focus`) drops, the engine will deterministically look for the fallback value in the `theme` object first, before falling back to the generic `style` object. This allows developers to pass explicit, robust baseline props without state transitions using defaults from style objects.
+
 ## stateOrder
 
 When multiple states are active on an element, the order in which they are applied is determined by the `Config.stateOrder` property. This allows you to control which state has higher specificity and overrides styles from other active states.

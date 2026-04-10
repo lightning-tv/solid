@@ -254,6 +254,7 @@ export interface ElementNode extends RendererNode, FocusNode {
   _rendererProps?: any;
   _states?: States;
   _style?: Styles;
+  _theme?: Styles;
   _lastAnyKeyPressTime?: number;
   _type: 'element' | 'textNode';
   _undoStyles?: string[];
@@ -1050,6 +1051,21 @@ export class ElementNode extends Object {
     return this._style || {};
   }
 
+  set theme(styles: Styles | undefined) {
+    if (!styles) {
+      return;
+    }
+    this._theme = styles;
+    for (const key in styles) {
+      this[key as keyof Styles] = styles[key as keyof Styles];
+    }
+  }
+
+  get theme(): Styles {
+    this._theme = this._theme || {};
+    return this._theme;
+  }
+
   get hasChildren() {
     return this.children.length > 0;
   }
@@ -1200,12 +1216,18 @@ export class ElementNode extends Object {
       if (this._undoStyles && this._undoStyles.length) {
         stylesToUndo = {};
         this._undoStyles.forEach((styleKey) => {
+          let fallbackValue = this.theme[styleKey];
+
+          if (fallbackValue === undefined) {
+            fallbackValue = this.style[styleKey];
+          }
+
           if (isDev) {
-            if (this.style[styleKey] === undefined) {
+            if (fallbackValue === undefined) {
               console.warn('fallback style key not found: ', styleKey);
             }
           }
-          stylesToUndo![styleKey] = this.style[styleKey];
+          stylesToUndo![styleKey] = fallbackValue;
         });
       }
 
