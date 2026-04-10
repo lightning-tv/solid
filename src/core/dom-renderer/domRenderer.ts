@@ -247,17 +247,14 @@ function updateNodeStyles(node: DOMNode | DOMText) {
 
     let { x, y } = props;
 
-    if (props.mountX != null) {
-      x -= (props.w ?? 0) * props.mountX;
-    }
-
-    if (props.mountY != null) {
-      y -= (props.h ?? 0) * props.mountY;
-    }
+    const hasMountX = props.mountX != null && props.mountX !== 0;
+    const hasMountY = props.mountY != null && props.mountY !== 0;
 
     if (x !== 0) transform += `translateX(${x}px)`;
+    if (hasMountX) transform += `translateX(${-props.mountX! * 100}%)`;
 
     if (y !== 0) transform += `translateY(${y}px)`;
+    if (hasMountY) transform += `translateY(${-props.mountY! * 100}%)`;
 
     if (props.rotation !== 0) transform += `rotate(${props.rotation}rad)`;
 
@@ -917,7 +914,7 @@ function getElSize(node: DOMNode): Size {
   need to have their height or width calculated.
   And then cause the flex layout to be recalculated.
 */
-function updateDOMTextSize(node: DOMText): void {
+function updateDOMTextSize(node: DOMText, emitLoaded = true): void {
   let size: Size;
   let dimensionsChanged = false;
   switch (node.contain) {
@@ -942,7 +939,7 @@ function updateDOMTextSize(node: DOMText): void {
       break;
   }
 
-  if (!node.loaded || dimensionsChanged) {
+  if (emitLoaded && (!node.loaded || dimensionsChanged)) {
     const payload: lng.NodeTextLoadedPayload = {
       type: 'text',
       dimensions: {
@@ -956,7 +953,7 @@ function updateDOMTextSize(node: DOMText): void {
 }
 
 function updateDOMTextMeasurements() {
-  textNodesToMeasure.forEach(updateDOMTextSize);
+  textNodesToMeasure.forEach((node) => updateDOMTextSize(node));
   textNodesToMeasure.clear();
 }
 
@@ -1619,6 +1616,8 @@ class DOMText extends DOMNode {
   ) {
     super(stage, props);
     this.div.innerText = props.text;
+    updateNodeStyles(this);
+    updateDOMTextSize(this, false);
     syncContainTextNodeTracking(this);
     scheduleUpdateDOMTextMeasurement(this);
   }
