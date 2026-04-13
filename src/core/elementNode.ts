@@ -870,6 +870,14 @@ export class ElementNode extends Object {
               | undefined
               | AnimationSettings);
 
+      if (!('animateProp' in this.lng)) {
+        const animationController = this.animate(
+          { [name]: value },
+          animationSettings,
+        );
+        return animationController.start();
+      }
+
       return (this.lng as any).animateProp(
         name,
         value,
