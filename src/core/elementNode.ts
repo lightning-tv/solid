@@ -870,6 +870,15 @@ export class ElementNode extends Object {
               | undefined
               | AnimationSettings);
 
+      // If the renderer doesn't support animateProp, fall back to animating all props which is less efficient but ensures animations still work
+      if (!('animateProp' in this.lng)) {
+        const animationController = this.animate(
+          { [name]: value },
+          animationSettings,
+        );
+        return animationController.start();
+      }
+
       return (this.lng as any).animateProp(
         name,
         value,
