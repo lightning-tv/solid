@@ -1,5 +1,7 @@
 # This project has moved: https://github.com/solid-tv/solid
 
+The npm package is now `@solidtv/solid`. Follow the [migration guide](https://solid-tv.github.io/solid/#/migrate) to switch an existing app.
+
 
 <p>
   <img src="https://assets.solidjs.com/banner?project=Library&type=@lightningtv/solid" alt="SolidJS Lightning" />
@@ -23,7 +25,7 @@ Join the [SolidJS Discord](https://discord.com/invite/solidjs) - #Lightning TV c
 
 ## Documentation
 
-[SolidJS Lightning Docs](https://lightning-tv.github.io/solid/)
+[SolidTV Docs](https://solid-tv.github.io/solid/)
 
 [AI Coding Guidelines](docs/AI_CODING_GUIDELINES.md)
 

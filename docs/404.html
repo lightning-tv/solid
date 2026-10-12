@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SolidTV has moved</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://solid-tv.github.io/solid/" />
+    <script>
+      // This site moved to solid-tv.github.io/solid. Send every old URL to the
+      // migration guide, passing the page they asked for so it can link to it.
+      (function () {
+        var target = 'https://solid-tv.github.io/solid/#/migrate';
+        var from = location.hash
+          ? location.hash.replace(/^#\/?/, '').split('?')[0]
+          : location.pathname.replace(/^\/solid\/?/, '').replace(/\.(md|html)$/, '');
+        from = from.replace(/\/+$/, '');
+        if (from && !/^(README|index|404)$/i.test(from)) {
+          target += '?from=' + encodeURIComponent(from);
+        }
+        location.replace(target);
+      })();
+    </script>
+    <noscript>
+      <meta
+        http-equiv="refresh"
+        content="0; url=https://solid-tv.github.io/solid/#/migrate"
+      />
+    </noscript>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 4rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SolidTV has moved</h1>
+    <p>
+      <code>@lightningtv/solid</code> is now <code>@solidtv/solid</code>, and
+      its docs live at
+      <a href="https://solid-tv.github.io/solid/">solid-tv.github.io/solid</a>.
+    </p>
+    <p>
+      <a href="https://solid-tv.github.io/solid/#/migrate">Read the migration guide</a>
+    </p>
+  </body>
+</html>

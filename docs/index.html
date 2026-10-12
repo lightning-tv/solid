@@ -1,54 +1,51 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <title>SolidJS & LightningJS 3 Documentation for TV App Development</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Get started with SolidJS and LightningJS 3 TV App Development" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
-  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicons/favicon-32x32.png" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-defaults.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
-  <style>
-    :root {
-      --base-font-size: 18px;
-    }
-  </style>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WZXHDZ1WH"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-2WZXHDZ1WH');
-  </script>
-</head>
-
-<body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      name: 'SolidJS & LightningJS',
-      repo: 'https://github.com/lightning-tv/solid/',
-      loadSidebar: true,
-      relativePath: true,
-      auto2top: true,
-      search: {
-        maxAge: 24 * 60 * 60 * 1000, // one day
-        paths: 'auto',
-        placeholder: 'Type to search',
-        noData: 'No Results!',
-        depth: 5,
-      },
-    };
-  </script>
-  <!-- Docsify v4 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-jsx.min.js"></script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <title>SolidTV has moved</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://solid-tv.github.io/solid/" />
+    <script>
+      // This site moved to solid-tv.github.io/solid. Send every old URL to the
+      // migration guide, passing the page they asked for so it can link to it.
+      (function () {
+        var target = 'https://solid-tv.github.io/solid/#/migrate';
+        var from = location.hash
+          ? location.hash.replace(/^#\/?/, '').split('?')[0]
+          : location.pathname.replace(/^\/solid\/?/, '').replace(/\.(md|html)$/, '');
+        from = from.replace(/\/+$/, '');
+        if (from && !/^(README|index|404)$/i.test(from)) {
+          target += '?from=' + encodeURIComponent(from);
+        }
+        location.replace(target);
+      })();
+    </script>
+    <noscript>
+      <meta
+        http-equiv="refresh"
+        content="0; url=https://solid-tv.github.io/solid/#/migrate"
+      />
+    </noscript>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 4rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SolidTV has moved</h1>
+    <p>
+      <code>@lightningtv/solid</code> is now <code>@solidtv/solid</code>, and
+      its docs live at
+      <a href="https://solid-tv.github.io/solid/">solid-tv.github.io/solid</a>.
+    </p>
+    <p>
+      <a href="https://solid-tv.github.io/solid/#/migrate">Read the migration guide</a>
+    </p>
+  </body>
 </html>
